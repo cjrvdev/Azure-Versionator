@@ -4,7 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
-import dev.cjrv.azureversionator.di.appModule
+import dev.cjrv.azureversionator.di.navigationModule
+import dev.cjrv.azureversionator.di.platformModule
 import dev.cjrv.azureversionator.navigation.AppNavigation
 import dev.cjrv.azureversionator.navigation.HomeScreen
 import dev.cjrv.azureversionator.navigation.Screen
@@ -17,7 +18,10 @@ import org.koin.dsl.koinConfiguration
 fun App() {
     KoinApplication(
         configuration = koinConfiguration {
-            modules(appModule)
+            modules(
+                navigationModule,
+                platformModule(),
+            )
         }
     ) {
         AzureVersionatorTheme {
