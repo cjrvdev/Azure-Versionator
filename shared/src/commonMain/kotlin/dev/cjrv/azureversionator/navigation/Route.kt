@@ -16,9 +16,15 @@ import kotlinx.serialization.Serializable
  *   @Serializable data object HomeScreen : Screen
  *   @Serializable data class DetailScreen(val id: String) : Screen
  */
-sealed interface Screen
+sealed interface Route
 
 /** Top-level destinations of the app. */
 @Serializable
-data object HomeScreen : Screen
+data object Home : Route
+
+@Serializable
+data object Settings : Route
+
+@Serializable
+data object NewVersion : Route
 

@@ -1,8 +1,10 @@
 package dev.cjrv.azureversionator.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider
 import org.koin.core.annotation.KoinExperimentalAPI
 
@@ -17,16 +19,19 @@ import org.koin.core.annotation.KoinExperimentalAPI
  * @param backStack mutable list acting as the navigation back stack.
  * @param modifier applied to the [NavDisplay] root.
  */
-@OptIn(KoinExperimentalAPI::class)
 @Composable
-fun AppNavigation(
-    backStack: MutableList<Screen>,
-    modifier: Modifier = Modifier,
-) {
+@OptIn(KoinExperimentalAPI::class)
+fun Navigation() {
+    val entryProvider = koinEntryProvider<Any>()
+    val navigator = koinInject<Navigator>()
+
     NavDisplay(
-        backStack = backStack,
-        modifier = modifier,
-        onBack = { backStack.removeLastOrNull() },
-        entryProvider = koinEntryProvider(),
+        backStack = navigator.backStack,
+        onBack = { navigator.goBack() },
+        entryProvider = entryProvider,
+        entryDecorators = listOf(
+            rememberSaveableStateHolderNavEntryDecorator(),
+            rememberViewModelStoreNavEntryDecorator()
+        )
     )
 }
