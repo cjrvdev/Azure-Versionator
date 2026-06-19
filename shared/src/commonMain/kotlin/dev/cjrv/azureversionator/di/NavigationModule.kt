@@ -2,7 +2,7 @@ package dev.cjrv.azureversionator.di
 
 import dev.cjrv.azureversionator.navigation.Navigator
 import dev.cjrv.azureversionator.navigation.Home
-import dev.cjrv.azureversionator.ui.HomeScreen
+import dev.cjrv.azureversionator.ui.features.HomeScreen
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.dsl.module
 import org.koin.dsl.navigation3.navigation
