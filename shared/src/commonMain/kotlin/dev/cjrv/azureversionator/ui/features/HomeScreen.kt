@@ -17,9 +17,12 @@ import dev.cjrv.azureversionator.ui.Screen
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun HomeScreen() {
+    val vm = koinViewModel<HomeViewModel>()
+
     Screen {
         Scaffold(topBar = {
             TopAppBar(
