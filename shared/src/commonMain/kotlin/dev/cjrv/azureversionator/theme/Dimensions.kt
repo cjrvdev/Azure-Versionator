@@ -11,3 +11,5 @@ val MarginLarge = 24.dp
 val TextTitle = 18.sp
 val TextSubtitle = 16.sp
 val TextBody = 14.sp
+
+val CornerRadius = 12.dp

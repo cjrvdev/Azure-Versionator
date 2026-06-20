@@ -22,6 +22,7 @@ import azureversionator.shared.generated.resources.app_name
 import dev.cjrv.azureversionator.navigation.NewVersion
 import dev.cjrv.azureversionator.navigation.Route
 import dev.cjrv.azureversionator.navigation.Settings
+import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.ui.Screen
 import dev.cjrv.azureversionator.ui.composables.CustomButton
@@ -58,8 +59,8 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                         verticalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxSize().padding(MarginMedium)
                             .background(
-                                MaterialTheme.colorScheme.onBackground,
-                                shape = RoundedCornerShape(8.dp)
+                                MaterialTheme.colorScheme.primaryContainer,
+                                shape = RoundedCornerShape(CornerRadius)
                             )
 
                     ) {
