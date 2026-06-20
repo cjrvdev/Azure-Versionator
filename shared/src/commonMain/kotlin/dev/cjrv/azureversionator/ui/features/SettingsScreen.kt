@@ -29,6 +29,17 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.settings
+import azureversionator.shared.generated.resources.azure_devops
+import azureversionator.shared.generated.resources.azure_organization
+import azureversionator.shared.generated.resources.azure_organization_placeholder
+import azureversionator.shared.generated.resources.azure_project_name
+import azureversionator.shared.generated.resources.azure_project_name_placeholder
+import azureversionator.shared.generated.resources.azure_pat
+import azureversionator.shared.generated.resources.azure_pat_placeholder
+import azureversionator.shared.generated.resources.azure_pipeline_id
+import azureversionator.shared.generated.resources.azure_pipeline_id_placeholder
+import azureversionator.shared.generated.resources.save_settings
+import azureversionator.shared.generated.resources.settings_saved
 import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.ui.Screen
@@ -44,10 +55,11 @@ fun SettingsScreen(onNavigateBack : () -> Unit) {
     val vm = koinViewModel<SettingsViewModel>()
     val state by vm.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val settingsSavedMessage = stringResource(Res.string.settings_saved)
 
     LaunchedEffect(state.savedFeedback) {
         if (state.savedFeedback) {
-            snackbarHostState.showSnackbar("Settings saved")
+            snackbarHostState.showSnackbar(settingsSavedMessage)
             vm.onSavedFeedbackConsumed()
         }
     }
@@ -90,39 +102,39 @@ fun SettingsScreen(onNavigateBack : () -> Unit) {
                             .verticalScroll(rememberScrollState())
                     ) {
                         Text(
-                            text = "Azure DevOps",
+                            text = stringResource(Res.string.azure_devops),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
 
                         CustomTextField(
-                            label = "Organization",
+                            label = stringResource(Res.string.azure_organization),
                             value = state.organization,
                             onValueChange = vm::onOrganizationChange,
                             modifier = Modifier.fillMaxWidth(),
-                            placeholder = "my-org",
+                            placeholder = stringResource(Res.string.azure_organization_placeholder),
                             isError = state.organizationError != null,
                             errorMessage = state.organizationError,
                             imeAction = ImeAction.Next
                         )
 
                         CustomTextField(
-                            label = "Project name",
+                            label = stringResource(Res.string.azure_project_name),
                             value = state.projectName,
                             onValueChange = vm::onProjectNameChange,
                             modifier = Modifier.fillMaxWidth(),
-                            placeholder = "my-project",
+                            placeholder = stringResource(Res.string.azure_project_name_placeholder),
                             isError = state.projectNameError != null,
                             errorMessage = state.projectNameError,
                             imeAction = ImeAction.Next
                         )
 
                         CustomTextField(
-                            label = "Personal Access Token",
+                            label = stringResource(Res.string.azure_pat),
                             value = state.personalAccessToken,
                             onValueChange = vm::onPersonalAccessTokenChange,
                             modifier = Modifier.fillMaxWidth(),
-                            placeholder = "••••••••",
+                            placeholder = stringResource(Res.string.azure_pat_placeholder),
                             isPassword = true,
                             isError = state.personalAccessTokenError != null,
                             errorMessage = state.personalAccessTokenError,
@@ -130,11 +142,11 @@ fun SettingsScreen(onNavigateBack : () -> Unit) {
                         )
 
                         CustomTextField(
-                            label = "Pipeline ID",
+                            label = stringResource(Res.string.azure_pipeline_id),
                             value = state.pipelineId,
                             onValueChange = vm::onPipelineIdChange,
                             modifier = Modifier.fillMaxWidth(),
-                            placeholder = "42",
+                            placeholder = stringResource(Res.string.azure_pipeline_id_placeholder),
                             keyboardType = KeyboardType.Number,
                             isError = state.pipelineIdError != null,
                             errorMessage = state.pipelineIdError,
@@ -144,7 +156,7 @@ fun SettingsScreen(onNavigateBack : () -> Unit) {
                         Spacer(modifier = Modifier.height(4.dp))
 
                         CustomPrimaryButton(
-                            text = "Save settings",
+                            text = stringResource(Res.string.save_settings),
                             modifier = Modifier.fillMaxWidth(),
                             onClick = vm::saveSettings
                         )

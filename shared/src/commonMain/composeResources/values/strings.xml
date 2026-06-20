@@ -3,4 +3,17 @@
     <string name="new_version">New Version</string>
     <string name="settings">Settings</string>
 
+    <!-- Azure DevOps Settings -->
+    <string name="azure_devops">Azure DevOps</string>
+    <string name="azure_organization">Organization</string>
+    <string name="azure_organization_placeholder">my-org</string>
+    <string name="azure_project_name">Project name</string>
+    <string name="azure_project_name_placeholder">my-project</string>
+    <string name="azure_pat">Personal Access Token</string>
+    <string name="azure_pat_placeholder">••••••••</string>
+    <string name="azure_pipeline_id">Pipeline ID</string>
+    <string name="azure_pipeline_id_placeholder">42</string>
+    <string name="save_settings">Save settings</string>
+    <string name="settings_saved">Settings saved</string>
+
 </resources>
