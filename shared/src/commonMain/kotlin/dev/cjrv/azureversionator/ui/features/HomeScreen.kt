@@ -19,13 +19,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.app_name
+import azureversionator.shared.generated.resources.new_version
+import azureversionator.shared.generated.resources.settings
 import dev.cjrv.azureversionator.navigation.NewVersion
 import dev.cjrv.azureversionator.navigation.Route
 import dev.cjrv.azureversionator.navigation.Settings
 import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.ui.Screen
-import dev.cjrv.azureversionator.ui.composables.CustomButton
+import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
+import dev.cjrv.azureversionator.ui.composables.CustomSecondaryButton
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
 import org.jetbrains.compose.resources.stringResource
@@ -64,9 +67,9 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                             )
 
                     ) {
-                        CustomButton("New Version", onClick = { navigateToTarget(NewVersion) })
+                        CustomPrimaryButton(stringResource(Res.string.new_version), onClick = { navigateToTarget(NewVersion) })
                         Spacer(modifier = Modifier.padding(MarginMedium))
-                        CustomButton("Settings", onClick = { navigateToTarget(Settings) })
+                        CustomSecondaryButton(stringResource(Res.string.settings), onClick = { navigateToTarget(Settings) })
                     }
                 }
             }

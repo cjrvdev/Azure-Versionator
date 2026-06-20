@@ -15,7 +15,7 @@ import org.jetbrains.compose.resources.vectorResource
 fun TopAppBar(
     text: String,
     hasBackButton: Boolean = true,
-    onNavigateBackClick: () -> Unit = {}
+    onBackPressed: () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
         title = { Text(text) },
@@ -27,7 +27,7 @@ fun TopAppBar(
         ),
         navigationIcon = {
             if (hasBackButton)
-                IconButton(onClick = onNavigateBackClick) {
+                IconButton(onClick = onBackPressed) {
                     Icon(
                         imageVector = vectorResource(Res.drawable.chevron_back),
                         contentDescription = null

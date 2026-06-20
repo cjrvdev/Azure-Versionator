@@ -24,8 +24,8 @@ val navigationModule = module {
         }
     }
     navigation<Settings> {
-        SettingsScreen() { route ->
-            get<Navigator>().navigateTo(route)
+        SettingsScreen() {
+            get<Navigator>().goBack()
         }
     }
 }
