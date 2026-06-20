@@ -1,27 +1,39 @@
 package dev.cjrv.azureversionator.ui.features
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.app_name
+import dev.cjrv.azureversionator.navigation.NewVersion
+import dev.cjrv.azureversionator.navigation.Route
+import dev.cjrv.azureversionator.navigation.Settings
+import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.ui.Screen
+import dev.cjrv.azureversionator.ui.composables.CustomButton
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navigateToTarget: (Route) -> Unit) {
     val vm = koinViewModel<HomeViewModel>()
+    val state by vm.state.collectAsState()
 
     Screen {
         Scaffold(topBar = {
@@ -30,14 +42,31 @@ fun HomeScreen() {
                 hasBackButton = false
             )
         }) { innerPadding ->
-            Column(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
                     .padding(innerPadding)
             ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    InfiniteLoadingIndicator()
+                if (state.isLoading) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                        InfiniteLoadingIndicator()
+                    }
+                } else {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxSize().padding(MarginMedium)
+                            .background(
+                                MaterialTheme.colorScheme.onBackground,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+
+                    ) {
+                        CustomButton("New Version", onClick = { navigateToTarget(NewVersion) })
+                        Spacer(modifier = Modifier.padding(MarginMedium))
+                        CustomButton("Settings", onClick = { navigateToTarget(Settings) })
+                    }
                 }
             }
         }

@@ -8,8 +8,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 
 @Composable
-fun CustomButton(text: String) {
-    Button(onClick = { /*TODO*/ }) {
+fun CustomButton(text: String, onClick: () -> Unit = {}) {
+    Button(onClick = onClick) {
         Text(text = text)
     }
 }

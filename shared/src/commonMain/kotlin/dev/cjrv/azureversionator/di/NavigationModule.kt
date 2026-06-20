@@ -16,8 +16,10 @@ import org.koin.dsl.navigation3.navigation
 val navigationModule = module {
     single { Navigator(startDestination = Home) }
 
-    navigation<Home> { _ ->
-        HomeScreen()
+    navigation<Home> {
+        HomeScreen() { route ->
+            get<Navigator>().navigateTo(route)
+        }
     }
 }
 
