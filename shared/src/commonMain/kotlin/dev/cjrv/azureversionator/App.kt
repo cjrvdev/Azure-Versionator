@@ -10,7 +10,6 @@ import org.koin.compose.KoinApplication
 import org.koin.dsl.koinConfiguration
 
 @Composable
-@Preview
 fun App() {
     KoinApplication(
         configuration = koinConfiguration {

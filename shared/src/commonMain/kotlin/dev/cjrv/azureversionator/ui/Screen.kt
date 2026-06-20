@@ -16,7 +16,7 @@ fun Screen(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
             .windowInsetsPadding(WindowInsets.safeDrawing),
         color = MaterialTheme.colorScheme.background,
         content = {
-            content
+            content()
         }
     )
 }

@@ -19,7 +19,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun HomeScreen() {
     Screen {
-        Scaffold(topBar = { TopAppBar(stringResource(Res.string.app_name)) }) { innerPadding ->
+        Scaffold(topBar = { TopAppBar(stringResource(Res.string.app_name), hasBackButton = false) }) { innerPadding ->
             Column(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.background)
