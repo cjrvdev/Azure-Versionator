@@ -55,3 +55,33 @@ fun CustomTextField(
     )
 }
 
+@Composable
+fun CustomMultilineTextField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    placeholder: String = "",
+    isError: Boolean = false,
+    errorMessage: String? = null,
+    keyboardType: KeyboardType = KeyboardType.Text
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        placeholder = { Text(placeholder) },
+        singleLine = false,
+        modifier = modifier,
+        shape = RoundedCornerShape(CornerRadius),
+        isError = isError,
+        supportingText = if (isError && errorMessage != null) {
+            { Text(errorMessage) }
+        } else null,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = keyboardType,
+            imeAction = ImeAction.Default
+        )
+    )
+}
+

@@ -14,8 +14,8 @@ class SettingsViewModel(
     private val settingsRepository: AzureSettingsRepository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(UiState())
-    val state: StateFlow<UiState> = _state.asStateFlow()
+    private val _state = MutableStateFlow(UIState())
+    val state: StateFlow<UIState> = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -82,7 +82,7 @@ class SettingsViewModel(
         ).all { it == null }
     }
 
-    data class UiState(
+    data class UIState(
         val isLoading: Boolean = true,
         val organization: String = "",
         val projectName: String = "",

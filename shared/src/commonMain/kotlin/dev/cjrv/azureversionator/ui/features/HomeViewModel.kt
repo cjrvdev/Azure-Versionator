@@ -11,8 +11,8 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 class HomeViewModel : ViewModel(){
-    private val _state = MutableStateFlow(UiState())
-    val state: StateFlow<UiState> = _state.asStateFlow()
+    private val _state = MutableStateFlow(UIState())
+    val state: StateFlow<UIState> = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -22,7 +22,7 @@ class HomeViewModel : ViewModel(){
         }
     }
 
-    data class UiState(
+    data class UIState(
         val isLoading: Boolean = true,
     )
 }
