@@ -8,12 +8,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,8 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import azureversionator.shared.generated.resources.Res
-import azureversionator.shared.generated.resources.azure_organization
-import azureversionator.shared.generated.resources.azure_organization_placeholder
 import azureversionator.shared.generated.resources.new_version
 import azureversionator.shared.generated.resources.new_version_submit
 import azureversionator.shared.generated.resources.release_notes
@@ -46,6 +46,37 @@ import org.koin.compose.viewmodel.koinViewModel
 fun NewVersionScreen(onNavigateBack: () -> Unit) {
     val vm = koinViewModel<NewVersionViewModel>()
     val state by vm.state.collectAsState()
+
+    // Handle success message
+    if (state.successMessage != null) {
+        AlertDialog(
+            onDismissRequest = { vm.onSuccessMessageConsumed() },
+            title = { Text("Success") },
+            text = { Text(state.successMessage.orEmpty()) },
+            confirmButton = {
+                TextButton(onClick = {
+                    vm.onSuccessMessageConsumed()
+                    onNavigateBack()
+                }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
+
+    // Handle error message
+    if (state.generalError != null) {
+        AlertDialog(
+            onDismissRequest = { vm.onErrorConsumed() },
+            title = { Text("Error") },
+            text = { Text(state.generalError.orEmpty()) },
+            confirmButton = {
+                TextButton(onClick = { vm.onErrorConsumed() }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
 
     Screen {
         Scaffold(topBar = {
@@ -118,6 +149,7 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                         CustomPrimaryButton(
                             text = stringResource(Res.string.new_version_submit),
                             onClick = vm::createVersion,
+                            enabled = state.isConfigurationValid && !state.isLoading,
                             modifier = Modifier
                                 .fillMaxWidth()
                         )

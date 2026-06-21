@@ -2,57 +2,118 @@ package dev.cjrv.azureversionator.ui.features
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.cjrv.azureversionator.data.model.PipelineVariables
+import dev.cjrv.azureversionator.data.network.AzureDevOpsApi
+import dev.cjrv.azureversionator.data.settings.AzureSettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class NewVersionViewModel  : ViewModel(){
+class NewVersionViewModel(
+    private val settingsRepository: AzureSettingsRepository,
+    private val azureDevOpsApi: AzureDevOpsApi
+) : ViewModel() {
     private val _state = MutableStateFlow(UIState())
     val state: StateFlow<UIState> = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
+            // Pre-load Azure configuration to validate it exists
+            val config = settingsRepository.loadConfig()
+            val isConfigValid = config.organization.isNotBlank() && config.projectName.isNotBlank() &&
+                config.personalAccessToken.isNotBlank() && config.pipelineId.isNotBlank()
 
+            if (!isConfigValid) {
+                _state.value = _state.value.copy(
+                    isConfigurationValid = false,
+                    generalError = "Azure DevOps configuration is incomplete. Please configure settings first."
+                )
+            } else {
+                _state.value = _state.value.copy(isConfigurationValid = true)
+            }
         }
     }
 
     fun onReleaseNotesChange(value: String) {
-        _state.value = _state.value.copy(releaseNotes = value)
+        _state.value = _state.value.copy(releaseNotes = value, releaseNotesError = null)
     }
 
     fun onVersionNameChange(value: String) {
-        _state.value = _state.value.copy(versionName = value)
+        _state.value = _state.value.copy(versionName = value, versionNameError = null)
     }
 
     fun onBuildNumberChange(value: String) {
-        _state.value = _state.value.copy(buildNumber = value)
+        _state.value = _state.value.copy(buildNumber = value, buildNumberError = null)
     }
 
-    fun createVersion(){
-        if (!validate())
-            return;
+    fun createVersion() {
+        if (!_state.value.isConfigurationValid) return
+        if (!validate()) return
+
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isLoading = true, generalError = null)
+
+            try {
+                val config = settingsRepository.loadConfig()
+                val variables = PipelineVariables(
+                    versionName = _state.value.versionName,
+                    versionCode = _state.value.buildNumber,
+                    releaseNotes = _state.value.releaseNotes
+                )
+
+                val result = azureDevOpsApi.runPipeline(config, variables)
+
+                result.onSuccess { response ->
+                    _state.value = _state.value.copy(
+                        isLoading = false,
+                        successMessage = "Pipeline triggered successfully (Run ID: ${response.id})",
+                        versionName = "",
+                        buildNumber = "",
+                        releaseNotes = ""
+                    )
+                }.onFailure { error ->
+                    _state.value = _state.value.copy(
+                        isLoading = false,
+                        generalError = "Failed to trigger pipeline: ${error.message}"
+                    )
+                }
+            } catch (e: Exception) {
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    generalError = "Error: ${e.message}"
+                )
+            }
+        }
     }
 
-    fun validate() : Boolean{
+    fun onSuccessMessageConsumed() {
+        _state.value = _state.value.copy(successMessage = null)
+    }
+
+    fun onErrorConsumed() {
+        _state.value = _state.value.copy(generalError = null)
+    }
+
+    fun validate(): Boolean {
         var isValid = true
         val s = _state.value
 
-        if (s.versionName.isBlank()){
+        if (s.versionName.isBlank()) {
             _state.value = _state.value.copy(versionNameError = "Version name cannot be empty")
             isValid = false
         } else {
             _state.value = _state.value.copy(versionNameError = null)
         }
 
-        if (s.buildNumber.isBlank()){
+        if (s.buildNumber.isBlank()) {
             _state.value = _state.value.copy(buildNumberError = "Build number cannot be empty")
             isValid = false
         } else {
             _state.value = _state.value.copy(buildNumberError = null)
         }
 
-        if (s.releaseNotes.isBlank()){
+        if (s.releaseNotes.isBlank()) {
             _state.value = _state.value.copy(releaseNotesError = "Release notes cannot be empty")
             isValid = false
         } else {
@@ -64,11 +125,14 @@ class NewVersionViewModel  : ViewModel(){
 
     data class UIState(
         val isLoading: Boolean = false,
-        val versionName : String = "",
-        val versionNameError : String? = null,
-        val buildNumber : String = "",
-        val buildNumberError : String? = null,
-        val releaseNotes : String = "",
-        val releaseNotesError : String? = null
+        val isConfigurationValid: Boolean = true,
+        val versionName: String = "",
+        val versionNameError: String? = null,
+        val buildNumber: String = "",
+        val buildNumberError: String? = null,
+        val releaseNotes: String = "",
+        val releaseNotesError: String? = null,
+        val successMessage: String? = null,
+        val generalError: String? = null
     )
 }
