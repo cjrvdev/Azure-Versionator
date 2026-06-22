@@ -38,6 +38,7 @@ import azureversionator.shared.generated.resources.release_notes_version_name_pl
 import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.ui.Screen
+import dev.cjrv.azureversionator.ui.composables.CustomDropdownField
 import dev.cjrv.azureversionator.ui.composables.CustomMultilineTextField
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
 import dev.cjrv.azureversionator.ui.composables.CustomTextField
@@ -50,6 +51,8 @@ import org.koin.compose.viewmodel.koinViewModel
 fun NewVersionScreen(onNavigateBack: () -> Unit) {
     val vm = koinViewModel<NewVersionViewModel>()
     val state by vm.state.collectAsState()
+    val selectedRepository = state.repositories.firstOrNull { it.id == state.selectedRepositoryId }
+    val selectedBranch = state.branches.firstOrNull { it.fullName == state.selectedBranchId }
 
     // Handle success message
     if (state.successMessage != null) {
@@ -114,25 +117,29 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                             .verticalScroll(rememberScrollState())
                     ) {
                         Row(horizontalArrangement = Arrangement.spacedBy(MarginMedium)) {
-                            CustomTextField(
+                            CustomDropdownField(
                                 label = stringResource(Res.string.azure_repository_name),
-                                value = state.repositoryId,
-                                onValueChange = vm::onRepositoryIdChange,
+                                selectedItem = selectedRepository,
+                                options = state.repositories,
+                                optionLabel = { it.name },
+                                onOptionSelected = vm::onRepositorySelected,
                                 modifier = Modifier.fillMaxWidth().weight(1f),
                                 placeholder = stringResource(Res.string.azure_repository_name_placeholder),
-                                isError = state.repositoryIdError != null,
-                                errorMessage = state.repositoryIdError,
-                                imeAction = ImeAction.Next
+                                enabled = state.isConfigurationValid && !state.isLoadingRepositories,
+                                isError = state.repositoryIdError != null || state.loadRepositoriesError != null,
+                                errorMessage = state.repositoryIdError ?: state.loadRepositoriesError
                             )
-                            CustomTextField(
+                            CustomDropdownField(
                                 label = stringResource(Res.string.azure_branch_name),
-                                value = state.branchName,
-                                onValueChange = vm::onBranchNameChange,
+                                selectedItem = selectedBranch,
+                                options = state.branches,
+                                optionLabel = { it.name },
+                                onOptionSelected = vm::onBranchSelected,
                                 modifier = Modifier.fillMaxWidth().weight(1f),
                                 placeholder = stringResource(Res.string.azure_branch_name_placeholder),
-                                isError = state.branchNameError != null,
-                                errorMessage = state.branchNameError,
-                                imeAction = ImeAction.Next
+                                enabled = state.selectedRepositoryId != null && !state.isLoadingBranches,
+                                isError = state.branchNameError != null || state.loadBranchesError != null,
+                                errorMessage = state.branchNameError ?: state.loadBranchesError
                             )
                         }
                         Row(horizontalArrangement = Arrangement.spacedBy(MarginMedium)) {
@@ -169,7 +176,7 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                         CustomPrimaryButton(
                             text = stringResource(Res.string.new_version_submit),
                             onClick = vm::createVersion,
-                            enabled = state.isConfigurationValid && !state.isLoading,
+                            enabled = state.isConfigurationValid,
                             modifier = Modifier
                                 .fillMaxWidth()
                         )
