@@ -25,8 +25,7 @@ class SettingsViewModel(
                     isLoading = false,
                     organization = config.organization,
                     projectName = config.projectName,
-                    personalAccessToken = config.personalAccessToken,
-                    pipelineId = config.pipelineId
+                    personalAccessToken = config.personalAccessToken
                 )
             }
         }
@@ -41,9 +40,6 @@ class SettingsViewModel(
     fun onPersonalAccessTokenChange(value: String) =
         _state.update { it.copy(personalAccessToken = value) }
 
-    fun onPipelineIdChange(value: String) =
-        _state.update { it.copy(pipelineId = value) }
-
     fun saveSettings() {
         if (!validate()) return
         val s = _state.value
@@ -51,8 +47,7 @@ class SettingsViewModel(
             AzureDevOpsConfig(
                 organization = s.organization,
                 projectName = s.projectName,
-                personalAccessToken = s.personalAccessToken,
-                pipelineId = s.pipelineId
+                personalAccessToken = s.personalAccessToken
             )
         )
         _state.update { it.copy(savedFeedback = true) }
@@ -67,18 +62,14 @@ class SettingsViewModel(
             it.copy(
                 organizationError = if (s.organization.isBlank()) "Required" else null,
                 projectNameError = if (s.projectName.isBlank()) "Required" else null,
-                personalAccessTokenError = if (s.personalAccessToken.isBlank()) "Required" else null,
-                pipelineIdError = if (s.pipelineId.isBlank()) "Required"
-                                  else if (s.pipelineId.toIntOrNull() == null) "Must be a number"
-                                  else null
+                personalAccessTokenError = if (s.personalAccessToken.isBlank()) "Required" else null
             )
         }
         val updated = _state.value
         return listOf(
             updated.organizationError,
             updated.projectNameError,
-            updated.personalAccessTokenError,
-            updated.pipelineIdError
+            updated.personalAccessTokenError
         ).all { it == null }
     }
 
@@ -87,11 +78,9 @@ class SettingsViewModel(
         val organization: String = "",
         val projectName: String = "",
         val personalAccessToken: String = "",
-        val pipelineId: String = "",
         val organizationError: String? = null,
         val projectNameError: String? = null,
         val personalAccessTokenError: String? = null,
-        val pipelineIdError: String? = null,
         val savedFeedback: Boolean = false,
     ) {
     }

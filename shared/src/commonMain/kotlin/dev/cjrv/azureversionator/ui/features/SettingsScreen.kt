@@ -25,7 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.settings
@@ -36,10 +35,6 @@ import azureversionator.shared.generated.resources.azure_project_name
 import azureversionator.shared.generated.resources.azure_project_name_placeholder
 import azureversionator.shared.generated.resources.azure_pat
 import azureversionator.shared.generated.resources.azure_pat_placeholder
-import azureversionator.shared.generated.resources.azure_pipeline_id
-import azureversionator.shared.generated.resources.azure_pipeline_id_placeholder
-import azureversionator.shared.generated.resources.azure_repository_name
-import azureversionator.shared.generated.resources.azure_repository_name_placeholder
 import azureversionator.shared.generated.resources.save_settings
 import azureversionator.shared.generated.resources.settings_saved
 import dev.cjrv.azureversionator.theme.CornerRadius
@@ -142,17 +137,6 @@ fun SettingsScreen(onNavigateBack : () -> Unit) {
                             imeAction = ImeAction.Next
                         )
 
-                        CustomTextField(
-                            label = stringResource(Res.string.azure_pipeline_id),
-                            value = state.pipelineId,
-                            onValueChange = vm::onPipelineIdChange,
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = stringResource(Res.string.azure_pipeline_id_placeholder),
-                            keyboardType = KeyboardType.Number,
-                            isError = state.pipelineIdError != null,
-                            errorMessage = state.pipelineIdError,
-                            imeAction = ImeAction.Done
-                        )
 
                         Spacer(modifier = Modifier.height(4.dp))
 

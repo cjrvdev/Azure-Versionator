@@ -13,8 +13,14 @@ interface AzureDevOpsApi {
      */
     suspend fun runPipeline(
         config: AzureDevOpsConfig,
-        variables: PipelineVariables = PipelineVariables()
+        variables: PipelineVariables = PipelineVariables(),
+        pipelineId: String
     ): Result<PipelineRunResponse>
+
+    /**
+     * Returns available pipelines for the configured Azure DevOps project.
+     */
+    suspend fun getPipelines(config: AzureDevOpsConfig): Result<List<AzurePipeline>>
 
     /**
      * Returns available Git repositories for the configured Azure DevOps project.
@@ -40,6 +46,12 @@ data class AzureBranch(
     val name: String,
     val fullName: String,
     val objectId: String? = null
+)
+
+data class AzurePipeline(
+    val id: String,
+    val name: String,
+    val folder: String? = null
 )
 
 @Serializable

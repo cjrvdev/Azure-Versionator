@@ -6,15 +6,14 @@ import dev.cjrv.azureversionator.data.model.AzureDevOpsConfig
 import dev.cjrv.azureversionator.data.model.PipelineVariables
 import dev.cjrv.azureversionator.data.network.AzureDevOpsApi
 import dev.cjrv.azureversionator.data.network.AzureBranch
+import dev.cjrv.azureversionator.data.network.AzurePipeline
 import dev.cjrv.azureversionator.data.network.AzureRepository
 import dev.cjrv.azureversionator.data.settings.AzureSettingsRepository
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
 
 class NewVersionViewModel(
     private val settingsRepository: AzureSettingsRepository,
@@ -28,7 +27,7 @@ class NewVersionViewModel(
             // Pre-load Azure configuration to validate it exists
             val config = settingsRepository.loadConfig()
             val isConfigValid = config.organization.isNotBlank() && config.projectName.isNotBlank() &&
-                config.personalAccessToken.isNotBlank() && config.pipelineId.isNotBlank()
+                config.personalAccessToken.isNotBlank()
 
             if (!isConfigValid) {
                 _state.value = _state.value.copy(
@@ -38,6 +37,7 @@ class NewVersionViewModel(
             } else {
                 _state.value = _state.value.copy(isConfigurationValid = true, isLoading = true)
                 loadRepositories(config)
+                loadPipelines(config)
                 _state.value = _state.value.copy(isLoading = false)
             }
         }
@@ -78,6 +78,16 @@ class NewVersionViewModel(
         }
     }
 
+    fun onPipelineSelected(pipeline: AzurePipeline) {
+        _state.update {
+            it.copy(
+                selectedPipelineId = pipeline.id,
+                pipelineIdError = null,
+                loadPipelinesError = null
+            )
+        }
+    }
+
     fun createVersion() {
         if (!_state.value.isConfigurationValid) return
         if (!validate()) return
@@ -93,7 +103,11 @@ class NewVersionViewModel(
                     releaseNotes = _state.value.releaseNotes
                 )
 
-                val result = azureDevOpsApi.runPipeline(config, variables)
+                val result = azureDevOpsApi.runPipeline(
+                    config = config,
+                    variables = variables,
+                    pipelineId = _state.value.selectedPipelineId.orEmpty()
+                )
 
                 result.onSuccess { response ->
                     _state.value = _state.value.copy(
@@ -186,6 +200,33 @@ class NewVersionViewModel(
             }
     }
 
+    private suspend fun loadPipelines(config: AzureDevOpsConfig) {
+        _state.value = _state.value.copy(isLoadingPipelines = true, loadPipelinesError = null)
+
+        azureDevOpsApi.getPipelines(config)
+            .onSuccess { pipelines ->
+                val selectedId = _state.value.selectedPipelineId
+                val nextSelectedId = when {
+                    selectedId != null && pipelines.any { it.id == selectedId } -> selectedId
+                    else -> pipelines.firstOrNull()?.id
+                }
+
+                _state.value = _state.value.copy(
+                    isLoadingPipelines = false,
+                    pipelines = pipelines,
+                    selectedPipelineId = nextSelectedId,
+                    loadPipelinesError = null
+                )
+            }
+            .onFailure { error ->
+                _state.value = _state.value.copy(
+                    isLoadingPipelines = false,
+                    pipelines = emptyList(),
+                    loadPipelinesError = "Failed to load pipelines: ${error.message}"
+                )
+            }
+    }
+
     fun validate(): Boolean {
         var isValid = true
         val s = _state.value
@@ -225,6 +266,13 @@ class NewVersionViewModel(
             _state.value = _state.value.copy(branchNameError = null)
         }
 
+        if (s.selectedPipelineId.isNullOrBlank()) {
+            _state.value = _state.value.copy(pipelineIdError = "Pipeline must be selected")
+            isValid = false
+        } else {
+            _state.value = _state.value.copy(pipelineIdError = null)
+        }
+
         return isValid
     }
 
@@ -252,6 +300,12 @@ class NewVersionViewModel(
         val selectedBranchId: String? = null,
         val branchNameError: String? = null,
         val loadBranchesError: String? = null,
+
+        val isLoadingPipelines: Boolean = false,
+        val pipelines: List<AzurePipeline> = emptyList(),
+        val selectedPipelineId: String? = null,
+        val pipelineIdError: String? = null,
+        val loadPipelinesError: String? = null,
 
         val successMessage: String? = null,
         val generalError: String? = null

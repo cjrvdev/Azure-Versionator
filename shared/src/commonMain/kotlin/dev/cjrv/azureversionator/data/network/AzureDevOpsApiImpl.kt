@@ -25,11 +25,12 @@ class AzureDevOpsApiImpl(
     @OptIn(ExperimentalEncodingApi::class)
     override suspend fun runPipeline(
         config: AzureDevOpsConfig,
-        variables: PipelineVariables
+        variables: PipelineVariables,
+        pipelineId: String
     ): Result<PipelineRunResponse> {
         return runCatching {
             val credentials = basicCredentials(config)
-            val url = "${projectApiBaseUrl(config)}/_apis/pipelines/${config.pipelineId}/runs?api-version=$apiVersion"
+            val url = "${projectApiBaseUrl(config)}/_apis/pipelines/$pipelineId/runs?api-version=$apiVersion"
 
             val body = buildPipelineRequestBody(variables)
 
@@ -44,6 +45,27 @@ class AzureDevOpsApiImpl(
             }
 
             response.body<PipelineRunResponse>()
+        }
+    }
+
+    @OptIn(ExperimentalEncodingApi::class)
+    override suspend fun getPipelines(config: AzureDevOpsConfig): Result<List<AzurePipeline>> {
+        return runCatching {
+            val response = httpClient.get("${projectApiBaseUrl(config)}/_apis/pipelines?api-version=$apiVersion") {
+                header("Authorization", "Basic ${basicCredentials(config)}")
+            }
+
+            if (!response.status.isSuccess()) {
+                error("Pipelines request failed with status ${response.status.value}")
+            }
+
+            response.body<PipelinesResponse>().value.map { pipeline ->
+                AzurePipeline(
+                    id = pipeline.id.toString(),
+                    name = pipeline.name,
+                    folder = pipeline.folder
+                )
+            }
         }
     }
 
@@ -159,5 +181,17 @@ private data class BranchesResponse(
 private data class BranchDto(
     val name: String,
     @SerialName("objectId") val objectId: String? = null
+)
+
+@Serializable
+private data class PipelinesResponse(
+    val value: List<PipelineDto> = emptyList()
+)
+
+@Serializable
+private data class PipelineDto(
+    val id: Int,
+    val name: String,
+    val folder: String? = null
 )
 
