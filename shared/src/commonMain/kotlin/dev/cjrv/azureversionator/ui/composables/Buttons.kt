@@ -17,6 +17,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import dev.cjrv.azureversionator.theme.AzureVersionatorTheme
 import dev.cjrv.azureversionator.theme.CornerRadius
 
 @Composable
@@ -163,20 +164,22 @@ private fun regularButtonStyle(): ButtonStyle {
     )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun ButtonsPreview() {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        CustomSecondaryButton(text = "Secondary Regular")
-        CustomSecondaryCompactButton(text = "Secondary Compact")
-        CustomPrimaryButton(
-            text = "Primary Regular",
-        )
-        CustomPrimaryCompactButton(text = "Primary Compact")
-        CustomSecondaryButton(text = "Secondary Disabled", enabled = false)
-        CustomPrimaryButton(
-            text = "Primary Disabled",
-            enabled = false
-        )
+    AzureVersionatorTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            CustomSecondaryButton(text = "Secondary Regular")
+            CustomSecondaryCompactButton(text = "Secondary Compact")
+            CustomPrimaryButton(
+                text = "Primary Regular",
+            )
+            CustomPrimaryCompactButton(text = "Primary Compact")
+            CustomSecondaryButton(text = "Secondary Disabled", enabled = false)
+            CustomPrimaryButton(
+                text = "Primary Disabled",
+                enabled = false
+            )
+        }
     }
 }

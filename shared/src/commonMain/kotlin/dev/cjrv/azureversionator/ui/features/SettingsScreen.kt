@@ -75,7 +75,7 @@ fun SettingsScreen(onNavigateBack : () -> Unit) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(innerPadding)
             ) {
                 if (state.isLoading) {
@@ -92,7 +92,7 @@ fun SettingsScreen(onNavigateBack : () -> Unit) {
                             .fillMaxSize()
                             .padding(MarginMedium)
                             .background(
-                                MaterialTheme.colorScheme.primaryContainer,
+                                MaterialTheme.colorScheme.surfaceContainer,
                                 shape = RoundedCornerShape(CornerRadius)
                             )
                             .padding(MarginMedium)
@@ -101,7 +101,7 @@ fun SettingsScreen(onNavigateBack : () -> Unit) {
                         Text(
                             text = stringResource(Res.string.azure_devops_settings),
                             style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         CustomTextField(
                             label = stringResource(Res.string.azure_pat),

@@ -49,7 +49,7 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(innerPadding)
             ) {
                 if (state.isLoading) {
@@ -62,7 +62,7 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                         verticalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxSize().padding(MarginMedium)
                             .background(
-                                MaterialTheme.colorScheme.primaryContainer,
+                                MaterialTheme.colorScheme.surfaceContainer,
                                 shape = RoundedCornerShape(CornerRadius)
                             )
 

@@ -25,11 +25,13 @@ import androidx.compose.ui.text.input.ImeAction
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.azure_branch_name
 import azureversionator.shared.generated.resources.azure_branch_name_placeholder
+import azureversionator.shared.generated.resources.azure_devops_settings
 import azureversionator.shared.generated.resources.azure_pipeline_id
 import azureversionator.shared.generated.resources.azure_pipeline_id_placeholder
 import azureversionator.shared.generated.resources.azure_repository_name
 import azureversionator.shared.generated.resources.azure_repository_name_placeholder
 import azureversionator.shared.generated.resources.new_version
+import azureversionator.shared.generated.resources.new_version_settings
 import azureversionator.shared.generated.resources.new_version_submit
 import azureversionator.shared.generated.resources.release_notes
 import azureversionator.shared.generated.resources.release_notes_build_number
@@ -99,7 +101,7 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(innerPadding)
             ) {
                 if (state.isLoading) {
@@ -113,12 +115,17 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                             .fillMaxSize()
                             .padding(MarginMedium)
                             .background(
-                                MaterialTheme.colorScheme.primaryContainer,
+                                MaterialTheme.colorScheme.surfaceContainer,
                                 shape = RoundedCornerShape(CornerRadius)
                             )
                             .padding(MarginMedium)
                             .verticalScroll(rememberScrollState())
                     ) {
+                        Text(
+                            text = stringResource(Res.string.new_version_settings),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                         CustomDropdownField(
                             label = stringResource(Res.string.azure_pipeline_id),
                             selectedItem = selectedPipeline,

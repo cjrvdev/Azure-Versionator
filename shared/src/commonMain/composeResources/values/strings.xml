@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Azure Versionator</string>
-    <string name="new_version">New Version</string>
+    <string name="new_version">Create new version</string>
     <string name="settings">Settings</string>
 
     <!-- Azure DevOps Settings -->
@@ -21,6 +21,7 @@
     <string name="settings_saved">Settings saved</string>
 
     <!-- Version Settings -->
+    <string name="new_version_settings">New version settings</string>
     <string name="release_notes">Release Notes</string>
     <string name="release_notes_placeholder">Write here the changes added to the new version</string>
     <string name="release_notes_version_name">Version name</string>
