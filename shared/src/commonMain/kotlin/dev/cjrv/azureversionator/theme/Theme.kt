@@ -242,7 +242,7 @@ fun AzureVersionatorTheme(
     content: @Composable () -> Unit,
 ) {
     MaterialExpressiveTheme(
-        colorScheme = if (darkTheme) darkScheme else lightScheme,
+        colorScheme = if (darkTheme) highContrastDarkColorScheme else lightScheme,
         typography = AzureTypography(),
         content = content,
     )
