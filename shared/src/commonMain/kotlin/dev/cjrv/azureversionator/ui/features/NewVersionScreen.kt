@@ -25,6 +25,8 @@ import androidx.compose.ui.text.input.ImeAction
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.azure_branch_name
 import azureversionator.shared.generated.resources.azure_branch_name_placeholder
+import azureversionator.shared.generated.resources.azure_pipeline_id
+import azureversionator.shared.generated.resources.azure_pipeline_id_placeholder
 import azureversionator.shared.generated.resources.azure_repository_name
 import azureversionator.shared.generated.resources.azure_repository_name_placeholder
 import azureversionator.shared.generated.resources.new_version
@@ -53,6 +55,7 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
     val state by vm.state.collectAsState()
     val selectedRepository = state.repositories.firstOrNull { it.id == state.selectedRepositoryId }
     val selectedBranch = state.branches.firstOrNull { it.fullName == state.selectedBranchId }
+    val selectedPipeline = state.pipelines.firstOrNull { it.id == state.selectedPipelineId }
 
     // Handle success message
     if (state.successMessage != null) {
@@ -116,6 +119,18 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                             .padding(MarginMedium)
                             .verticalScroll(rememberScrollState())
                     ) {
+                        CustomDropdownField(
+                            label = stringResource(Res.string.azure_pipeline_id),
+                            selectedItem = selectedPipeline,
+                            options = state.pipelines,
+                            optionLabel = { it.name },
+                            onOptionSelected = vm::onPipelineSelected,
+                            modifier = Modifier.fillMaxWidth(),
+                            placeholder = stringResource(Res.string.azure_pipeline_id_placeholder),
+                            enabled = state.isConfigurationValid && !state.isLoadingPipelines,
+                            isError = state.pipelineIdError != null || state.loadPipelinesError != null,
+                            errorMessage = state.pipelineIdError ?: state.loadPipelinesError
+                        )
                         Row(horizontalArrangement = Arrangement.spacedBy(MarginMedium)) {
                             CustomDropdownField(
                                 label = stringResource(Res.string.azure_repository_name),
