@@ -41,60 +41,6 @@ class NewVersionViewModel(
         }
     }
 
-    fun loadRepositories() {
-        viewModelScope.launch {
-            val config = settingsRepository.loadConfig()
-            val isConfigValid = config.organization.isNotBlank() && config.projectName.isNotBlank() &&
-                config.personalAccessToken.isNotBlank() && config.pipelineId.isNotBlank()
-
-            if (!isConfigValid) {
-                _state.value = _state.value.copy(
-                    loadRepositoriesError = "Azure DevOps configuration is incomplete.",
-                    repositories = emptyList()
-                )
-                return@launch
-            }
-
-            loadRepositories(config)
-        }
-    }
-
-    fun loadBranches(repositoryId: String) {
-        if (repositoryId.isBlank()) {
-            _state.value = _state.value.copy(
-                selectedRepositoryId = null,
-                branches = emptyList(),
-                loadBranchesError = null
-            )
-            return
-        }
-
-        viewModelScope.launch {
-            _state.value = _state.value.copy(
-                selectedRepositoryId = repositoryId,
-                isLoadingBranches = true,
-                loadBranchesError = null
-            )
-
-            val config = settingsRepository.loadConfig()
-            azureDevOpsApi.getBranches(config, repositoryId)
-                .onSuccess { branches ->
-                    _state.value = _state.value.copy(
-                        isLoadingBranches = false,
-                        branches = branches,
-                        loadBranchesError = null
-                    )
-                }
-                .onFailure { error ->
-                    _state.value = _state.value.copy(
-                        isLoadingBranches = false,
-                        branches = emptyList(),
-                        loadBranchesError = "Failed to load branches: ${error.message}"
-                    )
-                }
-        }
-    }
-
     fun onReleaseNotesChange(value: String) {
         _state.value = _state.value.copy(releaseNotes = value, releaseNotesError = null)
     }
@@ -161,6 +107,60 @@ class NewVersionViewModel(
         _state.value = _state.value.copy(generalError = null)
     }
 
+    fun loadRepositories() {
+        viewModelScope.launch {
+            val config = settingsRepository.loadConfig()
+            val isConfigValid = config.organization.isNotBlank() && config.projectName.isNotBlank() &&
+                    config.personalAccessToken.isNotBlank() && config.pipelineId.isNotBlank()
+
+            if (!isConfigValid) {
+                _state.value = _state.value.copy(
+                    loadRepositoriesError = "Azure DevOps configuration is incomplete.",
+                    repositories = emptyList()
+                )
+                return@launch
+            }
+
+            loadRepositories(config)
+        }
+    }
+
+    fun loadBranches(repositoryId: String) {
+        if (repositoryId.isBlank()) {
+            _state.value = _state.value.copy(
+                selectedRepositoryId = null,
+                branches = emptyList(),
+                loadBranchesError = null
+            )
+            return
+        }
+
+        viewModelScope.launch {
+            _state.value = _state.value.copy(
+                selectedRepositoryId = repositoryId,
+                isLoadingBranches = true,
+                loadBranchesError = null
+            )
+
+            val config = settingsRepository.loadConfig()
+            azureDevOpsApi.getBranches(config, repositoryId)
+                .onSuccess { branches ->
+                    _state.value = _state.value.copy(
+                        isLoadingBranches = false,
+                        branches = branches,
+                        loadBranchesError = null
+                    )
+                }
+                .onFailure { error ->
+                    _state.value = _state.value.copy(
+                        isLoadingBranches = false,
+                        branches = emptyList(),
+                        loadBranchesError = "Failed to load branches: ${error.message}"
+                    )
+                }
+        }
+    }
+
     private suspend fun loadRepositories(config: AzureDevOpsConfig) {
         _state.value = _state.value.copy(isLoadingRepositories = true, loadRepositoriesError = null)
 
@@ -211,6 +211,13 @@ class NewVersionViewModel(
             isValid = false
         } else {
             _state.value = _state.value.copy(repositoryIdError = null)
+        }
+
+        if (s.selectedBranchId.isNullOrBlank()) {
+            _state.value = _state.value.copy(branchNameError = "Branch must be selected")
+            isValid = false
+        } else {
+            _state.value = _state.value.copy(branchNameError = null)
         }
 
         return isValid
