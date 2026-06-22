@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.AzureVersionator.Splash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">#EBEFE7</item>
+        <item name="windowSplashScreenBackground">#ECEFF6</item>
         <item name="postSplashScreenTheme">@style/Theme.AzureVersionator</item>
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round</item>
     </style>
