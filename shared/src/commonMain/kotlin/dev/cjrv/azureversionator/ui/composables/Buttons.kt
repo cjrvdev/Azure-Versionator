@@ -4,7 +4,11 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -13,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -25,6 +30,7 @@ fun CustomPrimaryButton(
     text: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    leadingIcon: (@Composable () -> Unit)? = null,
     onClick: () -> Unit = {}
 ) {
     PrimaryButton(
@@ -32,6 +38,7 @@ fun CustomPrimaryButton(
         modifier = modifier,
         style = regularButtonStyle(),
         enabled = enabled,
+        leadingIcon = leadingIcon,
         onClick = onClick
     )
 }
@@ -41,6 +48,7 @@ fun CustomPrimaryCompactButton(
     text: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    leadingIcon: (@Composable () -> Unit)? = null,
     onClick: () -> Unit = {}
 ) {
     PrimaryButton(
@@ -48,6 +56,7 @@ fun CustomPrimaryCompactButton(
         modifier = modifier,
         style = compactButtonStyle(),
         enabled = enabled,
+        leadingIcon = leadingIcon,
         onClick = onClick
     )
 }
@@ -58,6 +67,7 @@ private fun PrimaryButton(
     modifier: Modifier,
     style: ButtonStyle,
     enabled: Boolean,
+    leadingIcon: (@Composable () -> Unit)?,
     onClick: () -> Unit
 ) {
     Button(
@@ -73,7 +83,13 @@ private fun PrimaryButton(
             disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
         )
     ) {
-        Text(text = text, style = style.textStyle)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (leadingIcon != null) {
+                leadingIcon()
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+            Text(text = text, style = style.textStyle)
+        }
     }
 }
 
@@ -82,6 +98,7 @@ fun CustomSecondaryButton(
     text: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    leadingIcon: (@Composable () -> Unit)? = null,
     onClick: () -> Unit = {}
 ) {
     SecondaryButton(
@@ -89,6 +106,7 @@ fun CustomSecondaryButton(
         modifier = modifier,
         style = regularButtonStyle(),
         enabled = enabled,
+        leadingIcon = leadingIcon,
         onClick = onClick
     )
 }
@@ -98,6 +116,7 @@ fun CustomSecondaryCompactButton(
     text: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    leadingIcon: (@Composable () -> Unit)? = null,
     onClick: () -> Unit = {}
 ) {
     SecondaryButton(
@@ -105,6 +124,7 @@ fun CustomSecondaryCompactButton(
         modifier = modifier,
         style = compactButtonStyle(),
         enabled = enabled,
+        leadingIcon = leadingIcon,
         onClick = onClick
     )
 }
@@ -115,6 +135,7 @@ private fun SecondaryButton(
     modifier: Modifier,
     style: ButtonStyle,
     enabled: Boolean,
+    leadingIcon: (@Composable () -> Unit)?,
     onClick: () -> Unit
 ) {
     OutlinedButton(
@@ -125,18 +146,24 @@ private fun SecondaryButton(
         border = BorderStroke(
             width = 1.5.dp,
             color = if (enabled) {
-                MaterialTheme.colorScheme.primary.copy(alpha = 0.85f)
+                MaterialTheme.colorScheme.secondary.copy(alpha = 0.85f)
             } else {
                 MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
             }
         ),
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.secondary,
             disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
         ),
         contentPadding = style.contentPadding
     ) {
-        Text(text = text, style = style.textStyle)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (leadingIcon != null) {
+                leadingIcon()
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+            Text(text = text, style = style.textStyle)
+        }
     }
 }
 
@@ -168,7 +195,7 @@ private fun regularButtonStyle(): ButtonStyle {
 @Composable
 fun ButtonsPreview() {
     AzureVersionatorTheme {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.padding(16.dp)) {
             CustomSecondaryButton(text = "Secondary Regular")
             CustomSecondaryCompactButton(text = "Secondary Compact")
             CustomPrimaryButton(

@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -16,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import azureversionator.shared.generated.resources.Res
+import azureversionator.shared.generated.resources.add_task
 import azureversionator.shared.generated.resources.app_name
 import azureversionator.shared.generated.resources.new_version
 import azureversionator.shared.generated.resources.settings
@@ -30,6 +34,7 @@ import dev.cjrv.azureversionator.ui.composables.CustomSecondaryButton
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -58,16 +63,38 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxSize().padding(MarginMedium)
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(MarginMedium)
                             .background(
                                 MaterialTheme.colorScheme.surfaceContainer,
                                 shape = RoundedCornerShape(CornerRadius)
                             )
+                            .padding(MarginMedium)
+                            .verticalScroll(rememberScrollState())
 
                     ) {
-                        CustomPrimaryButton(stringResource(Res.string.new_version), onClick = { navigateToTarget(NewVersion) })
+                        CustomPrimaryButton(
+                            stringResource(Res.string.new_version),
+                            onClick = { navigateToTarget(NewVersion) },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = vectorResource(Res.drawable.add_task),
+                                    contentDescription = stringResource(Res.string.new_version)
+                                )
+                            }
+                        )
                         Spacer(modifier = Modifier.padding(MarginMedium))
-                        CustomSecondaryButton(stringResource(Res.string.settings), onClick = { navigateToTarget(Settings) })
+                        CustomSecondaryButton(
+                            stringResource(Res.string.settings),
+                            onClick = { navigateToTarget(Settings) },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = vectorResource(Res.drawable.settings),
+                                    contentDescription = stringResource(Res.string.settings)
+                                )
+                            }
+                        )
                     }
                 }
             }

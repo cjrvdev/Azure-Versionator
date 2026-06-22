@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -35,6 +36,7 @@ import azureversionator.shared.generated.resources.azure_project_name
 import azureversionator.shared.generated.resources.azure_project_name_placeholder
 import azureversionator.shared.generated.resources.azure_pat
 import azureversionator.shared.generated.resources.azure_pat_placeholder
+import azureversionator.shared.generated.resources.save
 import azureversionator.shared.generated.resources.save_settings
 import azureversionator.shared.generated.resources.settings_saved
 import dev.cjrv.azureversionator.theme.CornerRadius
@@ -45,10 +47,11 @@ import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun SettingsScreen(onNavigateBack : () -> Unit) {
+fun SettingsScreen(onNavigateBack: () -> Unit) {
     val vm = koinViewModel<SettingsViewModel>()
     val state by vm.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -143,7 +146,13 @@ fun SettingsScreen(onNavigateBack : () -> Unit) {
                         CustomPrimaryButton(
                             text = stringResource(Res.string.save_settings),
                             modifier = Modifier.fillMaxWidth(),
-                            onClick = vm::saveSettings
+                            onClick = vm::saveSettings,
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = vectorResource(Res.drawable.save),
+                                    contentDescription = stringResource(Res.string.save_settings)
+                                )
+                            }
                         )
                     }
                 }

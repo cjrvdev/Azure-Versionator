@@ -18,7 +18,7 @@ fun TopAppBar(
     onBackPressed: () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
-        title = { Text(text) },
+        title = { Text(text, style = MaterialTheme.typography.titleLarge) },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.surface,
             titleContentColor = MaterialTheme.colorScheme.onSurface,

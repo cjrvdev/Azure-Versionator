@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -22,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.azure_branch_name
 import azureversionator.shared.generated.resources.azure_branch_name_placeholder
@@ -40,6 +43,9 @@ import azureversionator.shared.generated.resources.release_notes_placeholder
 import azureversionator.shared.generated.resources.release_notes_version_name
 import azureversionator.shared.generated.resources.release_notes_version_name_placeholder
 import azureversionator.shared.generated.resources.return_text
+import azureversionator.shared.generated.resources.save
+import azureversionator.shared.generated.resources.save_settings
+import azureversionator.shared.generated.resources.upload
 import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.ui.Screen
@@ -50,6 +56,7 @@ import dev.cjrv.azureversionator.ui.composables.CustomTextField
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -198,7 +205,7 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                             label = stringResource(Res.string.release_notes),
                             value = state.releaseNotes,
                             onValueChange = vm::onReleaseNotesChange,
-                            modifier = Modifier.fillMaxWidth().weight(1f),
+                            modifier = Modifier.fillMaxWidth().heightIn(min = 400.dp),
                             placeholder = stringResource(Res.string.release_notes_placeholder),
                             isError = state.releaseNotesError != null,
                             errorMessage = state.releaseNotesError,
@@ -208,7 +215,13 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                             onClick = vm::createVersion,
                             enabled = state.isConfigurationValid,
                             modifier = Modifier
-                                .fillMaxWidth()
+                                .fillMaxWidth(),
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = vectorResource(Res.drawable.upload),
+                                    contentDescription = stringResource(Res.string.new_version_submit)
+                                )
+                            }
                         )
                     }
                 }
