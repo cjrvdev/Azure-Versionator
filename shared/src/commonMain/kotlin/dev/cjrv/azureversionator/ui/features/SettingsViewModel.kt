@@ -82,6 +82,5 @@ class SettingsViewModel(
         val projectNameError: String? = null,
         val personalAccessTokenError: String? = null,
         val savedFeedback: Boolean = false,
-    ) {
-    }
+    )
 }

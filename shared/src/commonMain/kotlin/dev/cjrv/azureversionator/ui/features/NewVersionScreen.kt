@@ -25,7 +25,6 @@ import androidx.compose.ui.text.input.ImeAction
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.azure_branch_name
 import azureversionator.shared.generated.resources.azure_branch_name_placeholder
-import azureversionator.shared.generated.resources.azure_devops_settings
 import azureversionator.shared.generated.resources.azure_pipeline_id
 import azureversionator.shared.generated.resources.azure_pipeline_id_placeholder
 import azureversionator.shared.generated.resources.azure_repository_name
