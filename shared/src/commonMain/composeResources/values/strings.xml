@@ -2,6 +2,9 @@
     <string name="app_name">Azure Versionator</string>
     <string name="new_version">Create new version</string>
     <string name="settings">Settings</string>
+    <string name="ok">OK</string>
+    <string name="return_text">Return</string>
+    <string name="stay_here">Stay here</string>
 
     <!-- Azure DevOps Settings -->
     <string name="azure_devops_settings">Azure DevOps Settings</string>

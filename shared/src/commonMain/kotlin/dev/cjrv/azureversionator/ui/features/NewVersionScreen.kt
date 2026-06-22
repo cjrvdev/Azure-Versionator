@@ -32,12 +32,14 @@ import azureversionator.shared.generated.resources.azure_repository_name_placeho
 import azureversionator.shared.generated.resources.new_version
 import azureversionator.shared.generated.resources.new_version_settings
 import azureversionator.shared.generated.resources.new_version_submit
+import azureversionator.shared.generated.resources.ok
 import azureversionator.shared.generated.resources.release_notes
 import azureversionator.shared.generated.resources.release_notes_build_number
 import azureversionator.shared.generated.resources.release_notes_build_number_placeholder
 import azureversionator.shared.generated.resources.release_notes_placeholder
 import azureversionator.shared.generated.resources.release_notes_version_name
 import azureversionator.shared.generated.resources.release_notes_version_name_placeholder
+import azureversionator.shared.generated.resources.return_text
 import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.ui.Screen
@@ -64,12 +66,19 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
             onDismissRequest = { vm.onSuccessMessageConsumed() },
             title = { Text("Success") },
             text = { Text(state.successMessage.orEmpty()) },
+            dismissButton = {
+                TextButton(onClick = {
+                    vm.onSuccessMessageConsumed()
+                }) {
+                    Text(stringResource(Res.string.return_text))
+                }
+            },
             confirmButton = {
                 TextButton(onClick = {
                     vm.onSuccessMessageConsumed()
                     onNavigateBack()
                 }) {
-                    Text("OK")
+                    Text(stringResource(Res.string.ok))
                 }
             }
         )
@@ -83,7 +92,7 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
             text = { Text(state.generalError.orEmpty()) },
             confirmButton = {
                 TextButton(onClick = { vm.onErrorConsumed() }) {
-                    Text("OK")
+                    Text(stringResource(Res.string.ok))
                 }
             }
         )
