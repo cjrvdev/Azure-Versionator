@@ -23,6 +23,15 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "dev.cjrv.azureversionator"
             packageVersion = "1.0.0"
+            macOS{
+                iconFile.set(rootProject.file("shared/src/commonMain/composeResources/drawable/appicon_macos.icns"))
+            }
+            windows {
+                iconFile.set(rootProject.file("shared/src/commonMain/composeResources/drawable/appicon_windows.ico"))
+            }
+            linux {
+                iconFile.set(rootProject.file("shared/src/commonMain/composeResources/drawable/appicon.png"))
+            }
         }
     }
 }
