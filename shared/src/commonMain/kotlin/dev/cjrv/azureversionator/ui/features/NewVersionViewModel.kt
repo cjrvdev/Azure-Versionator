@@ -2,12 +2,16 @@ package dev.cjrv.azureversionator.ui.features
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.cjrv.azureversionator.data.model.AzureDevOpsConfig
 import dev.cjrv.azureversionator.data.model.PipelineVariables
 import dev.cjrv.azureversionator.data.network.AzureDevOpsApi
+import dev.cjrv.azureversionator.data.network.AzureBranch
+import dev.cjrv.azureversionator.data.network.AzureRepository
 import dev.cjrv.azureversionator.data.settings.AzureSettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class NewVersionViewModel(
@@ -31,7 +35,63 @@ class NewVersionViewModel(
                 )
             } else {
                 _state.value = _state.value.copy(isConfigurationValid = true)
+                loadRepositories(config)
             }
+            loadRepositories()
+        }
+    }
+
+    fun loadRepositories() {
+        viewModelScope.launch {
+            val config = settingsRepository.loadConfig()
+            val isConfigValid = config.organization.isNotBlank() && config.projectName.isNotBlank() &&
+                config.personalAccessToken.isNotBlank() && config.pipelineId.isNotBlank()
+
+            if (!isConfigValid) {
+                _state.value = _state.value.copy(
+                    repositoriesError = "Azure DevOps configuration is incomplete.",
+                    repositories = emptyList()
+                )
+                return@launch
+            }
+
+            loadRepositories(config)
+        }
+    }
+
+    fun loadBranches(repositoryId: String) {
+        if (repositoryId.isBlank()) {
+            _state.value = _state.value.copy(
+                selectedRepositoryId = null,
+                branches = emptyList(),
+                branchesError = null
+            )
+            return
+        }
+
+        viewModelScope.launch {
+            _state.value = _state.value.copy(
+                selectedRepositoryId = repositoryId,
+                isLoadingBranches = true,
+                branchesError = null
+            )
+
+            val config = settingsRepository.loadConfig()
+            azureDevOpsApi.getBranches(config, repositoryId)
+                .onSuccess { branches ->
+                    _state.value = _state.value.copy(
+                        isLoadingBranches = false,
+                        branches = branches,
+                        branchesError = null
+                    )
+                }
+                .onFailure { error ->
+                    _state.value = _state.value.copy(
+                        isLoadingBranches = false,
+                        branches = emptyList(),
+                        branchesError = "Failed to load branches: ${error.message}"
+                    )
+                }
         }
     }
 
@@ -46,6 +106,12 @@ class NewVersionViewModel(
     fun onBuildNumberChange(value: String) {
         _state.value = _state.value.copy(buildNumber = value, buildNumberError = null)
     }
+
+    fun onRepositoryIdChange(value: String) =
+        _state.update { it.copy(repositoryId = value) }
+
+    fun onBranchNameChange(value: String) =
+        _state.update { it.copy(selectedBranchId = value) }
 
     fun createVersion() {
         if (!_state.value.isConfigurationValid) return
@@ -95,6 +161,26 @@ class NewVersionViewModel(
         _state.value = _state.value.copy(generalError = null)
     }
 
+    private suspend fun loadRepositories(config: AzureDevOpsConfig) {
+        _state.value = _state.value.copy(isLoadingRepositories = true, repositoriesError = null)
+
+        azureDevOpsApi.getRepositories(config)
+            .onSuccess { repositories ->
+                _state.value = _state.value.copy(
+                    isLoadingRepositories = false,
+                    repositories = repositories,
+                    repositoriesError = null
+                )
+            }
+            .onFailure { error ->
+                _state.value = _state.value.copy(
+                    isLoadingRepositories = false,
+                    repositories = emptyList(),
+                    repositoriesError = "Failed to load repositories: ${error.message}"
+                )
+            }
+    }
+
     fun validate(): Boolean {
         var isValid = true
         val s = _state.value
@@ -120,18 +206,37 @@ class NewVersionViewModel(
             _state.value = _state.value.copy(releaseNotesError = null)
         }
 
+        if (s.repositoryId.isBlank()) {
+            _state.value = _state.value.copy(repositoryIdError = "Repository ID cannot be empty")
+            isValid = false
+        } else {
+            _state.value = _state.value.copy(repositoryIdError = null)
+        }
+
         return isValid
     }
 
     data class UIState(
         val isLoading: Boolean = false,
         val isConfigurationValid: Boolean = true,
+        val isLoadingRepositories: Boolean = false,
+        val isLoadingBranches: Boolean = false,
+        val repositories: List<AzureRepository> = emptyList(),
+        val branches: List<AzureBranch> = emptyList(),
+        val selectedRepositoryId: String? = null,
+        val selectedBranchId: String? = null,
+        val repositoriesError: String? = null,
+        val branchesError: String? = null,
         val versionName: String = "",
         val versionNameError: String? = null,
         val buildNumber: String = "",
         val buildNumberError: String? = null,
         val releaseNotes: String = "",
         val releaseNotesError: String? = null,
+        val repositoryId: String = "",
+        val repositoryIdError: String? = null,
+        val branchName: String = "",
+        val branchNameError: String? = null,
         val successMessage: String? = null,
         val generalError: String? = null
     )

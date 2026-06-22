@@ -23,6 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import azureversionator.shared.generated.resources.Res
+import azureversionator.shared.generated.resources.azure_branch_name
+import azureversionator.shared.generated.resources.azure_branch_name_placeholder
+import azureversionator.shared.generated.resources.azure_repository_name
+import azureversionator.shared.generated.resources.azure_repository_name_placeholder
 import azureversionator.shared.generated.resources.new_version
 import azureversionator.shared.generated.resources.new_version_submit
 import azureversionator.shared.generated.resources.release_notes
@@ -109,32 +113,48 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                             .padding(MarginMedium)
                             .verticalScroll(rememberScrollState())
                     ) {
-                        Row {
+                        Row(horizontalArrangement = Arrangement.spacedBy(MarginMedium)) {
+                            CustomTextField(
+                                label = stringResource(Res.string.azure_repository_name),
+                                value = state.repositoryId,
+                                onValueChange = vm::onRepositoryIdChange,
+                                modifier = Modifier.fillMaxWidth().weight(1f),
+                                placeholder = stringResource(Res.string.azure_repository_name_placeholder),
+                                isError = state.repositoryIdError != null,
+                                errorMessage = state.repositoryIdError,
+                                imeAction = ImeAction.Next
+                            )
+                            CustomTextField(
+                                label = stringResource(Res.string.azure_branch_name),
+                                value = state.branchName,
+                                onValueChange = vm::onBranchNameChange,
+                                modifier = Modifier.fillMaxWidth().weight(1f),
+                                placeholder = stringResource(Res.string.azure_branch_name_placeholder),
+                                isError = state.branchNameError != null,
+                                errorMessage = state.branchNameError,
+                                imeAction = ImeAction.Next
+                            )
+                        }
+                        Row(horizontalArrangement = Arrangement.spacedBy(MarginMedium)) {
                             CustomTextField(
                                 label = stringResource(Res.string.release_notes_version_name),
                                 value = state.versionName,
                                 onValueChange = vm::onVersionNameChange,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(1f)
-                                    .padding(end = MarginMedium),
+                                modifier = Modifier.fillMaxWidth().weight(1f),
                                 placeholder = stringResource(Res.string.release_notes_version_name_placeholder),
                                 isError = state.versionNameError != null,
                                 errorMessage = state.versionNameError,
                                 imeAction = ImeAction.Next
                             )
                             CustomTextField(
-                                    label = stringResource(Res.string.release_notes_build_number),
-                            value = state.buildNumber,
-                            onValueChange = vm::onBuildNumberChange,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                                .padding(end = MarginMedium),
-                            placeholder = stringResource(Res.string.release_notes_build_number_placeholder),
-                            isError = state.buildNumberError != null,
-                            errorMessage = state.buildNumberError,
-                            imeAction = ImeAction.Next
+                                label = stringResource(Res.string.release_notes_build_number),
+                                value = state.buildNumber,
+                                onValueChange = vm::onBuildNumberChange,
+                                modifier = Modifier.fillMaxWidth().weight(1f),
+                                placeholder = stringResource(Res.string.release_notes_build_number_placeholder),
+                                isError = state.buildNumberError != null,
+                                errorMessage = state.buildNumberError,
+                                imeAction = ImeAction.Next
                             )
                         }
                         CustomMultilineTextField(

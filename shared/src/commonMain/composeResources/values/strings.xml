@@ -4,7 +4,7 @@
     <string name="settings">Settings</string>
 
     <!-- Azure DevOps Settings -->
-    <string name="azure_devops">Azure DevOps</string>
+    <string name="azure_devops_settings">Azure DevOps Settings</string>
     <string name="azure_organization">Organization</string>
     <string name="azure_organization_placeholder">my-org</string>
     <string name="azure_project_name">Project name</string>
@@ -13,6 +13,10 @@
     <string name="azure_pat_placeholder">••••••••</string>
     <string name="azure_pipeline_id">Pipeline ID</string>
     <string name="azure_pipeline_id_placeholder">42</string>
+    <string name="azure_repository_name">Repository</string>
+    <string name="azure_repository_name_placeholder">Select a repository</string>
+    <string name="azure_branch_name">Branch</string>
+    <string name="azure_branch_name_placeholder">Select a branch</string>
     <string name="save_settings">Save settings</string>
     <string name="settings_saved">Settings saved</string>
 

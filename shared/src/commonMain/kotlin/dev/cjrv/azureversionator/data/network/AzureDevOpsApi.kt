@@ -15,7 +15,32 @@ interface AzureDevOpsApi {
         config: AzureDevOpsConfig,
         variables: PipelineVariables = PipelineVariables()
     ): Result<PipelineRunResponse>
+
+    /**
+     * Returns available Git repositories for the configured Azure DevOps project.
+     */
+    suspend fun getRepositories(config: AzureDevOpsConfig): Result<List<AzureRepository>>
+
+    /**
+     * Returns available branches (refs/heads/) for the selected repository.
+     */
+    suspend fun getBranches(
+        config: AzureDevOpsConfig,
+        repositoryId: String
+    ): Result<List<AzureBranch>>
 }
+
+data class AzureRepository(
+    val id: String,
+    val name: String,
+    val defaultBranch: String? = null
+)
+
+data class AzureBranch(
+    val name: String,
+    val fullName: String,
+    val objectId: String? = null
+)
 
 @Serializable
 data class PipelineRunResponse(

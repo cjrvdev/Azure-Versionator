@@ -92,6 +92,7 @@ class SettingsViewModel(
         val projectNameError: String? = null,
         val personalAccessTokenError: String? = null,
         val pipelineIdError: String? = null,
-        val savedFeedback: Boolean = false
-    )
+        val savedFeedback: Boolean = false,
+    ) {
+    }
 }

@@ -29,7 +29,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.settings
-import azureversionator.shared.generated.resources.azure_devops
+import azureversionator.shared.generated.resources.azure_devops_settings
 import azureversionator.shared.generated.resources.azure_organization
 import azureversionator.shared.generated.resources.azure_organization_placeholder
 import azureversionator.shared.generated.resources.azure_project_name
@@ -38,6 +38,8 @@ import azureversionator.shared.generated.resources.azure_pat
 import azureversionator.shared.generated.resources.azure_pat_placeholder
 import azureversionator.shared.generated.resources.azure_pipeline_id
 import azureversionator.shared.generated.resources.azure_pipeline_id_placeholder
+import azureversionator.shared.generated.resources.azure_repository_name
+import azureversionator.shared.generated.resources.azure_repository_name_placeholder
 import azureversionator.shared.generated.resources.save_settings
 import azureversionator.shared.generated.resources.settings_saved
 import dev.cjrv.azureversionator.theme.CornerRadius
@@ -102,9 +104,20 @@ fun SettingsScreen(onNavigateBack : () -> Unit) {
                             .verticalScroll(rememberScrollState())
                     ) {
                         Text(
-                            text = stringResource(Res.string.azure_devops),
+                            text = stringResource(Res.string.azure_devops_settings),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                        CustomTextField(
+                            label = stringResource(Res.string.azure_pat),
+                            value = state.personalAccessToken,
+                            onValueChange = vm::onPersonalAccessTokenChange,
+                            modifier = Modifier.fillMaxWidth(),
+                            placeholder = stringResource(Res.string.azure_pat_placeholder),
+                            isPassword = true,
+                            isError = state.personalAccessTokenError != null,
+                            errorMessage = state.personalAccessTokenError,
+                            imeAction = ImeAction.Next
                         )
 
                         CustomTextField(
@@ -126,18 +139,6 @@ fun SettingsScreen(onNavigateBack : () -> Unit) {
                             placeholder = stringResource(Res.string.azure_project_name_placeholder),
                             isError = state.projectNameError != null,
                             errorMessage = state.projectNameError,
-                            imeAction = ImeAction.Next
-                        )
-
-                        CustomTextField(
-                            label = stringResource(Res.string.azure_pat),
-                            value = state.personalAccessToken,
-                            onValueChange = vm::onPersonalAccessTokenChange,
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = stringResource(Res.string.azure_pat_placeholder),
-                            isPassword = true,
-                            isError = state.personalAccessTokenError != null,
-                            errorMessage = state.personalAccessTokenError,
                             imeAction = ImeAction.Next
                         )
 
