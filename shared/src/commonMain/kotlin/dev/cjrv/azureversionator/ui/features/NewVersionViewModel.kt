@@ -49,7 +49,7 @@ class NewVersionViewModel(
 
             if (!isConfigValid) {
                 _state.value = _state.value.copy(
-                    repositoriesError = "Azure DevOps configuration is incomplete.",
+                    loadRepositoriesError = "Azure DevOps configuration is incomplete.",
                     repositories = emptyList()
                 )
                 return@launch
@@ -64,7 +64,7 @@ class NewVersionViewModel(
             _state.value = _state.value.copy(
                 selectedRepositoryId = null,
                 branches = emptyList(),
-                branchesError = null
+                loadBranchesError = null
             )
             return
         }
@@ -73,7 +73,7 @@ class NewVersionViewModel(
             _state.value = _state.value.copy(
                 selectedRepositoryId = repositoryId,
                 isLoadingBranches = true,
-                branchesError = null
+                loadBranchesError = null
             )
 
             val config = settingsRepository.loadConfig()
@@ -82,14 +82,14 @@ class NewVersionViewModel(
                     _state.value = _state.value.copy(
                         isLoadingBranches = false,
                         branches = branches,
-                        branchesError = null
+                        loadBranchesError = null
                     )
                 }
                 .onFailure { error ->
                     _state.value = _state.value.copy(
                         isLoadingBranches = false,
                         branches = emptyList(),
-                        branchesError = "Failed to load branches: ${error.message}"
+                        loadBranchesError = "Failed to load branches: ${error.message}"
                     )
                 }
         }
@@ -162,21 +162,21 @@ class NewVersionViewModel(
     }
 
     private suspend fun loadRepositories(config: AzureDevOpsConfig) {
-        _state.value = _state.value.copy(isLoadingRepositories = true, repositoriesError = null)
+        _state.value = _state.value.copy(isLoadingRepositories = true, loadRepositoriesError = null)
 
         azureDevOpsApi.getRepositories(config)
             .onSuccess { repositories ->
                 _state.value = _state.value.copy(
                     isLoadingRepositories = false,
                     repositories = repositories,
-                    repositoriesError = null
+                    loadRepositoriesError = null
                 )
             }
             .onFailure { error ->
                 _state.value = _state.value.copy(
                     isLoadingRepositories = false,
                     repositories = emptyList(),
-                    repositoriesError = "Failed to load repositories: ${error.message}"
+                    loadRepositoriesError = "Failed to load repositories: ${error.message}"
                 )
             }
     }
@@ -219,24 +219,30 @@ class NewVersionViewModel(
     data class UIState(
         val isLoading: Boolean = false,
         val isConfigurationValid: Boolean = true,
-        val isLoadingRepositories: Boolean = false,
-        val isLoadingBranches: Boolean = false,
         val repositories: List<AzureRepository> = emptyList(),
         val branches: List<AzureBranch> = emptyList(),
-        val selectedRepositoryId: String? = null,
-        val selectedBranchId: String? = null,
-        val repositoriesError: String? = null,
-        val branchesError: String? = null,
+
         val versionName: String = "",
         val versionNameError: String? = null,
+
         val buildNumber: String = "",
         val buildNumberError: String? = null,
+
         val releaseNotes: String = "",
         val releaseNotesError: String? = null,
+
+        val isLoadingRepositories: Boolean = false,
+        val selectedRepositoryId: String? = null,
         val repositoryId: String = "",
         val repositoryIdError: String? = null,
+        val loadRepositoriesError: String? = null,
+
+        val isLoadingBranches: Boolean = false,
+        val selectedBranchId: String? = null,
         val branchName: String = "",
         val branchNameError: String? = null,
+        val loadBranchesError: String? = null,
+
         val successMessage: String? = null,
         val generalError: String? = null
     )
