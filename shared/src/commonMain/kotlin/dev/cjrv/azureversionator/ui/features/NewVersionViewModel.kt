@@ -106,7 +106,8 @@ class NewVersionViewModel(
                 val result = azureDevOpsApi.runPipeline(
                     config = config,
                     variables = variables,
-                    pipelineId = _state.value.selectedPipelineId.orEmpty()
+                    pipelineId = _state.value.selectedPipelineId.orEmpty(),
+                    branchName = _state.value.selectedBranchId
                 )
 
                 result.onSuccess { response ->

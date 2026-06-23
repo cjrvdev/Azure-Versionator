@@ -14,7 +14,8 @@ interface AzureDevOpsApi {
     suspend fun runPipeline(
         config: AzureDevOpsConfig,
         variables: PipelineVariables = PipelineVariables(),
-        pipelineId: String
+        pipelineId: String,
+        branchName: String? = null
     ): Result<PipelineRunResponse>
 
     /**
