@@ -26,13 +26,14 @@ class AzureDevOpsApiImpl(
     override suspend fun runPipeline(
         config: AzureDevOpsConfig,
         variables: PipelineVariables,
-        pipelineId: String
+        pipelineId: String,
+        branchName: String?
     ): Result<PipelineRunResponse> {
         return runCatching {
             val credentials = basicCredentials(config)
             val url = "${projectApiBaseUrl(config)}/_apis/pipelines/$pipelineId/runs?api-version=$apiVersion"
 
-            val body = buildPipelineRequestBody(variables)
+            val body = buildPipelineRequestBody(variables, branchName)
 
             val response = httpClient.post(url) {
                 header("Authorization", "Basic $credentials")
@@ -116,10 +117,22 @@ class AzureDevOpsApiImpl(
         }
     }
 
-    private fun buildPipelineRequestBody(variables: PipelineVariables): String {
-        return if (variables.versionName.isNotBlank() || variables.versionCode.isNotBlank() || variables.releaseNotes.isNotBlank()) {
+    private fun buildPipelineRequestBody(variables: PipelineVariables, branchName: String?): String {
+        val refName = if (!branchName.isNullOrBlank()) branchName else "refs/heads/main"
+        val hasVariables = variables.versionName.isNotBlank() ||
+            variables.versionCode.isNotBlank() ||
+            variables.releaseNotes.isNotBlank()
+
+        return if (hasVariables) {
             """
             {
+                "resources": {
+                    "repositories": {
+                        "self": {
+                            "refName": "${escapeJsonString(refName)}"
+                        }
+                    }
+                },
                 "variables": {
                     "VersionName": {
                         "value": "${escapeJsonString(variables.versionName)}",
@@ -137,7 +150,7 @@ class AzureDevOpsApiImpl(
             }
             """.trimIndent()
         } else {
-            """{"resources":{"repositories":{"self":{"refName":"refs/heads/main"}}}}"""
+            """{"resources":{"repositories":{"self":{"refName":"${escapeJsonString(refName)}"}}}}"""
         }
     }
 

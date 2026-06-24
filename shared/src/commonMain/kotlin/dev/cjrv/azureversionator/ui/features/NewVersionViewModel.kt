@@ -106,16 +106,14 @@ class NewVersionViewModel(
                 val result = azureDevOpsApi.runPipeline(
                     config = config,
                     variables = variables,
-                    pipelineId = _state.value.selectedPipelineId.orEmpty()
+                    pipelineId = _state.value.selectedPipelineId.orEmpty(),
+                    branchName = _state.value.selectedBranchId
                 )
 
                 result.onSuccess { response ->
                     _state.value = _state.value.copy(
                         isLoading = false,
-                        successMessage = "Pipeline triggered successfully (Run ID: ${response.id})",
-                        versionName = "",
-                        buildNumber = "",
-                        releaseNotes = ""
+                        successMessage = "Pipeline triggered successfully (Run ID: ${response.id})"
                     )
                 }.onFailure { error ->
                     _state.value = _state.value.copy(
