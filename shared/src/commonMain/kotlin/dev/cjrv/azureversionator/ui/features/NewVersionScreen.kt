@@ -43,8 +43,6 @@ import azureversionator.shared.generated.resources.release_notes_placeholder
 import azureversionator.shared.generated.resources.release_notes_version_name
 import azureversionator.shared.generated.resources.release_notes_version_name_placeholder
 import azureversionator.shared.generated.resources.return_text
-import azureversionator.shared.generated.resources.save
-import azureversionator.shared.generated.resources.save_settings
 import azureversionator.shared.generated.resources.upload
 import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
