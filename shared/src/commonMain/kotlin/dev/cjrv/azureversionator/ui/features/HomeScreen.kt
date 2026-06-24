@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.onClick
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -42,11 +40,9 @@ import dev.cjrv.azureversionator.navigation.Settings
 import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.theme.MarginSmall
-import dev.cjrv.azureversionator.theme.MarginTiny
 import dev.cjrv.azureversionator.ui.Screen
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
 import dev.cjrv.azureversionator.ui.composables.CustomSecondaryButton
-import dev.cjrv.azureversionator.ui.composables.CustomSecondaryCompactButton
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
 import org.jetbrains.compose.resources.stringResource
@@ -124,13 +120,13 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                         ) {
                             Box(
                                 Modifier
-                                    .clickable() { vm.openAboutMe() }
                                     .border(
                                         BorderStroke(
                                             width = 1.5.dp,
                                             MaterialTheme.colorScheme.secondary.copy(alpha = 0.85f)
                                         ), RoundedCornerShape(CornerRadius)
                                     )
+                                    .clickable() { vm.openAboutMe() }
                                     .padding(MarginSmall)
                             ) {
                                 Text(

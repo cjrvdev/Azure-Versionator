@@ -9,13 +9,13 @@
     <!-- Azure DevOps Settings -->
     <string name="azure_devops_settings">Azure DevOps Settings</string>
     <string name="azure_organization">Organization</string>
-    <string name="azure_organization_placeholder">my-org</string>
-    <string name="azure_project_name">Project name</string>
-    <string name="azure_project_name_placeholder">my-project</string>
+    <string name="azure_organization_placeholder">Organization name</string>
+    <string name="azure_project_name">Project</string>
+    <string name="azure_project_name_placeholder">Project name</string>
     <string name="azure_pat">Personal Access Token</string>
     <string name="azure_pat_placeholder">••••••••</string>
     <string name="azure_pipeline_id">Pipeline ID</string>
-    <string name="azure_pipeline_id_placeholder">42</string>
+    <string name="azure_pipeline_id_placeholder">123..</string>
     <string name="azure_repository_name">Repository</string>
     <string name="azure_repository_name_placeholder">Select a repository</string>
     <string name="azure_branch_name">Branch</string>
@@ -30,7 +30,7 @@
     <string name="release_notes_version_name">Version name</string>
     <string name="release_notes_version_name_placeholder">Major.minor.patch</string>
     <string name="release_notes_build_number">Build number</string>
-    <string name="release_notes_build_number_placeholder">1000</string>
+    <string name="release_notes_build_number_placeholder">1234</string>
     <string name="new_version_submit">Submit New Version</string>
 
 </resources>
