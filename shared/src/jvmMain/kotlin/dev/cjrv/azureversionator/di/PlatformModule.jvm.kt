@@ -1,5 +1,6 @@
 package dev.cjrv.azureversionator.di
 
+import dev.cjrv.azureversionator.data.openurl.OpenUrlService
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -10,6 +11,6 @@ import org.koin.dsl.module
  *   single { java.util.prefs.Preferences.userRoot() }
  */
 actual fun platformModule(): Module = module {
-    // Desktop-specific bindings go here
+    single<OpenUrlService> { OpenUrlService() }
 }
 

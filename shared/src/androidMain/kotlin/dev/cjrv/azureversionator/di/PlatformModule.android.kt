@@ -1,6 +1,8 @@
 package dev.cjrv.azureversionator.di
 
 import android.content.Context
+import dev.cjrv.azureversionator.data.openurl.OpenUrlService
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -14,7 +16,7 @@ import org.koin.dsl.module
  *   single { get<Context>().getSharedPreferences("prefs", Context.MODE_PRIVATE) }
  */
 actual fun platformModule(): Module = module {
-    // Example: expose Android Application Context as a dependency
-    // single<Context> { androidContext() }
+    single<Context> { androidContext() }
+    single<OpenUrlService> { OpenUrlService(get()) }
 }
 
