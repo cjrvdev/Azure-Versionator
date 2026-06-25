@@ -11,17 +11,29 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import azureversionator.shared.generated.resources.Res
+import azureversionator.shared.generated.resources.help
+import azureversionator.shared.generated.resources.save
 import dev.cjrv.azureversionator.theme.CornerRadius
+import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.vectorResource
 
 @Composable
 fun CustomTextField(
@@ -153,3 +165,66 @@ fun <T> CustomDropdownField(
     }
 }
 
+@Composable
+fun CustomTextFieldWithHelp(
+    label: String,
+    value: String,
+    helpText: String? = null,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    placeholder: String = "",
+    isPassword: Boolean = false,
+    isError: Boolean = false,
+    errorMessage: String? = null,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    imeAction: ImeAction = ImeAction.Next
+) {
+    var passwordVisible by remember { mutableStateOf(false) }
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        placeholder = { Text(placeholder) },
+        singleLine = true,
+        modifier = modifier,
+        shape = RoundedCornerShape(CornerRadius),
+        isError = isError,
+        supportingText = if (isError && errorMessage != null) {
+            { Text(errorMessage) }
+        } else null,
+        visualTransformation = if (isPassword && !passwordVisible) {
+            PasswordVisualTransformation()
+        } else {
+            VisualTransformation.None
+        },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = if (isPassword) KeyboardType.Password else keyboardType,
+            imeAction = imeAction
+        ),
+        trailingIcon = {
+            if (helpText.isNullOrBlank()) return@OutlinedTextField
+
+            val tooltipState = rememberTooltipState()
+            val coroutineScope = rememberCoroutineScope()
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                state = tooltipState,
+                tooltip = {
+                    PlainTooltip { Text(helpText) }
+                },
+            ) {
+                IconButton(onClick = {
+                    coroutineScope.launch {
+                        tooltipState.show()
+                    }
+                }) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.help),
+                        contentDescription = helpText
+                    )
+                }
+            }
+        }
+    )
+}

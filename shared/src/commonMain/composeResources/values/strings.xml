@@ -22,6 +22,7 @@
     <string name="azure_branch_name_placeholder">Select a branch</string>
     <string name="save_settings">Save settings</string>
     <string name="settings_saved">Settings saved</string>
+    <string name="azure_pat_help">PAT must have 'Repo' READ and 'Pipeline' READ AND WRITE permissions</string>
 
     <!-- Version Settings -->
     <string name="new_version_settings">New version settings</string>

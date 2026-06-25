@@ -13,39 +13,48 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import azureversionator.shared.generated.resources.Res
-import azureversionator.shared.generated.resources.settings
 import azureversionator.shared.generated.resources.azure_devops_settings
 import azureversionator.shared.generated.resources.azure_organization
 import azureversionator.shared.generated.resources.azure_organization_placeholder
+import azureversionator.shared.generated.resources.azure_pat
+import azureversionator.shared.generated.resources.azure_pat_help
+import azureversionator.shared.generated.resources.azure_pat_placeholder
 import azureversionator.shared.generated.resources.azure_project_name
 import azureversionator.shared.generated.resources.azure_project_name_placeholder
-import azureversionator.shared.generated.resources.azure_pat
-import azureversionator.shared.generated.resources.azure_pat_placeholder
 import azureversionator.shared.generated.resources.save
 import azureversionator.shared.generated.resources.save_settings
+import azureversionator.shared.generated.resources.settings
 import azureversionator.shared.generated.resources.settings_saved
 import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.ui.Screen
-import dev.cjrv.azureversionator.ui.composables.CustomTextField
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
+import dev.cjrv.azureversionator.ui.composables.CustomTextField
+import dev.cjrv.azureversionator.ui.composables.CustomTextFieldWithHelp
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -106,16 +115,18 @@ fun SettingsScreen(onNavigateBack: () -> Unit) {
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
-                        CustomTextField(
+
+                        CustomTextFieldWithHelp(
                             label = stringResource(Res.string.azure_pat),
                             value = state.personalAccessToken,
+                            helpText = stringResource(Res.string.azure_pat_help),
                             onValueChange = vm::onPersonalAccessTokenChange,
                             modifier = Modifier.fillMaxWidth(),
                             placeholder = stringResource(Res.string.azure_pat_placeholder),
                             isPassword = true,
                             isError = state.personalAccessTokenError != null,
                             errorMessage = state.personalAccessTokenError,
-                            imeAction = ImeAction.Next
+                            imeAction = ImeAction.Next,
                         )
 
                         CustomTextField(
@@ -128,7 +139,6 @@ fun SettingsScreen(onNavigateBack: () -> Unit) {
                             errorMessage = state.organizationError,
                             imeAction = ImeAction.Next
                         )
-
                         CustomTextField(
                             label = stringResource(Res.string.azure_project_name),
                             value = state.projectName,
