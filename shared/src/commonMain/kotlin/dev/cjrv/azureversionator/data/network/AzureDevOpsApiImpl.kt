@@ -1,6 +1,10 @@
 package dev.cjrv.azureversionator.data.network
 
+import dev.cjrv.azureversionator.data.model.AzureBranch
 import dev.cjrv.azureversionator.data.model.AzureDevOpsConfig
+import dev.cjrv.azureversionator.data.model.AzurePipeline
+import dev.cjrv.azureversionator.data.model.AzureRepository
+import dev.cjrv.azureversionator.data.model.PipelineRunResponse
 import dev.cjrv.azureversionator.data.model.PipelineVariables
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -66,7 +70,7 @@ class AzureDevOpsApiImpl(
                     name = pipeline.name,
                     folder = pipeline.folder
                 )
-            }
+            }.sortedBy { it.name }
         }
     }
 
@@ -87,7 +91,7 @@ class AzureDevOpsApiImpl(
                     name = repository.name,
                     defaultBranch = repository.defaultBranch
                 )
-            }
+            }.sortedBy { it.name }
         }
     }
 
@@ -113,7 +117,7 @@ class AzureDevOpsApiImpl(
                     fullName = branch.name,
                     objectId = branch.objectId
                 )
-            }
+            }.sortedBy { it.name }
         }
     }
 

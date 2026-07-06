@@ -1,8 +1,11 @@
 package dev.cjrv.azureversionator.data.network
 
+import dev.cjrv.azureversionator.data.model.AzureBranch
 import dev.cjrv.azureversionator.data.model.AzureDevOpsConfig
+import dev.cjrv.azureversionator.data.model.AzurePipeline
+import dev.cjrv.azureversionator.data.model.AzureRepository
+import dev.cjrv.azureversionator.data.model.PipelineRunResponse
 import dev.cjrv.azureversionator.data.model.PipelineVariables
-import kotlinx.serialization.Serializable
 
 interface AzureDevOpsApi {
     /**
@@ -36,30 +39,4 @@ interface AzureDevOpsApi {
         repositoryId: String
     ): Result<List<AzureBranch>>
 }
-
-data class AzureRepository(
-    val id: String,
-    val name: String,
-    val defaultBranch: String? = null
-)
-
-data class AzureBranch(
-    val name: String,
-    val fullName: String,
-    val objectId: String? = null
-)
-
-data class AzurePipeline(
-    val id: String,
-    val name: String,
-    val folder: String? = null
-)
-
-@Serializable
-data class PipelineRunResponse(
-    val id: Int,
-    val state: String,
-    val result: String? = null,
-    val url: String? = null
-)
 
