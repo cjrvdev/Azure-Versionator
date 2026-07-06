@@ -20,16 +20,16 @@ class SettingsViewModel(
     init {
         viewModelScope.launch {
             val config = settingsRepository.loadConfig()
-            val filters = settingsRepository.loadFilter()
+            val filters = settingsRepository.loadFilters()
             _state.update {
                 it.copy(
                     isLoading = false,
                     organization = config.organization,
                     projectName = config.projectName,
                     personalAccessToken = config.personalAccessToken,
-                    branchFilter = filters.branchFilter,
-                    pipelineFilter = filters.pipelineFilter,
-                    repositoryFilter = filters.repositoryFilter
+                    branchFilter = filters.branchFilter.joinToString(separator = ";"),
+                    pipelineFilter = filters.pipelineFilter.joinToString(separator = ";"),
+                    repositoryFilter = filters.repositoryFilter.joinToString(separator = ";")
                 )
             }
         }

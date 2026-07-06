@@ -8,8 +8,8 @@ data class AzureDevOpsConfig(
 )
 
 data class AzureDevOpsPreferencesFilter(
-    val branchFilter: String = "",
-    val pipelineFilter: String = "",
-    val repositoryFilter: String = ""
+    val branchFilter: List<String> = emptyList(),
+    val pipelineFilter: List<String> = emptyList(),
+    val repositoryFilter: List<String> = emptyList()
 )
 

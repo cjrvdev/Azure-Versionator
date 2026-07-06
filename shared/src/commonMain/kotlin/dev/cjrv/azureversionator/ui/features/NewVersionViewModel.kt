@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.cjrv.azureversionator.data.model.AzureBranch
 import dev.cjrv.azureversionator.data.model.AzureDevOpsConfig
+import dev.cjrv.azureversionator.data.model.AzureDevOpsPreferencesFilter
 import dev.cjrv.azureversionator.data.model.AzurePipeline
 import dev.cjrv.azureversionator.data.model.AzureRepository
 import dev.cjrv.azureversionator.data.model.PipelineVariables
@@ -36,8 +37,9 @@ class NewVersionViewModel(
                 )
             } else {
                 _state.value = _state.value.copy(isConfigurationValid = true, isLoading = true)
-                loadRepositories(config)
-                loadPipelines(config)
+                var filters = settingsRepository.loadFilters()
+                loadRepositories(config, filters)
+                loadPipelines(config, filters)
                 _state.value = _state.value.copy(isLoading = false)
             }
         }
@@ -158,11 +160,12 @@ class NewVersionViewModel(
             )
 
             val config = settingsRepository.loadConfig()
+            val filters = settingsRepository.loadFilters()
             azureDevOpsApi.getBranches(config, repositoryId)
                 .onSuccess { branches ->
                     _state.value = _state.value.copy(
                         isLoadingBranches = false,
-                        branches = branches.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, { it.name })),
+                        branches = sortWithFilteredFirst(branches, filters.branchFilter) { it.name },
                         loadBranchesError = null,
                         isLoading = false
                     )
@@ -178,14 +181,17 @@ class NewVersionViewModel(
         }
     }
 
-    private suspend fun loadRepositories(config: AzureDevOpsConfig) {
+    private suspend fun loadRepositories(
+        config: AzureDevOpsConfig,
+        filters: AzureDevOpsPreferencesFilter
+    ) {
         _state.value = _state.value.copy(isLoadingRepositories = true, loadRepositoriesError = null)
 
         azureDevOpsApi.getRepositories(config)
             .onSuccess { repositories ->
                 _state.value = _state.value.copy(
                     isLoadingRepositories = false,
-                    repositories = repositories.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, { it.name })),
+                    repositories = sortWithFilteredFirst(repositories, filters.repositoryFilter) { it.name },
                     loadRepositoriesError = null
                 )
             }
@@ -198,7 +204,10 @@ class NewVersionViewModel(
             }
     }
 
-    private suspend fun loadPipelines(config: AzureDevOpsConfig) {
+    private suspend fun loadPipelines(
+        config: AzureDevOpsConfig,
+        filters: AzureDevOpsPreferencesFilter
+    ) {
         _state.value = _state.value.copy(isLoadingPipelines = true, loadPipelinesError = null)
 
         azureDevOpsApi.getPipelines(config)
@@ -211,7 +220,7 @@ class NewVersionViewModel(
 
                 _state.value = _state.value.copy(
                     isLoadingPipelines = false,
-                    pipelines = pipelines.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, { it.name })),
+                    pipelines = sortWithFilteredFirst(pipelines, filters.pipelineFilter) { it.name },
                     selectedPipelineId = nextSelectedId,
                     loadPipelinesError = null
                 )
@@ -272,6 +281,30 @@ class NewVersionViewModel(
         }
 
         return isValid
+    }
+
+    private fun <T> sortWithFilteredFirst(
+        items: List<T>,
+        filters: List<String>,
+        selector: (T) -> String
+    ): List<T> {
+        if (filters.isEmpty()) {
+            return items.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, selector))
+        }
+
+        val filtered = items.filter { item ->
+            filters.any { filter ->
+                selector(item).contains(filter, ignoreCase = true)
+            }
+        }.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, selector))
+
+        val remaining = items.filterNot { item ->
+            filters.any { filter ->
+                selector(item).contains(filter, ignoreCase = true)
+            }
+        }.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, selector))
+
+        return filtered + remaining
     }
 
     data class UIState(

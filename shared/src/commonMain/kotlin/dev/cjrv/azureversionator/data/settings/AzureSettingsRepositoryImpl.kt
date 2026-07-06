@@ -20,11 +20,11 @@ class AzureSettingsRepositoryImpl(
         settings.putString(KEY_PAT, config.personalAccessToken)
     }
 
-    override fun loadFilter(): AzureDevOpsPreferencesFilter =
+    override fun loadFilters(): AzureDevOpsPreferencesFilter =
         AzureDevOpsPreferencesFilter(
-            branchFilter = settings.getString(KEY_FILTER_BRANCH, ""),
-            pipelineFilter = settings.getString(KEY_FILTER_PIPELINE, ""),
-            repositoryFilter = settings.getString(KEY_FILTER_REPOSITORY, ""),
+            branchFilter = settings.getString(KEY_FILTER_BRANCH, "").split(';'),
+            pipelineFilter = settings.getString(KEY_FILTER_PIPELINE, "").split(';'),
+            repositoryFilter = settings.getString(KEY_FILTER_REPOSITORY, "").split(';'),
         )
 
     override fun saveFilters(
