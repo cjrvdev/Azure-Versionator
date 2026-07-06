@@ -2,12 +2,12 @@ package dev.cjrv.azureversionator.ui.features
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.cjrv.azureversionator.data.model.AzureDevOpsConfig
-import dev.cjrv.azureversionator.data.model.PipelineVariables
-import dev.cjrv.azureversionator.data.network.AzureDevOpsApi
 import dev.cjrv.azureversionator.data.model.AzureBranch
+import dev.cjrv.azureversionator.data.model.AzureDevOpsConfig
 import dev.cjrv.azureversionator.data.model.AzurePipeline
 import dev.cjrv.azureversionator.data.model.AzureRepository
+import dev.cjrv.azureversionator.data.model.PipelineVariables
+import dev.cjrv.azureversionator.data.network.AzureDevOpsApi
 import dev.cjrv.azureversionator.data.settings.AzureSettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -162,7 +162,7 @@ class NewVersionViewModel(
                 .onSuccess { branches ->
                     _state.value = _state.value.copy(
                         isLoadingBranches = false,
-                        branches = branches,
+                        branches = branches.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, { it.name })),
                         loadBranchesError = null,
                         isLoading = false
                     )
@@ -185,7 +185,7 @@ class NewVersionViewModel(
             .onSuccess { repositories ->
                 _state.value = _state.value.copy(
                     isLoadingRepositories = false,
-                    repositories = repositories,
+                    repositories = repositories.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, { it.name })),
                     loadRepositoriesError = null
                 )
             }
@@ -211,7 +211,7 @@ class NewVersionViewModel(
 
                 _state.value = _state.value.copy(
                     isLoadingPipelines = false,
-                    pipelines = pipelines,
+                    pipelines = pipelines.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, { it.name })),
                     selectedPipelineId = nextSelectedId,
                     loadPipelinesError = null
                 )

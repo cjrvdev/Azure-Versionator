@@ -70,7 +70,7 @@ class AzureDevOpsApiImpl(
                     name = pipeline.name,
                     folder = pipeline.folder
                 )
-            }.sortedBy { it.name }
+            }
         }
     }
 
@@ -91,7 +91,7 @@ class AzureDevOpsApiImpl(
                     name = repository.name,
                     defaultBranch = repository.defaultBranch
                 )
-            }.sortedBy { it.name }
+            }
         }
     }
 
@@ -117,7 +117,7 @@ class AzureDevOpsApiImpl(
                     fullName = branch.name,
                     objectId = branch.objectId
                 )
-            }.sortedBy { it.name }
+            }
         }
     }
 
