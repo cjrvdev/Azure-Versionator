@@ -23,6 +23,13 @@
     <string name="save_settings">Save settings</string>
     <string name="settings_saved">Settings saved</string>
     <string name="azure_pat_help">PAT must have 'Repo' READ and 'Pipeline' READ AND WRITE permissions</string>
+    <string name="filter_preferences">Filter Preferences (optional)</string>
+    <string name="filter_preferences_branch">Branches</string>
+    <string name="filter_preferences_branch_help">Semi-colon separated list of branch names to show first</string>
+    <string name="filter_preferences_repository">Repositories</string>
+    <string name="filter_preferences_repository_help">Semi-colon separated list of repository names to show first</string>
+    <string name="filter_preferences_pipeline">Pipelines</string>
+    <string name="filter_preferences_pipeline_help">Semi-colon separated list of pipeline IDs to show first</string>
 
     <!-- Version Settings -->
     <string name="new_version_settings">New version settings</string>
@@ -33,5 +40,6 @@
     <string name="release_notes_build_number">Build number</string>
     <string name="release_notes_build_number_placeholder">1234</string>
     <string name="new_version_submit">Submit New Version</string>
+
 
 </resources>
