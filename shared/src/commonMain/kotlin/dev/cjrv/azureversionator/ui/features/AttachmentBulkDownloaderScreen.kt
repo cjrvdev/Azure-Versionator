@@ -108,7 +108,11 @@ fun AttachmentBulkDownloaderScreen(onNavigateBack: () -> Unit) {
                         contentAlignment = Alignment.Center,
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        InfiniteLoadingIndicator()
+                        if (state.downloadingMessage.isNullOrBlank()) {
+                            InfiniteLoadingIndicator()
+                        } else {
+                            InfiniteLoadingIndicator(state.downloadingMessage!!)
+                        }
                     }
                 } else {
                     Column(
@@ -148,7 +152,6 @@ fun AttachmentBulkDownloaderScreen(onNavigateBack: () -> Unit) {
                             )
                             CustomSecondaryCompactButton(
                                 stringResource(Res.string.select_download_path),
-                                enabled = !state.isDownloading,
                                 leadingIcon = {
                                     Icon(
                                         imageVector = vectorResource(Res.drawable.folder),
@@ -162,7 +165,7 @@ fun AttachmentBulkDownloaderScreen(onNavigateBack: () -> Unit) {
                         CustomPrimaryButton(
                             text = stringResource(Res.string.download_attachments),
                             onClick = vm::downloadAttachments,
-                            enabled = !state.isDownloading && state.isConfigurationValid,
+                            enabled = state.isConfigurationValid,
                             modifier = Modifier.fillMaxWidth(),
                             leadingIcon = {
                                 Icon(

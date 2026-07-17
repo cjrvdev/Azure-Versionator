@@ -53,7 +53,7 @@ class AttachmentBulkDownloaderViewModel(
         viewModelScope.launch {
             _state.update {
                 it.copy(
-                    isDownloading = true,
+                    isLoading = true,
                     generalError = null,
                     successMessage = null
                 )
@@ -66,7 +66,7 @@ class AttachmentBulkDownloaderViewModel(
                 .getOrElse { error ->
                     _state.update {
                         it.copy(
-                            isDownloading = false,
+                            isLoading = false,
                             generalError = "Failed to load attachments: ${error.message}"
                         )
                     }
@@ -76,7 +76,7 @@ class AttachmentBulkDownloaderViewModel(
             if (attachments.isEmpty()) {
                 _state.update {
                     it.copy(
-                        isDownloading = false,
+                        isLoading = false,
                         generalError = "No active attachments found in work item $workItemId."
                     )
                 }
@@ -84,7 +84,17 @@ class AttachmentBulkDownloaderViewModel(
             }
 
             val filesToSave = mutableListOf<AttachmentFilePayload>()
+            var fileNumber = 0
+
             for (attachment in attachments) {
+                fileNumber++
+                _state.update {
+                    it.copy(
+                        //downloadingMessage = "Downloading attachment $fileNumber of ${attachments.size}: \n'${attachment.fileName}'"
+                        downloadingMessage = "Downloading attachment $fileNumber of ${attachments.size}"
+                    )
+                }
+
                 val fileBytes = azureDevOpsApi.downloadAttachment(
                     config = config,
                     attachmentUrl = attachment.url,
@@ -92,7 +102,7 @@ class AttachmentBulkDownloaderViewModel(
                 ).getOrElse { error ->
                     _state.update {
                         it.copy(
-                            isDownloading = false,
+                            isLoading = false,
                             generalError = "Failed to download '${attachment.fileName}': ${error.message}"
                         )
                     }
@@ -112,7 +122,7 @@ class AttachmentBulkDownloaderViewModel(
                 .onSuccess { savedCount ->
                     _state.update {
                         it.copy(
-                            isDownloading = false,
+                            isLoading = false,
                             successMessage = "Downloaded $savedCount attachment(s) to '$destinationPath'."
                         )
                     }
@@ -120,7 +130,7 @@ class AttachmentBulkDownloaderViewModel(
                 .onFailure { error ->
                     _state.update {
                         it.copy(
-                            isDownloading = false,
+                            isLoading = false,
                             generalError = "Failed to save files: ${error.message}"
                         )
                     }
@@ -176,11 +186,11 @@ class AttachmentBulkDownloaderViewModel(
 data class UIState(
     val isLoading: Boolean = true,
     val isConfigurationValid: Boolean = true,
-    val isDownloading: Boolean = false,
     val workitemId: String = "",
     val workitemIdError: String? = null,
     val destinationPath: String = "",
     val destinationPathError: String? = null,
+    val downloadingMessage: String? = null,
     val successMessage: String? = null,
     val generalError: String? = null
 )
