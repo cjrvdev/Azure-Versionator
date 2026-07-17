@@ -22,7 +22,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "dev.cjrv.azureversionator"
-            packageVersion = "1.3.0"
+            packageVersion = libs.versions.app.version.get()
             macOS{
                 iconFile.set(rootProject.file("shared/src/commonMain/composeResources/drawable/appicon_macos.icns"))
             }
