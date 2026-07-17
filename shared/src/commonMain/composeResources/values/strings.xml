@@ -46,6 +46,9 @@
 
     <!-- Attachment bulk downloader -->
     <string name="attachment_bulk_downloader">Attachment bulk downloader</string>
-
+    <string name="download_attachments">Download attachments</string>
+    <string name="workitem_id">Workitem ID</string>
+    <string name="workitem_id_placeholder">Workitem ID</string>
+    <string name="workitem_id_help">ID of the User story, Task, Bug, etc...</string>
 
 </resources>
