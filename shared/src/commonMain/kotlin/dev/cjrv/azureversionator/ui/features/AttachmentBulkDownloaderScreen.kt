@@ -30,7 +30,6 @@ import azureversionator.shared.generated.resources.download
 import azureversionator.shared.generated.resources.download_attachments
 import azureversionator.shared.generated.resources.folder
 import azureversionator.shared.generated.resources.ok
-import azureversionator.shared.generated.resources.return_text
 import azureversionator.shared.generated.resources.select_download_path
 import azureversionator.shared.generated.resources.workitem_id
 import azureversionator.shared.generated.resources.workitem_id_help
@@ -43,6 +42,7 @@ import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
 import dev.cjrv.azureversionator.ui.composables.CustomSecondaryCompactButton
 import dev.cjrv.azureversionator.ui.composables.CustomTextFieldWithHelp
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
+import dev.cjrv.azureversionator.ui.composables.LinearFiniteLoadingIndicator
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -58,15 +58,9 @@ fun AttachmentBulkDownloaderScreen(onNavigateBack: () -> Unit) {
             onDismissRequest = { vm.onSuccessMessageConsumed() },
             title = { Text("Success") },
             text = { Text(state.successMessage.orEmpty()) },
-            dismissButton = {
-                TextButton(onClick = { vm.onSuccessMessageConsumed() }) {
-                    Text(stringResource(Res.string.return_text))
-                }
-            },
             confirmButton = {
                 TextButton(onClick = {
                     vm.onSuccessMessageConsumed()
-                    onNavigateBack()
                 }) {
                     Text(stringResource(Res.string.ok))
                 }
@@ -111,7 +105,11 @@ fun AttachmentBulkDownloaderScreen(onNavigateBack: () -> Unit) {
                         if (state.downloadingMessage.isNullOrBlank()) {
                             InfiniteLoadingIndicator()
                         } else {
-                            InfiniteLoadingIndicator(state.downloadingMessage!!)
+                            LinearFiniteLoadingIndicator(
+                                state.downloadingMessageCurrentFileIndex!!,
+                                state.downloadingMessageFileTotalAmount!!,
+                                state.downloadingMessage!!
+                            )
                         }
                     }
                 } else {

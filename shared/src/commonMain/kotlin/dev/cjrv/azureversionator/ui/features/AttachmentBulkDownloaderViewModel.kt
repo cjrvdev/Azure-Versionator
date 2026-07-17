@@ -90,7 +90,8 @@ class AttachmentBulkDownloaderViewModel(
                 fileNumber++
                 _state.update {
                     it.copy(
-                        //downloadingMessage = "Downloading attachment $fileNumber of ${attachments.size}: \n'${attachment.fileName}'"
+                        downloadingMessageCurrentFileIndex = fileNumber.toFloat(),
+                        downloadingMessageFileTotalAmount = attachments.size.toFloat(),
                         downloadingMessage = "Downloading attachment $fileNumber of ${attachments.size}"
                     )
                 }
@@ -123,7 +124,9 @@ class AttachmentBulkDownloaderViewModel(
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            successMessage = "Downloaded $savedCount attachment(s) to '$destinationPath'."
+                            successMessage = "Downloaded $savedCount attachment(s) to '$destinationPath'.",
+                            downloadingMessageFileTotalAmount = null,
+                            downloadingMessage = null
                         )
                     }
                 }
@@ -131,7 +134,9 @@ class AttachmentBulkDownloaderViewModel(
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            generalError = "Failed to save files: ${error.message}"
+                            generalError = "Failed to save files: ${error.message}",
+                            downloadingMessageFileTotalAmount = null,
+                            downloadingMessage = null
                         )
                     }
                 }
@@ -191,6 +196,8 @@ data class UIState(
     val destinationPath: String = "",
     val destinationPathError: String? = null,
     val downloadingMessage: String? = null,
+    val downloadingMessageCurrentFileIndex: Float? = null,
+    val downloadingMessageFileTotalAmount: Float? = null,
     val successMessage: String? = null,
     val generalError: String? = null
 )
