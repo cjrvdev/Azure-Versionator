@@ -8,6 +8,7 @@
 
     <!-- Azure DevOps Settings -->
     <string name="azure_devops_settings">Azure DevOps Settings</string>
+    <string name="azure_connection_settings">Azure DevOps Connection Settings</string>
     <string name="azure_organization">Organization</string>
     <string name="azure_organization_placeholder">Organization name</string>
     <string name="azure_project_name">Project</string>

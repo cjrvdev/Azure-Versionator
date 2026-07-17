@@ -27,7 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import azureversionator.shared.generated.resources.Res
-import azureversionator.shared.generated.resources.azure_devops_settings
+import azureversionator.shared.generated.resources.azure_connection_settings
 import azureversionator.shared.generated.resources.azure_organization
 import azureversionator.shared.generated.resources.azure_organization_placeholder
 import azureversionator.shared.generated.resources.azure_pat
@@ -48,11 +48,12 @@ import azureversionator.shared.generated.resources.settings
 import azureversionator.shared.generated.resources.settings_saved
 import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
-import dev.cjrv.azureversionator.theme.MarginTiny
+import dev.cjrv.azureversionator.theme.MarginSmall
 import dev.cjrv.azureversionator.ui.Screen
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
 import dev.cjrv.azureversionator.ui.composables.CustomTextField
 import dev.cjrv.azureversionator.ui.composables.CustomTextFieldWithHelp
+import dev.cjrv.azureversionator.ui.composables.ExpandableSection
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
 import org.jetbrains.compose.resources.stringResource
@@ -110,61 +111,24 @@ fun SettingsScreen(onNavigateBack: () -> Unit) {
                             .padding(MarginMedium)
                             .verticalScroll(rememberScrollState())
                     ) {
-                        Text(
-                            text = stringResource(Res.string.azure_devops_settings),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface
+                        ConnectionSettings(
+                            state,
+                            vm::onPersonalAccessTokenChange,
+                            vm::onOrganizationChange,
+                            vm::onProjectNameChange
                         )
-                        ConnectionSettings(state, vm::onPersonalAccessTokenChange, vm::onOrganizationChange,vm::onProjectNameChange)
-                        Spacer(Modifier.height(MarginMedium))
-                        Text(
-                            text = stringResource(Res.string.filter_preferences),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface
+                        FilterPreferences(
+                            state,
+                            vm::onPipelineFilterChange,
+                            vm::onRepositoryFilterChange,
+                            vm::onBranchFilterChange
                         )
-
-                        CustomTextFieldWithHelp(
-                            label = stringResource(Res.string.filter_preferences_pipeline),
-                            value = state.pipelineFilter,
-                            helpText = stringResource(Res.string.filter_preferences_pipeline_help),
-                            onValueChange = vm::onPipelineFilterChange,
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = stringResource(Res.string.filter_preferences_pipeline),
-                            isError = state.pipelineFilterError != null,
-                            errorMessage = state.pipelineFilterError,
-                            imeAction = ImeAction.Next
-                        )
-
-                        CustomTextFieldWithHelp(
-                            label = stringResource(Res.string.filter_preferences_repository),
-                            value = state.repositoryFilter,
-                            helpText = stringResource(Res.string.filter_preferences_repository_help),
-                            onValueChange = vm::onRepositoryFilterChange,
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = stringResource(Res.string.filter_preferences_repository),
-                            isError = state.repositoryFilterError != null,
-                            errorMessage = state.repositoryFilterError,
-                            imeAction = ImeAction.Next
-                        )
-
-                        CustomTextFieldWithHelp(
-                            label = stringResource(Res.string.filter_preferences_branch),
-                            value = state.branchFilter,
-                            helpText = stringResource(Res.string.filter_preferences_branch_help),
-                            onValueChange = vm::onBranchFilterChange,
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = stringResource(Res.string.filter_preferences_branch),
-                            isError = state.branchFilterError != null,
-                            errorMessage = state.branchFilterError,
-                            imeAction = ImeAction.Done
-                        )
-
-                        Spacer(modifier = Modifier.height(MarginTiny))
+                        Spacer(modifier = Modifier.height(MarginSmall))
 
                         CustomPrimaryButton(
                             text = stringResource(Res.string.save_settings),
                             modifier = Modifier.fillMaxWidth(),
-                            onClick = vm::saveSettings,
+                            onClick = { vm.saveSettings() },
                             leadingIcon = {
                                 Icon(
                                     imageVector = vectorResource(Res.drawable.save),
@@ -179,6 +143,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit) {
     }
 }
 
+
 @Composable
 private fun ConnectionSettings(
     state: SettingsViewModel.UIState,
@@ -186,37 +151,120 @@ private fun ConnectionSettings(
     onOrganizationChange: (String) -> Unit,
     onProjectNameChange: (String) -> Unit
 ) {
-    CustomTextFieldWithHelp(
-        label = stringResource(Res.string.azure_pat),
-        value = state.personalAccessToken,
-        helpText = stringResource(Res.string.azure_pat_help),
-        onValueChange = onPersonalAccessTokenChange,
-        modifier = Modifier.fillMaxWidth(),
-        placeholder = stringResource(Res.string.azure_pat_placeholder),
-        isPassword = true,
-        isError = state.personalAccessTokenError != null,
-        errorMessage = state.personalAccessTokenError,
-        imeAction = ImeAction.Next,
-    )
+    ExpandableSection(
+        title = {
+            Text(
+                text = stringResource(Res.string.azure_connection_settings),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(MarginMedium),
+            modifier = Modifier.padding(
+                start = MarginMedium,
+                end = MarginMedium,
+                bottom = MarginMedium
+            )
+        ) {
+            CustomTextFieldWithHelp(
+                label = stringResource(Res.string.azure_pat),
+                value = state.personalAccessToken,
+                helpText = stringResource(Res.string.azure_pat_help),
+                onValueChange = onPersonalAccessTokenChange,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = stringResource(Res.string.azure_pat_placeholder),
+                isPassword = true,
+                isError = state.personalAccessTokenError != null,
+                errorMessage = state.personalAccessTokenError,
+                imeAction = ImeAction.Next,
+            )
 
-    CustomTextField(
-        label = stringResource(Res.string.azure_organization),
-        value = state.organization,
-        onValueChange = onOrganizationChange,
-        modifier = Modifier.fillMaxWidth(),
-        placeholder = stringResource(Res.string.azure_organization_placeholder),
-        isError = state.organizationError != null,
-        errorMessage = state.organizationError,
-        imeAction = ImeAction.Next
-    )
-    CustomTextField(
-        label = stringResource(Res.string.azure_project_name),
-        value = state.projectName,
-        onValueChange = onProjectNameChange,
-        modifier = Modifier.fillMaxWidth(),
-        placeholder = stringResource(Res.string.azure_project_name_placeholder),
-        isError = state.projectNameError != null,
-        errorMessage = state.projectNameError,
-        imeAction = ImeAction.Next
-    )
+            CustomTextField(
+                label = stringResource(Res.string.azure_organization),
+                value = state.organization,
+                onValueChange = onOrganizationChange,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = stringResource(Res.string.azure_organization_placeholder),
+                isError = state.organizationError != null,
+                errorMessage = state.organizationError,
+                imeAction = ImeAction.Next
+            )
+            CustomTextField(
+                label = stringResource(Res.string.azure_project_name),
+                value = state.projectName,
+                onValueChange = onProjectNameChange,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = stringResource(Res.string.azure_project_name_placeholder),
+                isError = state.projectNameError != null,
+                errorMessage = state.projectNameError,
+                imeAction = ImeAction.Next
+            )
+        }
+    }
+}
+
+
+@Composable
+private fun FilterPreferences(
+    state: SettingsViewModel.UIState,
+    onPipelineFilterChange: (String) -> Unit,
+    onRepositoryFilterChange: (String) -> Unit,
+    onBranchFilterChange: (String) -> Unit
+) {
+    ExpandableSection(
+        title = {
+            Text(
+                text = stringResource(Res.string.filter_preferences),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(MarginMedium),
+            modifier = Modifier.padding(
+                start = MarginMedium,
+                end = MarginMedium,
+                bottom = MarginMedium
+            )
+        ) {
+            CustomTextFieldWithHelp(
+                label = stringResource(Res.string.filter_preferences_pipeline),
+                value = state.pipelineFilter,
+                helpText = stringResource(Res.string.filter_preferences_pipeline_help),
+                onValueChange = onPipelineFilterChange,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = stringResource(Res.string.filter_preferences_pipeline),
+                isError = state.pipelineFilterError != null,
+                errorMessage = state.pipelineFilterError,
+                imeAction = ImeAction.Next
+            )
+
+            CustomTextFieldWithHelp(
+                label = stringResource(Res.string.filter_preferences_repository),
+                value = state.repositoryFilter,
+                helpText = stringResource(Res.string.filter_preferences_repository_help),
+                onValueChange = onRepositoryFilterChange,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = stringResource(Res.string.filter_preferences_repository),
+                isError = state.repositoryFilterError != null,
+                errorMessage = state.repositoryFilterError,
+                imeAction = ImeAction.Next
+            )
+
+            CustomTextFieldWithHelp(
+                label = stringResource(Res.string.filter_preferences_branch),
+                value = state.branchFilter,
+                helpText = stringResource(Res.string.filter_preferences_branch_help),
+                onValueChange = onBranchFilterChange,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = stringResource(Res.string.filter_preferences_branch),
+                isError = state.branchFilterError != null,
+                errorMessage = state.branchFilterError,
+                imeAction = ImeAction.Done
+            )
+        }
+    }
 }
