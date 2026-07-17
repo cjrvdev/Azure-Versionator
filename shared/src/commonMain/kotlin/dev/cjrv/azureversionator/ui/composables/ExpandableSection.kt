@@ -23,7 +23,10 @@ import androidx.compose.ui.unit.dp
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.arrow_drop_down
 import azureversionator.shared.generated.resources.arrow_drop_up
+import azureversionator.shared.generated.resources.collapse
+import azureversionator.shared.generated.resources.expand
 import dev.cjrv.azureversionator.theme.CornerRadius
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
 @Composable
@@ -73,7 +76,7 @@ fun ExpandableSectionTitle(
             modifier = Modifier.size(32.dp),
             imageVector = icon,
             colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onPrimaryContainer),
-            contentDescription = null
+            contentDescription = if (isExpanded) stringResource(Res.string.collapse) else stringResource(Res.string.expand)
         )
         title()
     }

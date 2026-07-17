@@ -5,6 +5,8 @@
     <string name="ok">OK</string>
     <string name="return_text">Return</string>
     <string name="stay_here">Stay here</string>
+    <string name="expand">Expand</string>
+    <string name="collapse">Collapse</string>
 
     <!-- Azure DevOps Settings -->
     <string name="azure_devops_settings">Azure DevOps Settings</string>
@@ -41,6 +43,9 @@
     <string name="release_notes_build_number">Build number</string>
     <string name="release_notes_build_number_placeholder">1234</string>
     <string name="new_version_submit">Submit New Version</string>
+
+    <!-- Attachment bulk downloader -->
+    <string name="attachment_bulk_downloader">Attachment bulk downloader</string>
 
 
 </resources>

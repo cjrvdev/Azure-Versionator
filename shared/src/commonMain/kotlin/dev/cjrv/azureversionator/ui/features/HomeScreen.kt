@@ -32,8 +32,11 @@ import androidx.compose.ui.unit.dp
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.add_task
 import azureversionator.shared.generated.resources.app_name
+import azureversionator.shared.generated.resources.attachment_bulk_downloader
+import azureversionator.shared.generated.resources.download
 import azureversionator.shared.generated.resources.new_version
 import azureversionator.shared.generated.resources.settings
+import dev.cjrv.azureversionator.navigation.AttachmentBulkDownloader
 import dev.cjrv.azureversionator.navigation.NewVersion
 import dev.cjrv.azureversionator.navigation.Route
 import dev.cjrv.azureversionator.navigation.Settings
@@ -101,6 +104,17 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                         contentDescription = stringResource(Res.string.new_version)
                                     )
                                 }
+                            )
+                            Spacer(modifier = Modifier.height(MarginMedium))
+                            CustomPrimaryButton(
+                                    stringResource(Res.string.attachment_bulk_downloader),
+                            onClick = { navigateToTarget(AttachmentBulkDownloader) },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = vectorResource(Res.drawable.download),
+                                    contentDescription = stringResource(Res.string.attachment_bulk_downloader)
+                                )
+                            }
                             )
                             Spacer(modifier = Modifier.height(MarginMedium))
                             CustomSecondaryButton(
