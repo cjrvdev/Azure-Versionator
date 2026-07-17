@@ -4,6 +4,7 @@ import dev.cjrv.azureversionator.data.model.AzureBranch
 import dev.cjrv.azureversionator.data.model.AzureDevOpsConfig
 import dev.cjrv.azureversionator.data.model.AzurePipeline
 import dev.cjrv.azureversionator.data.model.AzureRepository
+import dev.cjrv.azureversionator.data.model.AzureWorkItemAttachment
 import dev.cjrv.azureversionator.data.model.PipelineRunResponse
 import dev.cjrv.azureversionator.data.model.PipelineVariables
 
@@ -38,5 +39,21 @@ interface AzureDevOpsApi {
         config: AzureDevOpsConfig,
         repositoryId: String
     ): Result<List<AzureBranch>>
-}
 
+    /**
+     * Returns active attached files for a work item.
+     */
+    suspend fun getWorkItemAttachments(
+        config: AzureDevOpsConfig,
+        workItemId: String
+    ): Result<List<AzureWorkItemAttachment>>
+
+    /**
+     * Downloads an attachment binary content from its relation URL.
+     */
+    suspend fun downloadAttachment(
+        config: AzureDevOpsConfig,
+        attachmentUrl: String,
+        fileName: String
+    ): Result<ByteArray>
+}

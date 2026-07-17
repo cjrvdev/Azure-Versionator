@@ -177,14 +177,16 @@ fun CustomTextFieldWithHelp(
     isPassword: Boolean = false,
     isError: Boolean = false,
     errorMessage: String? = null,
+    enabled: Boolean = true,
     keyboardType: KeyboardType = KeyboardType.Text,
-    imeAction: ImeAction = ImeAction.Next
+    imeAction: ImeAction = ImeAction.Next,
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
 
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
+        enabled = enabled,
         label = { Text(label) },
         placeholder = { Text(placeholder) },
         singleLine = true,

@@ -4,37 +4,43 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import azureversionator.shared.generated.resources.Res
-import azureversionator.shared.generated.resources.azure_pat
-import azureversionator.shared.generated.resources.azure_pat_help
-import azureversionator.shared.generated.resources.azure_pat_placeholder
+import azureversionator.shared.generated.resources.attachment_bulk_downloader
 import azureversionator.shared.generated.resources.download
 import azureversionator.shared.generated.resources.download_attachments
-import azureversionator.shared.generated.resources.save
-import azureversionator.shared.generated.resources.save_settings
-import azureversionator.shared.generated.resources.settings
+import azureversionator.shared.generated.resources.folder
+import azureversionator.shared.generated.resources.ok
+import azureversionator.shared.generated.resources.return_text
+import azureversionator.shared.generated.resources.select_download_path
 import azureversionator.shared.generated.resources.workitem_id
 import azureversionator.shared.generated.resources.workitem_id_help
 import azureversionator.shared.generated.resources.workitem_id_placeholder
 import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
+import dev.cjrv.azureversionator.theme.MarginSmall
 import dev.cjrv.azureversionator.ui.Screen
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
+import dev.cjrv.azureversionator.ui.composables.CustomSecondaryCompactButton
 import dev.cjrv.azureversionator.ui.composables.CustomTextFieldWithHelp
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
@@ -47,11 +53,45 @@ fun AttachmentBulkDownloaderScreen(onNavigateBack: () -> Unit) {
     val vm = koinViewModel<AttachmentBulkDownloaderViewModel>()
     val state by vm.state.collectAsState()
 
+    if (state.successMessage != null) {
+        AlertDialog(
+            onDismissRequest = { vm.onSuccessMessageConsumed() },
+            title = { Text("Success") },
+            text = { Text(state.successMessage.orEmpty()) },
+            dismissButton = {
+                TextButton(onClick = { vm.onSuccessMessageConsumed() }) {
+                    Text(stringResource(Res.string.return_text))
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    vm.onSuccessMessageConsumed()
+                    onNavigateBack()
+                }) {
+                    Text(stringResource(Res.string.ok))
+                }
+            }
+        )
+    }
+
+    if (state.generalError != null) {
+        AlertDialog(
+            onDismissRequest = { vm.onErrorConsumed() },
+            title = { Text("Error") },
+            text = { Text(state.generalError.orEmpty()) },
+            confirmButton = {
+                TextButton(onClick = { vm.onErrorConsumed() }) {
+                    Text(stringResource(Res.string.ok))
+                }
+            }
+        )
+    }
+
     Screen {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    stringResource(Res.string.settings),
+                    stringResource(Res.string.attachment_bulk_downloader),
                     hasBackButton = true,
                     onBackPressed = { onNavigateBack() }
                 )
@@ -90,16 +130,39 @@ fun AttachmentBulkDownloaderScreen(onNavigateBack: () -> Unit) {
                             onValueChange = vm::onWorkitemIdChange,
                             modifier = Modifier.fillMaxWidth(),
                             placeholder = stringResource(Res.string.workitem_id_placeholder),
-                            isPassword = true,
                             isError = state.workitemIdError != null,
                             errorMessage = state.workitemIdError,
-                            imeAction = ImeAction.Done,
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Next,
                         )
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(MarginSmall)
+                        ) {
+                            Text(
+                                state.destinationPath,
+                                modifier = Modifier.weight(1f),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            CustomSecondaryCompactButton(
+                                stringResource(Res.string.select_download_path),
+                                enabled = !state.isDownloading,
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = vectorResource(Res.drawable.folder),
+                                        contentDescription = stringResource(Res.string.select_download_path)
+                                    )
+                                },
+                                onClick = vm::onSelectDownloadPath
+                            )
+                        }
 
                         CustomPrimaryButton(
                             text = stringResource(Res.string.download_attachments),
-                            onClick = { vm.downloadAttachments() },
-                            enabled = !state.isDownloading,
+                            onClick = vm::downloadAttachments,
+                            enabled = !state.isDownloading && state.isConfigurationValid,
                             modifier = Modifier.fillMaxWidth(),
                             leadingIcon = {
                                 Icon(

@@ -9,11 +9,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.dialogs.init
+import io.github.vinceglb.filekit.manualFileKitCoreInitialization
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
         super.onCreate(savedInstanceState)
+        installSplashScreen()
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.auto(
                 lightScrim = android.graphics.Color.TRANSPARENT,
@@ -25,6 +28,9 @@ class MainActivity : ComponentActivity() {
             ) { isDarkTheme() },
         )
 
+        //FileKit.manualFileKitCoreInitialization(this)
+        FileKit.init(this)
+
         setContent {
             App()
         }
@@ -32,7 +38,7 @@ class MainActivity : ComponentActivity() {
 
     private fun isDarkTheme(): Boolean {
         return (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-            Configuration.UI_MODE_NIGHT_YES
+                Configuration.UI_MODE_NIGHT_YES
     }
 }
 

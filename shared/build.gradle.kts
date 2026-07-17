@@ -60,6 +60,9 @@ kotlin {
             implementation(libs.ktor.client.negotiation)
             implementation(libs.kotlin.serialization)
 
+            implementation(libs.filekit.core)
+            implementation(libs.filekit.dialogs.compose)
+
         }
     }
 }

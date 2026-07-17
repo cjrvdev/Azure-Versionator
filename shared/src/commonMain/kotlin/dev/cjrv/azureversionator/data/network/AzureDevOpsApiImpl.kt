@@ -4,6 +4,7 @@ import dev.cjrv.azureversionator.data.model.AzureBranch
 import dev.cjrv.azureversionator.data.model.AzureDevOpsConfig
 import dev.cjrv.azureversionator.data.model.AzurePipeline
 import dev.cjrv.azureversionator.data.model.AzureRepository
+import dev.cjrv.azureversionator.data.model.AzureWorkItemAttachment
 import dev.cjrv.azureversionator.data.model.PipelineRunResponse
 import dev.cjrv.azureversionator.data.model.PipelineVariables
 import io.ktor.client.HttpClient
@@ -13,6 +14,7 @@ import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
+import io.ktor.http.URLBuilder
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import kotlin.io.encoding.Base64
@@ -121,6 +123,63 @@ class AzureDevOpsApiImpl(
         }
     }
 
+    @OptIn(ExperimentalEncodingApi::class)
+    override suspend fun getWorkItemAttachments(
+        config: AzureDevOpsConfig,
+        workItemId: String
+    ): Result<List<AzureWorkItemAttachment>> {
+        return runCatching {
+            val response = httpClient.get(
+                "${projectApiBaseUrl(config)}/_apis/wit/workitems/$workItemId?\$expand=relations&api-version=$apiVersion"
+            ) {
+                header("Authorization", "Basic ${basicCredentials(config)}")
+            }
+
+            if (!response.status.isSuccess()) {
+                error("Work item request failed with status ${response.status.value}")
+            }
+
+            response.body<WorkItemResponse>().relations
+                .asSequence()
+                .filter { relation -> relation.rel.equals("AttachedFile", ignoreCase = true) }
+                .filter { relation -> relation.attributes?.isDeleted != true }
+                .map { relation ->
+                    AzureWorkItemAttachment(
+                        fileName = relation.attributes?.name
+                            ?.takeIf { it.isNotBlank() }
+                            ?: fallbackFileNameFromUrl(relation.url),
+                        url = relation.url
+                    )
+                }
+                .toList()
+        }
+    }
+
+    @OptIn(ExperimentalEncodingApi::class)
+    override suspend fun downloadAttachment(
+        config: AzureDevOpsConfig,
+        attachmentUrl: String,
+        fileName: String
+    ): Result<ByteArray> {
+        return runCatching {
+            val downloadUrl = URLBuilder(attachmentUrl).apply {
+                parameters.append("download", "true")
+                parameters.append("fileName", fileName)
+                parameters.append("api-version", apiVersion)
+            }.buildString()
+
+            val response = httpClient.get(downloadUrl) {
+                header("Authorization", "Basic ${basicCredentials(config)}")
+            }
+
+            if (!response.status.isSuccess()) {
+                error("Attachment download failed with status ${response.status.value}")
+            }
+
+            response.body<ByteArray>()
+        }
+    }
+
     private fun buildPipelineRequestBody(variables: PipelineVariables, branchName: String?): String {
         val refName = if (!branchName.isNullOrBlank()) branchName else "refs/heads/main"
         val hasVariables = variables.versionName.isNotBlank() ||
@@ -175,6 +234,10 @@ class AzureDevOpsApiImpl(
     private fun projectApiBaseUrl(config: AzureDevOpsConfig): String {
         return "https://dev.azure.com/${config.organization}/${config.projectName}"
     }
+
+    private fun fallbackFileNameFromUrl(url: String): String {
+        return url.substringAfterLast('/').substringBefore('?').ifBlank { "attachment.bin" }
+    }
 }
 
 @Serializable
@@ -212,3 +275,20 @@ private data class PipelineDto(
     val folder: String? = null
 )
 
+@Serializable
+private data class WorkItemResponse(
+    val relations: List<WorkItemRelationDto> = emptyList()
+)
+
+@Serializable
+private data class WorkItemRelationDto(
+    val rel: String,
+    val url: String,
+    val attributes: WorkItemRelationAttributesDto? = null
+)
+
+@Serializable
+private data class WorkItemRelationAttributesDto(
+    val name: String? = null,
+    @SerialName("isDeleted") val isDeleted: Boolean? = null
+)

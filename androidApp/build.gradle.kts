@@ -22,7 +22,8 @@ dependencies {
     implementation(libs.ktor.client.okhttp)
     implementation(libs.core.splashscreen)
 
-
+    implementation(libs.filekit.core)
+    implementation(libs.filekit.dialogs.compose)
 }
 
 android {

@@ -50,5 +50,6 @@
     <string name="workitem_id">Workitem ID</string>
     <string name="workitem_id_placeholder">Workitem ID</string>
     <string name="workitem_id_help">ID of the User story, Task, Bug, etc...</string>
+    <string name="select_download_path">Select Download path</string>
 
 </resources>

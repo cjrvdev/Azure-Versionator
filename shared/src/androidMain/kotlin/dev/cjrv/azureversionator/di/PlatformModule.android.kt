@@ -1,5 +1,7 @@
 package dev.cjrv.azureversionator.di
 
+import dev.cjrv.azureversionator.data.files.AttachmentFileService
+import dev.cjrv.azureversionator.data.files.AttachmentFileServiceImpl
 import dev.cjrv.azureversionator.data.openurl.OpenUrlService
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -15,5 +17,5 @@ import org.koin.dsl.module
  */
 actual fun platformModule(): Module = module {
     single<OpenUrlService> { OpenUrlService(get()) }
+    single<AttachmentFileService> { AttachmentFileServiceImpl(get()) }
 }
-

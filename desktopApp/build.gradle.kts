@@ -34,4 +34,8 @@ compose.desktop {
             }
         }
     }
+
+    dependencies{
+        implementation(libs.filekit.core)
+    }
 }
