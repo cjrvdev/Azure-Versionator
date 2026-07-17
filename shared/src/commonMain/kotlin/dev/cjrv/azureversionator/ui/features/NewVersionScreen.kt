@@ -33,7 +33,6 @@ import azureversionator.shared.generated.resources.azure_pipeline_id_placeholder
 import azureversionator.shared.generated.resources.azure_repository_name
 import azureversionator.shared.generated.resources.azure_repository_name_placeholder
 import azureversionator.shared.generated.resources.new_version
-import azureversionator.shared.generated.resources.new_version_settings
 import azureversionator.shared.generated.resources.new_version_submit
 import azureversionator.shared.generated.resources.ok
 import azureversionator.shared.generated.resources.release_notes
@@ -134,11 +133,6 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                             .padding(MarginMedium)
                             .verticalScroll(rememberScrollState())
                     ) {
-                        Text(
-                            text = stringResource(Res.string.new_version_settings),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
                         CustomDropdownField(
                             label = stringResource(Res.string.azure_pipeline_id),
                             selectedItem = selectedPipeline,

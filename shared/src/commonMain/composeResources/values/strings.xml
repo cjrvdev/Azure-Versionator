@@ -45,11 +45,11 @@
     <string name="new_version_submit">Submit New Version</string>
 
     <!-- Attachment bulk downloader -->
-    <string name="attachment_bulk_downloader">Attachment bulk downloader</string>
+    <string name="attachment_bulk_downloader">Workitem Attachment Bulk Downloader</string>
     <string name="download_attachments">Download attachments</string>
     <string name="workitem_id">Workitem ID</string>
-    <string name="workitem_id_placeholder">Workitem ID</string>
+    <string name="workitem_id_placeholder">ID</string>
     <string name="workitem_id_help">ID of the User story, Task, Bug, etc...</string>
-    <string name="select_download_path">Select Download path</string>
+    <string name="select_download_path">Change save path</string>
 
 </resources>
