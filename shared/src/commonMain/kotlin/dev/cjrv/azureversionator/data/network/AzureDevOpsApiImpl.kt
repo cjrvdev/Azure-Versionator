@@ -1,12 +1,13 @@
 package dev.cjrv.azureversionator.data.network
 
+import dev.cjrv.azureversionator.data.model.app.Profile
 import dev.cjrv.azureversionator.data.model.azure.AzureBranch
 import dev.cjrv.azureversionator.data.model.azure.AzureDevOpsConfig
 import dev.cjrv.azureversionator.data.model.azure.AzurePipeline
 import dev.cjrv.azureversionator.data.model.azure.AzureRepository
+import dev.cjrv.azureversionator.data.model.azure.AzureVariable
 import dev.cjrv.azureversionator.data.model.azure.AzureWorkItemAttachment
 import dev.cjrv.azureversionator.data.model.azure.PipelineRunResponse
-import dev.cjrv.azureversionator.data.model.azure.PipelineVariables
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -31,15 +32,15 @@ class AzureDevOpsApiImpl(
     @OptIn(ExperimentalEncodingApi::class)
     override suspend fun runPipeline(
         config: AzureDevOpsConfig,
-        variables: PipelineVariables,
+        selectedProfile: Profile,
         pipelineId: String,
         branchName: String?
     ): Result<PipelineRunResponse> {
         return runCatching {
             val credentials = basicCredentials(config)
-            val url = "${projectApiBaseUrl(config)}/_apis/pipelines/$pipelineId/runs?api-version=$apiVersion"
+            val url = "${projectApiBaseUrl(config,selectedProfile)}/_apis/pipelines/$pipelineId/runs?api-version=$apiVersion"
 
-            val body = buildPipelineRequestBody(variables, branchName)
+            val body = buildRunPipelineRequestBody(selectedProfile.variables, branchName)
 
             val response = httpClient.post(url) {
                 header("Authorization", "Basic $credentials")
@@ -56,9 +57,9 @@ class AzureDevOpsApiImpl(
     }
 
     @OptIn(ExperimentalEncodingApi::class)
-    override suspend fun getPipelines(config: AzureDevOpsConfig): Result<List<AzurePipeline>> {
+    override suspend fun getPipelines(config: AzureDevOpsConfig, selectedProfile: Profile): Result<List<AzurePipeline>> {
         return runCatching {
-            val response = httpClient.get("${projectApiBaseUrl(config)}/_apis/pipelines?api-version=$apiVersion") {
+            val response = httpClient.get("${projectApiBaseUrl(config, selectedProfile)}/_apis/pipelines?api-version=$apiVersion") {
                 header("Authorization", "Basic ${basicCredentials(config)}")
             }
 
@@ -77,9 +78,9 @@ class AzureDevOpsApiImpl(
     }
 
     @OptIn(ExperimentalEncodingApi::class)
-    override suspend fun getRepositories(config: AzureDevOpsConfig): Result<List<AzureRepository>> {
+    override suspend fun getRepositories(config: AzureDevOpsConfig, selectedProfile: Profile): Result<List<AzureRepository>> {
         return runCatching {
-            val response = httpClient.get("${projectApiBaseUrl(config)}/_apis/git/repositories?api-version=$apiVersion") {
+            val response = httpClient.get("${projectApiBaseUrl(config, selectedProfile)}/_apis/git/repositories?api-version=$apiVersion") {
                 header("Authorization", "Basic ${basicCredentials(config)}")
             }
 
@@ -100,11 +101,12 @@ class AzureDevOpsApiImpl(
     @OptIn(ExperimentalEncodingApi::class)
     override suspend fun getBranches(
         config: AzureDevOpsConfig,
-        repositoryId: String
+        repositoryId: String,
+        selectedProfile: Profile
     ): Result<List<AzureBranch>> {
         return runCatching {
             val response = httpClient.get(
-                "${projectApiBaseUrl(config)}/_apis/git/repositories/$repositoryId/refs?filter=heads/&api-version=$apiVersion"
+                "${projectApiBaseUrl(config,selectedProfile)}/_apis/git/repositories/$repositoryId/refs?filter=heads/&api-version=$apiVersion"
             ) {
                 header("Authorization", "Basic ${basicCredentials(config)}")
             }
@@ -126,11 +128,12 @@ class AzureDevOpsApiImpl(
     @OptIn(ExperimentalEncodingApi::class)
     override suspend fun getWorkItemAttachments(
         config: AzureDevOpsConfig,
-        workItemId: String
+        workItemId: String,
+        selectedProfile: Profile
     ): Result<List<AzureWorkItemAttachment>> {
         return runCatching {
             val response = httpClient.get(
-                "${projectApiBaseUrl(config)}/_apis/wit/workitems/$workItemId?\$expand=relations&api-version=$apiVersion"
+                "${projectApiBaseUrl(config, selectedProfile)}/_apis/wit/workitems/$workItemId?\$expand=relations&api-version=$apiVersion"
             ) {
                 header("Authorization", "Basic ${basicCredentials(config)}")
             }
@@ -159,7 +162,8 @@ class AzureDevOpsApiImpl(
     override suspend fun downloadAttachment(
         config: AzureDevOpsConfig,
         attachmentUrl: String,
-        fileName: String
+        fileName: String,
+        selectedProfile: Profile
     ): Result<ByteArray> {
         return runCatching {
             val downloadUrl = URLBuilder(attachmentUrl).apply {
@@ -180,13 +184,10 @@ class AzureDevOpsApiImpl(
         }
     }
 
-    private fun buildPipelineRequestBody(variables: PipelineVariables, branchName: String?): String {
+    private fun buildRunPipelineRequestBody(variables: List<AzureVariable>, branchName: String?): String {
         val refName = if (!branchName.isNullOrBlank()) branchName else "refs/heads/main"
-        val hasVariables = variables.versionName.isNotBlank() ||
-            variables.versionCode.isNotBlank() ||
-            variables.releaseNotes.isNotBlank()
 
-        return if (hasVariables) {
+        return if (variables.isNotEmpty()) {
             """
             {
                 "resources": {
@@ -197,18 +198,7 @@ class AzureDevOpsApiImpl(
                     }
                 },
                 "variables": {
-                    "VersionName": {
-                        "value": "${escapeJsonString(variables.versionName)}",
-                        "isSecret": false
-                    },
-                    "VersionCode": {
-                        "value": "${escapeJsonString(variables.versionCode)}",
-                        "isSecret": false
-                    },
-                    "ReleaseNotes": {
-                        "value": "${escapeJsonString(variables.releaseNotes)}",
-                        "isSecret": false
-                    }
+                    ${buildVariableList(variables)}
                 }
             }
             """.trimIndent()
@@ -226,13 +216,24 @@ class AzureDevOpsApiImpl(
             .replace("\t", "\\t")
     }
 
+    private fun buildVariableList(variables: List<AzureVariable>): String {
+        return variables.joinToString(",") { variable ->
+            """
+            "${variable.name}": {
+                "value": "${escapeJsonString(variable.value)}",
+                "isSecret": ${variable.isSecret}
+            }
+            """.trimIndent()
+        }
+    }
+
     @OptIn(ExperimentalEncodingApi::class)
     private fun basicCredentials(config: AzureDevOpsConfig): String {
         return Base64.encode(":${config.personalAccessToken}".encodeToByteArray())
     }
 
-    private fun projectApiBaseUrl(config: AzureDevOpsConfig): String {
-        return "https://dev.azure.com/${config.organization}/${config.projectName}"
+    private fun projectApiBaseUrl(config: AzureDevOpsConfig, selectedProfile: Profile): String {
+        return "https://dev.azure.com/${config.organization}/${selectedProfile.teamProjectName}"
     }
 
     private fun fallbackFileNameFromUrl(url: String): String {

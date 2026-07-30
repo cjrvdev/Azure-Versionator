@@ -33,8 +33,6 @@ import azureversionator.shared.generated.resources.azure_organization_placeholde
 import azureversionator.shared.generated.resources.azure_pat
 import azureversionator.shared.generated.resources.azure_pat_help
 import azureversionator.shared.generated.resources.azure_pat_placeholder
-import azureversionator.shared.generated.resources.azure_project_name
-import azureversionator.shared.generated.resources.azure_project_name_placeholder
 import azureversionator.shared.generated.resources.filter_preferences
 import azureversionator.shared.generated.resources.filter_preferences_branch
 import azureversionator.shared.generated.resources.filter_preferences_branch_help
@@ -114,8 +112,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit) {
                         ConnectionSettings(
                             state,
                             vm::onPersonalAccessTokenChange,
-                            vm::onOrganizationChange,
-                            vm::onProjectNameChange
+                            vm::onOrganizationChange
                         )
                         FilterPreferences(
                             state,
@@ -148,8 +145,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit) {
 private fun ConnectionSettings(
     state: SettingsViewModel.UIState,
     onPersonalAccessTokenChange: (String) -> Unit,
-    onOrganizationChange: (String) -> Unit,
-    onProjectNameChange: (String) -> Unit
+    onOrganizationChange: (String) -> Unit
 ) {
     ExpandableSection(
         title = {
@@ -189,16 +185,6 @@ private fun ConnectionSettings(
                 placeholder = stringResource(Res.string.azure_organization_placeholder),
                 isError = state.organizationError != null,
                 errorMessage = state.organizationError,
-                imeAction = ImeAction.Next
-            )
-            CustomTextField(
-                label = stringResource(Res.string.azure_project_name),
-                value = state.projectName,
-                onValueChange = onProjectNameChange,
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = stringResource(Res.string.azure_project_name_placeholder),
-                isError = state.projectNameError != null,
-                errorMessage = state.projectNameError,
                 imeAction = ImeAction.Next
             )
         }

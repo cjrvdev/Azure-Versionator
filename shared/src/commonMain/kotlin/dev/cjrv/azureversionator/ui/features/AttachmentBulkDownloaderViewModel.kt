@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.cjrv.azureversionator.data.files.AttachmentFilePayload
 import dev.cjrv.azureversionator.data.files.AttachmentFileService
+import dev.cjrv.azureversionator.data.model.app.Profile
 import dev.cjrv.azureversionator.data.network.AzureDevOpsApi
 import dev.cjrv.azureversionator.data.settings.AzureSettingsRepository
 import io.github.vinceglb.filekit.FileKit
@@ -27,13 +28,16 @@ class AttachmentBulkDownloaderViewModel(
     init {
         viewModelScope.launch {
             val config = settingsRepository.loadConfig()
+            val selectedProfile = settingsRepository.getActiveProfile()
+
             val isConfigValid = config.organization.isNotBlank() &&
-                    config.projectName.isNotBlank() &&
+                    selectedProfile.teamProjectName.isNotBlank() &&
                     config.personalAccessToken.isNotBlank()
 
             _state.update {
                 it.copy(
                     isLoading = false,
+                    selectedProfile = selectedProfile,
                     isConfigurationValid = isConfigValid,
                     destinationPath = attachmentFileService.defaultDownloadDirectoryPath(),
                     generalError = if (isConfigValid) null
@@ -62,7 +66,7 @@ class AttachmentBulkDownloaderViewModel(
             val config = settingsRepository.loadConfig()
             val workItemId = _state.value.workitemId.trim()
 
-            val attachments = azureDevOpsApi.getWorkItemAttachments(config, workItemId)
+            val attachments = azureDevOpsApi.getWorkItemAttachments(config, workItemId, _state.value.selectedProfile!!)
                 .getOrElse { error ->
                     _state.update {
                         it.copy(
@@ -99,7 +103,8 @@ class AttachmentBulkDownloaderViewModel(
                 val fileBytes = azureDevOpsApi.downloadAttachment(
                     config = config,
                     attachmentUrl = attachment.url,
-                    fileName = attachment.fileName
+                    fileName = attachment.fileName,
+                    selectedProfile = _state.value.selectedProfile!!
                 ).getOrElse { error ->
                     _state.update {
                         it.copy(
@@ -199,5 +204,6 @@ data class UIState(
     val downloadingMessageCurrentFileIndex: Float? = null,
     val downloadingMessageFileTotalAmount: Float? = null,
     val successMessage: String? = null,
-    val generalError: String? = null
+    val generalError: String? = null,
+    val selectedProfile : Profile? = null
 )

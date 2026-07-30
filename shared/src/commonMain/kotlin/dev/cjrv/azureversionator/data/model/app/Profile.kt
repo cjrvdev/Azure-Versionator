@@ -1,10 +1,14 @@
 package dev.cjrv.azureversionator.data.model.app
 
+import dev.cjrv.azureversionator.data.model.azure.AzureVariable
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
 @Serializable
 data class Profile(
-    val id: Uuid = Uuid.random(),
-    val name: String
+    val id: String = Uuid.random().toString(),
+    val name: String,
+    val teamProjectName : String,
+    val variables : List<AzureVariable> = emptyList()
 )
+

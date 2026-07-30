@@ -2,12 +2,12 @@ package dev.cjrv.azureversionator.ui.features
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.cjrv.azureversionator.data.model.app.Profile
 import dev.cjrv.azureversionator.data.model.azure.AzureBranch
 import dev.cjrv.azureversionator.data.model.azure.AzureDevOpsConfig
 import dev.cjrv.azureversionator.data.model.azure.AzureDevOpsPreferencesFilter
 import dev.cjrv.azureversionator.data.model.azure.AzurePipeline
 import dev.cjrv.azureversionator.data.model.azure.AzureRepository
-import dev.cjrv.azureversionator.data.model.azure.PipelineVariables
 import dev.cjrv.azureversionator.data.network.AzureDevOpsApi
 import dev.cjrv.azureversionator.data.settings.AzureSettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +27,9 @@ class NewVersionViewModel(
         viewModelScope.launch {
             // Pre-load Azure configuration to validate it exists
             val config = settingsRepository.loadConfig()
-            val isConfigValid = config.organization.isNotBlank() && config.projectName.isNotBlank() &&
+            val selectedProfile = settingsRepository.getActiveProfile()
+
+            val isConfigValid = config.organization.isNotBlank() && selectedProfile.teamProjectName.isNotBlank() &&
                 config.personalAccessToken.isNotBlank()
 
             if (!isConfigValid) {
@@ -36,7 +38,7 @@ class NewVersionViewModel(
                     generalError = "Azure DevOps configuration is incomplete. Please configure settings first."
                 )
             } else {
-                _state.value = _state.value.copy(isConfigurationValid = true, isLoading = true)
+                _state.value = _state.value.copy(isConfigurationValid = true, isLoading = true, selectedProfile = selectedProfile)
                 var filters = settingsRepository.loadFilters()
                 loadRepositories(config, filters)
                 loadPipelines(config, filters)
@@ -99,15 +101,9 @@ class NewVersionViewModel(
 
             try {
                 val config = settingsRepository.loadConfig()
-                val variables = PipelineVariables(
-                    versionName = _state.value.versionName,
-                    versionCode = _state.value.buildNumber,
-                    releaseNotes = _state.value.releaseNotes
-                )
-
                 val result = azureDevOpsApi.runPipeline(
                     config = config,
-                    variables = variables,
+                    selectedProfile = _state.value.selectedProfile!!,
                     pipelineId = _state.value.selectedPipelineId.orEmpty(),
                     branchName = _state.value.selectedBranchId
                 )
@@ -161,7 +157,7 @@ class NewVersionViewModel(
 
             val config = settingsRepository.loadConfig()
             val filters = settingsRepository.loadFilters()
-            azureDevOpsApi.getBranches(config, repositoryId)
+            azureDevOpsApi.getBranches(config, repositoryId, _state.value.selectedProfile!!)
                 .onSuccess { branches ->
                     _state.value = _state.value.copy(
                         isLoadingBranches = false,
@@ -187,7 +183,7 @@ class NewVersionViewModel(
     ) {
         _state.value = _state.value.copy(isLoadingRepositories = true, loadRepositoriesError = null)
 
-        azureDevOpsApi.getRepositories(config)
+        azureDevOpsApi.getRepositories(config, _state.value.selectedProfile!!)
             .onSuccess { repositories ->
                 _state.value = _state.value.copy(
                     isLoadingRepositories = false,
@@ -210,7 +206,7 @@ class NewVersionViewModel(
     ) {
         _state.value = _state.value.copy(isLoadingPipelines = true, loadPipelinesError = null)
 
-        azureDevOpsApi.getPipelines(config)
+        azureDevOpsApi.getPipelines(config, _state.value.selectedProfile!!)
             .onSuccess { pipelines ->
                 val selectedId = _state.value.selectedPipelineId
                 val nextSelectedId = when {
@@ -312,6 +308,7 @@ class NewVersionViewModel(
         val isConfigurationValid: Boolean = true,
         val repositories: List<AzureRepository> = emptyList(),
         val branches: List<AzureBranch> = emptyList(),
+        val selectedProfile : Profile? = null,
 
         val versionName: String = "",
         val versionNameError: String? = null,

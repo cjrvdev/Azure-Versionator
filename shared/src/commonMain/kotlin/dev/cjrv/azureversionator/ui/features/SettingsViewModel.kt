@@ -25,7 +25,6 @@ class SettingsViewModel(
                 it.copy(
                     isLoading = false,
                     organization = config.organization,
-                    projectName = config.projectName,
                     personalAccessToken = config.personalAccessToken,
                     branchFilter = filters.branchFilter.joinToString(separator = ";"),
                     pipelineFilter = filters.pipelineFilter.joinToString(separator = ";"),
@@ -37,9 +36,6 @@ class SettingsViewModel(
 
     fun onOrganizationChange(value: String) =
         _state.update { it.copy(organization = value) }
-
-    fun onProjectNameChange(value: String) =
-        _state.update { it.copy(projectName = value) }
 
     fun onPersonalAccessTokenChange(value: String) =
         _state.update { it.copy(personalAccessToken = value) }
@@ -59,7 +55,6 @@ class SettingsViewModel(
         settingsRepository.saveConfig(
             AzureDevOpsConfig(
                 organization = s.organization,
-                projectName = s.projectName,
                 personalAccessToken = s.personalAccessToken
             )
         ).also {
@@ -80,14 +75,12 @@ class SettingsViewModel(
         _state.update {
             it.copy(
                 organizationError = if (s.organization.isBlank()) "Required" else null,
-                projectNameError = if (s.projectName.isBlank()) "Required" else null,
                 personalAccessTokenError = if (s.personalAccessToken.isBlank()) "Required" else null
             )
         }
         val updated = _state.value
         return listOf(
             updated.organizationError,
-            updated.projectNameError,
             updated.personalAccessTokenError
         ).all { it == null }
     }
@@ -95,13 +88,11 @@ class SettingsViewModel(
     data class UIState(
         val isLoading: Boolean = true,
         val organization: String = "",
-        val projectName: String = "",
         val personalAccessToken: String = "",
         val branchFilter: String = "",
         val pipelineFilter: String = "",
         val repositoryFilter: String = "",
         val organizationError: String? = null,
-        val projectNameError: String? = null,
         val personalAccessTokenError: String? = null,
         val branchFilterError: String? = null,
         val pipelineFilterError: String? = null,

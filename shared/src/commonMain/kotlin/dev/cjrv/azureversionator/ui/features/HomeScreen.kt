@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -90,10 +89,19 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                             )
                             .padding(MarginMedium)
                     ) {
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                            /*CustomDropdownField(
-                                label = "Perfil",
-                            )*/
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End,
+                            verticalAlignment = Alignment.CenterVertically) {
+                            CustomDropdownField(
+                                label = state.selectedProfileName ?: "",
+                                options = state.profiles.map { it.id },
+                                selectedItem = state.selectedProfileId ?: "",
+                                onOptionSelected = { selectedId ->
+                                    vm.onSelectedProfileChanged(selectedId)
+                                }, optionLabel = { profileId ->
+                                    state.profiles.find { it.id == profileId }?.name ?: ""
+                                },
+                                modifier = Modifier.weight(1f)
+                            )
                             Spacer(modifier = Modifier.width(MarginMedium))
                             CustomSecondaryButton(
                                 stringResource(Res.string.settings),
