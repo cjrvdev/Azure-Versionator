@@ -1,5 +1,6 @@
 package dev.cjrv.azureversionator.navigation
 
+import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
 /**
@@ -16,7 +17,9 @@ import kotlinx.serialization.Serializable
  *   @Serializable data object HomeScreen : Screen
  *   @Serializable data class DetailScreen(val id: String) : Screen
  */
-sealed interface Route
+
+@Serializable
+sealed interface Route : NavKey
 
 /** Top-level destinations of the app. */
 @Serializable
