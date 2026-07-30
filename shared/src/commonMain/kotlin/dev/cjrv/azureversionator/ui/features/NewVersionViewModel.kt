@@ -2,12 +2,12 @@ package dev.cjrv.azureversionator.ui.features
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.cjrv.azureversionator.data.model.AzureBranch
-import dev.cjrv.azureversionator.data.model.AzureDevOpsConfig
-import dev.cjrv.azureversionator.data.model.AzureDevOpsPreferencesFilter
-import dev.cjrv.azureversionator.data.model.AzurePipeline
-import dev.cjrv.azureversionator.data.model.AzureRepository
-import dev.cjrv.azureversionator.data.model.PipelineVariables
+import dev.cjrv.azureversionator.data.model.azure.AzureBranch
+import dev.cjrv.azureversionator.data.model.azure.AzureDevOpsConfig
+import dev.cjrv.azureversionator.data.model.azure.AzureDevOpsPreferencesFilter
+import dev.cjrv.azureversionator.data.model.azure.AzurePipeline
+import dev.cjrv.azureversionator.data.model.azure.AzureRepository
+import dev.cjrv.azureversionator.data.model.azure.PipelineVariables
 import dev.cjrv.azureversionator.data.network.AzureDevOpsApi
 import dev.cjrv.azureversionator.data.settings.AzureSettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow

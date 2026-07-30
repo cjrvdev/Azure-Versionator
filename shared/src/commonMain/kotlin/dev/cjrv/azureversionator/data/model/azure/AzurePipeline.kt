@@ -1,4 +1,4 @@
-package dev.cjrv.azureversionator.data.model
+package dev.cjrv.azureversionator.data.model.azure
 
 data class AzurePipeline(
     val id: String,

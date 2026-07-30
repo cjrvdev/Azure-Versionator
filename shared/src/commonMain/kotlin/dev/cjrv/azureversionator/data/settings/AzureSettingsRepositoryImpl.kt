@@ -1,8 +1,8 @@
 package dev.cjrv.azureversionator.data.settings
 
 import com.russhwolf.settings.Settings
-import dev.cjrv.azureversionator.data.model.AzureDevOpsConfig
-import dev.cjrv.azureversionator.data.model.AzureDevOpsPreferencesFilter
+import dev.cjrv.azureversionator.data.model.azure.AzureDevOpsConfig
+import dev.cjrv.azureversionator.data.model.azure.AzureDevOpsPreferencesFilter
 
 class AzureSettingsRepositoryImpl(
     private val settings: Settings

@@ -7,11 +7,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -44,6 +47,7 @@ import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.theme.MarginSmall
 import dev.cjrv.azureversionator.ui.Screen
+import dev.cjrv.azureversionator.ui.composables.CustomDropdownField
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
 import dev.cjrv.azureversionator.ui.composables.CustomSecondaryButton
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
@@ -86,6 +90,21 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                             )
                             .padding(MarginMedium)
                     ) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                            /*CustomDropdownField(
+                                label = "Perfil",
+                            )*/
+                            Spacer(modifier = Modifier.width(MarginMedium))
+                            CustomSecondaryButton(
+                                stringResource(Res.string.settings),
+                                onClick = { navigateToTarget(Settings) },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = vectorResource(Res.drawable.settings),
+                                        contentDescription = stringResource(Res.string.settings)
+                                    )
+                                }
+                            ) }
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center,
@@ -117,16 +136,6 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                             }
                             )
                             Spacer(modifier = Modifier.height(MarginMedium))
-                            CustomSecondaryButton(
-                                stringResource(Res.string.settings),
-                                onClick = { navigateToTarget(Settings) },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = vectorResource(Res.drawable.settings),
-                                        contentDescription = stringResource(Res.string.settings)
-                                    )
-                                }
-                            )
                         }
                         Box(
                             Modifier.fillMaxWidth(),

@@ -1,12 +1,12 @@
 package dev.cjrv.azureversionator.data.network
 
-import dev.cjrv.azureversionator.data.model.AzureBranch
-import dev.cjrv.azureversionator.data.model.AzureDevOpsConfig
-import dev.cjrv.azureversionator.data.model.AzurePipeline
-import dev.cjrv.azureversionator.data.model.AzureRepository
-import dev.cjrv.azureversionator.data.model.AzureWorkItemAttachment
-import dev.cjrv.azureversionator.data.model.PipelineRunResponse
-import dev.cjrv.azureversionator.data.model.PipelineVariables
+import dev.cjrv.azureversionator.data.model.azure.AzureBranch
+import dev.cjrv.azureversionator.data.model.azure.AzureDevOpsConfig
+import dev.cjrv.azureversionator.data.model.azure.AzurePipeline
+import dev.cjrv.azureversionator.data.model.azure.AzureRepository
+import dev.cjrv.azureversionator.data.model.azure.AzureWorkItemAttachment
+import dev.cjrv.azureversionator.data.model.azure.PipelineRunResponse
+import dev.cjrv.azureversionator.data.model.azure.PipelineVariables
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get

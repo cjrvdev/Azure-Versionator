@@ -30,5 +30,7 @@ class HomeViewModel(private val openUrlService: OpenUrlService) : ViewModel() {
 
     data class UIState(
         val isLoading: Boolean = true,
+        val selectedProfileId : String? = null,
+        val profiles : List<String> = listOf("Profile 1", "Profile 2", "Profile 3")
     )
 }
