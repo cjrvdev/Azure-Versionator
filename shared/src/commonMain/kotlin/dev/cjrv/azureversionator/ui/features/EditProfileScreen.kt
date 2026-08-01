@@ -40,6 +40,7 @@ import azureversionator.shared.generated.resources.input_textfield_type
 import azureversionator.shared.generated.resources.profile_name
 import azureversionator.shared.generated.resources.profile_name_placeholder
 import azureversionator.shared.generated.resources.profile_saved
+import azureversionator.shared.generated.resources.remove_profile
 import azureversionator.shared.generated.resources.remove_variable
 import azureversionator.shared.generated.resources.save_changes
 import azureversionator.shared.generated.resources.value_cannot_be_empty
@@ -56,6 +57,7 @@ import dev.cjrv.azureversionator.ui.Screen
 import dev.cjrv.azureversionator.ui.composables.CustomDropdownField
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryCompactButton
+import dev.cjrv.azureversionator.ui.composables.CustomSecondaryCompactButton
 import dev.cjrv.azureversionator.ui.composables.CustomTextField
 import dev.cjrv.azureversionator.ui.composables.CustomTextFieldWithHelp
 import dev.cjrv.azureversionator.ui.composables.ExpandableSection
@@ -127,9 +129,11 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
                             .padding(MarginMedium)
                     ) {
                         item {
-                            ProfileNameField(
+                            ProfileNameOrRemove(
                                 profileName = state.profileName,
-                                onProfileNameChanged = vm::onProfileNameChanged
+                                onProfileNameChanged = vm::onProfileNameChanged,
+                                removeProfile = vm::removeProfile,
+                                navigateBack = onNavigateBack
                             )
                         }
                         item {
@@ -166,18 +170,38 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
 }
 
 @Composable
-private fun ProfileNameField(
+private fun ProfileNameOrRemove(
     profileName: String,
-    onProfileNameChanged: (String) -> Unit
+    onProfileNameChanged: (String) -> Unit,
+    removeProfile: () -> Unit,
+    navigateBack: () -> Unit
 ) {
-    CustomTextField(
-        label = stringResource(Res.string.profile_name),
-        value = profileName,
-        onValueChange = onProfileNameChanged,
-        modifier = Modifier.fillMaxWidth(),
-        placeholder = stringResource(Res.string.profile_name_placeholder),
-        imeAction = ImeAction.Next
-    )
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        CustomTextField(
+            label = stringResource(Res.string.profile_name),
+            value = profileName,
+            onValueChange = onProfileNameChanged,
+            modifier = Modifier.weight(1f),
+            placeholder = stringResource(Res.string.profile_name_placeholder),
+            imeAction = ImeAction.Next
+        )
+        Spacer(modifier = Modifier.width(MarginSmall))
+        CustomSecondaryCompactButton(
+            text = stringResource(Res.string.remove_profile),
+            onClick = {
+                removeProfile()
+                navigateBack()
+            },
+            modifier = Modifier.align(Alignment.CenterVertically),
+            leadingIcon = {
+                Icon(
+                    imageVector = vectorResource(Res.drawable.delete),
+                    contentDescription = stringResource(Res.string.remove_profile),
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
+        )
+    }
 }
 
 @Composable
@@ -249,7 +273,7 @@ fun VariableRow(
                 tint = MaterialTheme.colorScheme.error
             )
         }
-        Column (modifier = Modifier.weight(1f)) {
+        Column(modifier = Modifier.weight(1f)) {
             Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
                 CustomTextField(
                     label = stringResource(Res.string.variable_name),

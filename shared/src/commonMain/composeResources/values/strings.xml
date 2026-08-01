@@ -56,6 +56,8 @@
 
     <!-- Profiles -->
     <string name="edit_profile">Edit Profile</string>"
+    <string name="new_profile">New Profile</string>
+    <string name="remove_profile">Remove Profile</string>
     <string name="variables">Variables</string>"
     <string name="variable_name">Name</string>"
     <string name="variable_default_value">Default Value</string>"

@@ -39,6 +39,7 @@ import azureversionator.shared.generated.resources.attachment_bulk_downloader
 import azureversionator.shared.generated.resources.download
 import azureversionator.shared.generated.resources.edit
 import azureversionator.shared.generated.resources.edit_profile
+import azureversionator.shared.generated.resources.new_profile
 import azureversionator.shared.generated.resources.new_version
 import azureversionator.shared.generated.resources.selected_profile
 import azureversionator.shared.generated.resources.settings
@@ -110,6 +111,17 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                     state.profiles.find { it.id == profileId }?.name ?: ""
                                 },
                                 modifier = Modifier.widthIn(max = 250.dp)
+                            )
+                            Spacer(modifier = Modifier.width(MarginMedium))
+                            CustomSecondaryCompactButton(
+                                text = stringResource(Res.string.new_profile),
+                                onClick = { vm.createNewProfile() },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = vectorResource(Res.drawable.add_task),
+                                        contentDescription = stringResource(Res.string.new_profile)
+                                    )
+                                }
                             )
                             Spacer(modifier = Modifier.width(MarginMedium))
                             CustomSecondaryCompactButton(

@@ -42,13 +42,7 @@ class AzureSettingsRepositoryImpl(
 
         // No profiles
         if (profileKeys.isEmpty()){
-            val defaultProfile = Profile(
-                name = "Default",
-                teamProjectName = "",
-                variables = emptyList()
-            )
-            saveProfile(defaultProfile)
-            setActiveProfile(defaultProfile)
+            val defaultProfile = createNewProfile()
             return listOf(defaultProfile)
         }
         return profileKeys.mapNotNull { key ->
@@ -64,6 +58,9 @@ class AzureSettingsRepositoryImpl(
 
     override fun deleteProfile(profile: Profile) {
         settings.remove("${KEY_PROFILES}_${profile.id}")
+        if (profile.id == getActiveProfile().id) {
+            setActiveProfile(loadProfiles().first())
+        }
     }
 
     override fun getProfile(id: String): Profile? {
@@ -78,6 +75,18 @@ class AzureSettingsRepositoryImpl(
     override fun getActiveProfile(): Profile {
         val defaultProfileId = settings.getString(KEY_DEFAULT_SELECTED_PROFILE_ID, "")
         return getProfile(defaultProfileId) ?: loadProfiles().first()
+    }
+
+    override fun createNewProfile(): Profile {
+        val defaultProfile = Profile(
+            name = "New profile",
+            teamProjectName = "",
+            variables = emptyList()
+        )
+        saveProfile(defaultProfile)
+        setActiveProfile(defaultProfile)
+
+        return defaultProfile
     }
 
     private companion object {

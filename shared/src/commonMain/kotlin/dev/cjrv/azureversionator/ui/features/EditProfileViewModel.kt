@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class EditProfileViewModel(private val settingsRepository : AzureSettingsRepository) : ViewModel() {
+class EditProfileViewModel(private val settingsRepository: AzureSettingsRepository) : ViewModel() {
     private val _state = MutableStateFlow(UIState())
     val state: StateFlow<UIState> = _state.asStateFlow()
 
@@ -36,7 +36,7 @@ class EditProfileViewModel(private val settingsRepository : AzureSettingsReposit
         }
     }
 
-    fun addNewVariable(){
+    fun addNewVariable() {
         val newVariable = AzureVariable(name = "", value = "", isSecret = false)
         _state.update { current ->
             current.copy(variables = current.variables + newVariable)
@@ -77,6 +77,10 @@ class EditProfileViewModel(private val settingsRepository : AzureSettingsReposit
         }
     }
 
+    fun onProfileNameChanged(newValue: String) {
+        _state.update { it.copy(profileName = newValue) }
+    }
+
     fun onTeamProjectNameChanged(newValue: String) {
         _state.update { current ->
             current.copy(
@@ -86,8 +90,8 @@ class EditProfileViewModel(private val settingsRepository : AzureSettingsReposit
         }
     }
 
-    fun onProfileNameChanged(newValue: String) {
-        _state.update { it.copy(profileName = newValue) }
+    fun removeProfile() {
+        settingsRepository.deleteProfile(settingsRepository.getActiveProfile())
     }
 
     fun onSaveChangesClicked() {
@@ -134,7 +138,12 @@ class EditProfileViewModel(private val settingsRepository : AzureSettingsReposit
         val hasInvalidVariables = currentState.variables.any {
             it.name.isBlank()
         }
-        _state.update { it.copy(teamProjectNameError = teamProjectNameError, showValidationErrors = true) }
+        _state.update {
+            it.copy(
+                teamProjectNameError = teamProjectNameError,
+                showValidationErrors = true
+            )
+        }
         return !teamProjectNameError && !hasInvalidVariables
     }
 
@@ -148,9 +157,9 @@ class EditProfileViewModel(private val settingsRepository : AzureSettingsReposit
         val selectedProfileId: String? = null,
         val selectedProfileName: String? = null,
         val profileName: String = "",
-        val teamProjectName : String = "",
+        val teamProjectName: String = "",
         val teamProjectNameError: Boolean = false,
-        val variables : List<AzureVariable> = emptyList(),
+        val variables: List<AzureVariable> = emptyList(),
         val showValidationErrors: Boolean = false,
         val saveFeedback: SaveFeedback? = null
     )

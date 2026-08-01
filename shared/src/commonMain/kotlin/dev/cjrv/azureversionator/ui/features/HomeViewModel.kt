@@ -41,6 +41,12 @@ class HomeViewModel(private val openUrlService: OpenUrlService, private val sett
         openUrlService.openInBrowser("https://github.com/cjrvdev")
     }
 
+    fun createNewProfile() {
+        val createdProfile = settingsRepository.createNewProfile()
+        loadProfiles()
+        onSelectedProfileChanged(createdProfile.id)
+    }
+
     data class UIState(
         val isLoading: Boolean = true,
         val selectedProfileId : String? = null,
