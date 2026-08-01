@@ -4,13 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.cjrv.azureversionator.data.model.azure.AzureVariable
 import dev.cjrv.azureversionator.data.settings.AzureSettingsRepository
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
 
 class EditProfileViewModel(private val settingsRepository : AzureSettingsRepository) : ViewModel() {
     private val _state = MutableStateFlow(UIState())
@@ -19,7 +17,6 @@ class EditProfileViewModel(private val settingsRepository : AzureSettingsReposit
     init {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
-            delay(1000L.milliseconds)
             loadVariables()
             _state.update { it.copy(isLoading = false) }
         }
@@ -31,6 +28,7 @@ class EditProfileViewModel(private val settingsRepository : AzureSettingsReposit
             it.copy(
                 selectedProfileId = activeProfile.id,
                 selectedProfileName = activeProfile.name,
+                profileName = activeProfile.name,
                 teamProjectName = activeProfile.teamProjectName,
                 variables = activeProfile.variables
             )
@@ -73,7 +71,16 @@ class EditProfileViewModel(private val settingsRepository : AzureSettingsReposit
     }
 
     fun onTeamProjectNameChanged(newValue: String) {
-        _state.update { it.copy(teamProjectName = newValue, teamProjectNameError = null) }
+        _state.update { current ->
+            current.copy(
+                teamProjectName = newValue,
+                teamProjectNameError = current.showValidationErrors && newValue.isBlank()
+            )
+        }
+    }
+
+    fun onProfileNameChanged(newValue: String) {
+        _state.update { it.copy(profileName = newValue) }
     }
 
     fun onSaveChangesClicked() {
@@ -84,11 +91,12 @@ class EditProfileViewModel(private val settingsRepository : AzureSettingsReposit
         val activeProfile = settingsRepository.getActiveProfile()
         settingsRepository.saveProfile(
             activeProfile.copy(
+                name = state.value.profileName,
                 teamProjectName = state.value.teamProjectName,
                 variables = state.value.variables
             )
         )
-        _state.update { it.copy(saveFeedback = SaveFeedback.Saved) }
+        _state.update { it.copy(saveFeedback = SaveFeedback.Saved, showValidationErrors = false) }
     }
 
     fun onSaveFeedbackConsumed() {
@@ -115,12 +123,12 @@ class EditProfileViewModel(private val settingsRepository : AzureSettingsReposit
 
     private fun validate(): Boolean {
         val currentState = _state.value
-        val teamProjectNameError = if (currentState.teamProjectName.isBlank()) "Required" else null
+        val teamProjectNameError = currentState.teamProjectName.isBlank()
         val hasInvalidVariables = currentState.variables.any {
             it.name.isBlank() || it.value.isBlank()
         }
-        _state.update { it.copy(teamProjectNameError = teamProjectNameError) }
-        return teamProjectNameError == null && !hasInvalidVariables
+        _state.update { it.copy(teamProjectNameError = teamProjectNameError, showValidationErrors = true) }
+        return !teamProjectNameError && !hasInvalidVariables
     }
 
     enum class SaveFeedback {
@@ -132,9 +140,11 @@ class EditProfileViewModel(private val settingsRepository : AzureSettingsReposit
         val isLoading: Boolean = true,
         val selectedProfileId: String? = null,
         val selectedProfileName: String? = null,
+        val profileName: String = "",
         val teamProjectName : String = "",
-        val teamProjectNameError: String? = null,
+        val teamProjectNameError: Boolean = false,
         val variables : List<AzureVariable> = emptyList(),
+        val showValidationErrors: Boolean = false,
         val saveFeedback: SaveFeedback? = null
     )
 }

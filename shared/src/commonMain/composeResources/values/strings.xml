@@ -65,5 +65,7 @@
     <string name="save_changes">Save changes</string>
     <string name="profile_saved">Profile saved</string>
     <string name="edit_profile_validation_error">Team Project and all variables are required</string>
+    <string name="profile_name">Profile name</string>
+    <string name="profile_name_placeholder">Profile name</string>
 
 </resources>

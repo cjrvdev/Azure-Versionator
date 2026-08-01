@@ -35,9 +35,12 @@ import azureversionator.shared.generated.resources.azure_project_name_placeholde
 import azureversionator.shared.generated.resources.delete
 import azureversionator.shared.generated.resources.edit_profile
 import azureversionator.shared.generated.resources.edit_profile_validation_error
+import azureversionator.shared.generated.resources.profile_name
+import azureversionator.shared.generated.resources.profile_name_placeholder
 import azureversionator.shared.generated.resources.profile_saved
 import azureversionator.shared.generated.resources.remove_variable
 import azureversionator.shared.generated.resources.save_changes
+import azureversionator.shared.generated.resources.value_cannot_be_empty
 import azureversionator.shared.generated.resources.variable_is_secret
 import azureversionator.shared.generated.resources.variable_name
 import azureversionator.shared.generated.resources.variable_value
@@ -46,7 +49,6 @@ import dev.cjrv.azureversionator.data.model.azure.AzureVariable
 import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.theme.MarginSmall
-import dev.cjrv.azureversionator.theme.MarginTiny
 import dev.cjrv.azureversionator.ui.Screen
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryCompactButton
@@ -119,7 +121,16 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
                             .padding(MarginMedium)
                     ) {
                         item {
-                            TeamProjectSection(state, vm::onTeamProjectNameChanged)
+                            ProfileNameField(
+                                profileName = state.profileName,
+                                onProfileNameChanged = vm::onProfileNameChanged
+                            )
+                        }
+                        item {
+                            TeamProjectSection(
+                                state = state,
+                                onTeamProjectNameChanged = vm::onTeamProjectNameChanged
+                            )
                         }
                         item {
                             VariablesSection(
@@ -148,13 +159,28 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
 }
 
 @Composable
+private fun ProfileNameField(
+    profileName: String,
+    onProfileNameChanged: (String) -> Unit
+) {
+    CustomTextField(
+        label = stringResource(Res.string.profile_name),
+        value = profileName,
+        onValueChange = onProfileNameChanged,
+        modifier = Modifier.fillMaxWidth(),
+        placeholder = stringResource(Res.string.profile_name_placeholder),
+        imeAction = ImeAction.Next
+    )
+}
+
+@Composable
 fun VariablesSection(
     state: EditProfileViewModel.UIState,
     onAddNewVariable: () -> Unit,
     onVariableNameChanged: (Int, String) -> Unit,
     onVariableValueChanged: (Int, String) -> Unit,
     onVariableSecretChanged: (Int, Boolean) -> Unit,
-    onRemoveVariable: (Int) -> Unit,
+    onRemoveVariable: (Int) -> Unit
 ) {
     ExpandableSection(
         title = {
@@ -178,6 +204,7 @@ fun VariablesSection(
                     onValueChange = { onVariableValueChanged(index, it) },
                     onSecretChange = { onVariableSecretChanged(index, it) },
                     onRemove = { onRemoveVariable(index) },
+                    showValidationErrors = state.showValidationErrors,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -199,6 +226,7 @@ fun VariableRow(
     onValueChange: (String) -> Unit,
     onSecretChange: (Boolean) -> Unit,
     onRemove: () -> Unit,
+    showValidationErrors: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
@@ -217,6 +245,8 @@ fun VariableRow(
             onValueChange = onNameChange,
             modifier = Modifier.weight(1f),
             isPassword = false,
+            isError = showValidationErrors && variable.name.isBlank(),
+            errorMessage = stringResource(Res.string.value_cannot_be_empty),
             imeAction = ImeAction.Next,
         )
         Spacer(modifier = Modifier.width(MarginSmall))
@@ -226,6 +256,8 @@ fun VariableRow(
             onValueChange = onValueChange,
             modifier = Modifier.weight(1f),
             isPassword = variable.isSecret,
+            isError = showValidationErrors && variable.value.isBlank(),
+            errorMessage = stringResource(Res.string.value_cannot_be_empty),
             imeAction = ImeAction.Next,
         )
         Checkbox(checked = variable.isSecret, onCheckedChange = onSecretChange)
@@ -239,7 +271,7 @@ fun VariableRow(
 @Composable
 private fun TeamProjectSection(
     state: EditProfileViewModel.UIState,
-    onTeamProjectNameChanged: (String) -> Unit,
+    onTeamProjectNameChanged: (String) -> Unit
 ) {
     ExpandableSection(
         title = {
@@ -265,8 +297,8 @@ private fun TeamProjectSection(
                 onValueChange = { onTeamProjectNameChanged(it) },
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = stringResource(Res.string.azure_project_name_placeholder),
-                isError = state.teamProjectNameError != null,
-                errorMessage = state.teamProjectNameError,
+                isError = state.teamProjectNameError,
+                errorMessage = stringResource(Res.string.value_cannot_be_empty),
                 imeAction = ImeAction.Done,
             )
         }
