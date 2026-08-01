@@ -38,7 +38,6 @@ fun ExpandableSection(
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     Column(
         modifier = modifier
-            .clickable { isExpanded = !isExpanded }
             .background(
                 color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(
                     CornerRadius
@@ -46,7 +45,13 @@ fun ExpandableSection(
             )
             .fillMaxWidth()
     ) {
-        ExpandableSectionTitle(isExpanded = isExpanded, title = title)
+        ExpandableSectionTitle(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { isExpanded = !isExpanded },
+            isExpanded = isExpanded,
+            title = title
+        )
 
         AnimatedVisibility(
             modifier = Modifier
