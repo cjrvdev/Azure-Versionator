@@ -4,7 +4,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AzureVariable(
-    val name: String,
-    val value: String,
-    val isSecret: Boolean = false
+    var name: String,
+    var value: String,
+    var isSecret: Boolean = false,
+    var textFieldType: TextFieldType = TextFieldType.SingleLine
 )
+
+@Serializable
+enum class TextFieldType {
+    SingleLine,
+    Multiline
+}

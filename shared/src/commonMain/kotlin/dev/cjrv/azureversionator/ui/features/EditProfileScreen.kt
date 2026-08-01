@@ -8,14 +8,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -35,21 +36,24 @@ import azureversionator.shared.generated.resources.azure_project_name_placeholde
 import azureversionator.shared.generated.resources.delete
 import azureversionator.shared.generated.resources.edit_profile
 import azureversionator.shared.generated.resources.edit_profile_validation_error
+import azureversionator.shared.generated.resources.input_textfield_type
 import azureversionator.shared.generated.resources.profile_name
 import azureversionator.shared.generated.resources.profile_name_placeholder
 import azureversionator.shared.generated.resources.profile_saved
 import azureversionator.shared.generated.resources.remove_variable
 import azureversionator.shared.generated.resources.save_changes
 import azureversionator.shared.generated.resources.value_cannot_be_empty
+import azureversionator.shared.generated.resources.variable_default_value
 import azureversionator.shared.generated.resources.variable_is_secret
 import azureversionator.shared.generated.resources.variable_name
-import azureversionator.shared.generated.resources.variable_default_value
 import azureversionator.shared.generated.resources.variables
 import dev.cjrv.azureversionator.data.model.azure.AzureVariable
+import dev.cjrv.azureversionator.data.model.azure.TextFieldType
 import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.theme.MarginSmall
 import dev.cjrv.azureversionator.ui.Screen
+import dev.cjrv.azureversionator.ui.composables.CustomDropdownField
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryCompactButton
 import dev.cjrv.azureversionator.ui.composables.CustomTextField
@@ -141,6 +145,7 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
                                 onVariableNameChanged = vm::onVariableNameChanged,
                                 onVariableValueChanged = vm::onVariableValueChanged,
                                 onVariableSecretChanged = vm::onVariableSecretChanged,
+                                onVariableTextFieldTypeChanged = vm::onVariableTextFieldTypeChanged,
                                 onRemoveVariable = vm::removeVariable
                             )
                         }
@@ -182,6 +187,7 @@ fun VariablesSection(
     onVariableNameChanged: (Int, String) -> Unit,
     onVariableValueChanged: (Int, String) -> Unit,
     onVariableSecretChanged: (Int, Boolean) -> Unit,
+    onVariableTextFieldTypeChanged: (Int, TextFieldType) -> Unit,
     onRemoveVariable: (Int) -> Unit
 ) {
     ExpandableSection(
@@ -205,6 +211,7 @@ fun VariablesSection(
                     onNameChange = { onVariableNameChanged(index, it) },
                     onValueChange = { onVariableValueChanged(index, it) },
                     onSecretChange = { onVariableSecretChanged(index, it) },
+                    onVariableTextFieldTypeChanged = { onVariableTextFieldTypeChanged(index, it) },
                     onRemove = { onRemoveVariable(index) },
                     showValidationErrors = state.showValidationErrors,
                     modifier = Modifier.fillMaxWidth()
@@ -227,12 +234,13 @@ fun VariableRow(
     onNameChange: (String) -> Unit,
     onValueChange: (String) -> Unit,
     onSecretChange: (Boolean) -> Unit,
+    onVariableTextFieldTypeChanged: (TextFieldType) -> Unit,
     onRemove: () -> Unit,
     showValidationErrors: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        IconButton(
+        OutlinedIconButton(
             onClick = onRemove
         ) {
             Icon(
@@ -241,25 +249,38 @@ fun VariableRow(
                 tint = MaterialTheme.colorScheme.error
             )
         }
-        CustomTextField(
-            label = stringResource(Res.string.variable_name),
-            value = variable.name,
-            onValueChange = onNameChange,
-            modifier = Modifier.weight(1f),
-            isPassword = false,
-            isError = showValidationErrors && variable.name.isBlank(),
-            errorMessage = stringResource(Res.string.value_cannot_be_empty),
-            imeAction = ImeAction.Next,
-        )
-        Spacer(modifier = Modifier.width(MarginSmall))
-        CustomTextField(
-            label = stringResource(Res.string.variable_default_value),
-            value = variable.value,
-            onValueChange = onValueChange,
-            modifier = Modifier.weight(1f),
-            isPassword = variable.isSecret,
-            imeAction = ImeAction.Next,
-        )
+        Column (modifier = Modifier.weight(1f)) {
+            Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+                CustomTextField(
+                    label = stringResource(Res.string.variable_name),
+                    value = variable.name,
+                    onValueChange = onNameChange,
+                    modifier = Modifier,
+                    isPassword = false,
+                    isError = showValidationErrors && variable.name.isBlank(),
+                    errorMessage = stringResource(Res.string.value_cannot_be_empty),
+                    imeAction = ImeAction.Next,
+                )
+                Spacer(modifier = Modifier.width(MarginSmall))
+                CustomDropdownField(
+                    label = stringResource(Res.string.input_textfield_type),
+                    selectedItem = variable.textFieldType,
+                    options = TextFieldType.entries,
+                    optionLabel = { it.name },
+                    onOptionSelected = onVariableTextFieldTypeChanged
+                )
+            }
+            Spacer(modifier = Modifier.height(MarginSmall))
+            CustomTextField(
+                label = stringResource(Res.string.variable_default_value),
+                value = variable.value,
+                onValueChange = onValueChange,
+                modifier = Modifier.fillMaxWidth(),
+                isPassword = variable.isSecret,
+                imeAction = ImeAction.Next,
+            )
+        }
+
         Checkbox(checked = variable.isSecret, onCheckedChange = onSecretChange)
         Text(
             text = stringResource(Res.string.variable_is_secret),

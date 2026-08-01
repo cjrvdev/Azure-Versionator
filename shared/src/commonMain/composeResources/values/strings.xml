@@ -67,5 +67,9 @@
     <string name="edit_profile_validation_error">Team Project and all variables are required</string>
     <string name="profile_name">Profile name</string>
     <string name="profile_name_placeholder">Profile name</string>
+    <string name="selected_profile">Selected profile</string>
+    <string name="input_textfield_type">Textfield type</string>
+    <string name="input_textfield_type_singleline">Single line</string>
+    <string name="input_textfield_type_multiline">Multiline</string>
 
 </resources>

@@ -43,6 +43,7 @@ import azureversionator.shared.generated.resources.release_notes_version_name
 import azureversionator.shared.generated.resources.release_notes_version_name_placeholder
 import azureversionator.shared.generated.resources.return_text
 import azureversionator.shared.generated.resources.upload
+import azureversionator.shared.generated.resources.variables
 import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.ui.Screen
@@ -171,6 +172,11 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                                 errorMessage = state.branchNameError ?: state.loadBranchesError
                             )
                         }
+                        Text(
+                            text = stringResource(Res.string.variables),
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(top = MarginMedium)
+                        )
                         Row(horizontalArrangement = Arrangement.spacedBy(MarginMedium)) {
                             CustomTextField(
                                 label = stringResource(Res.string.release_notes_version_name),

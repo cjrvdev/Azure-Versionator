@@ -3,6 +3,7 @@ package dev.cjrv.azureversionator.ui.features
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.cjrv.azureversionator.data.model.azure.AzureVariable
+import dev.cjrv.azureversionator.data.model.azure.TextFieldType
 import dev.cjrv.azureversionator.data.settings.AzureSettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -67,6 +68,12 @@ class EditProfileViewModel(private val settingsRepository : AzureSettingsReposit
     fun onVariableSecretChanged(index: Int, isSecret: Boolean) {
         updateVariable(index) { variable ->
             variable.copy(isSecret = isSecret)
+        }
+    }
+
+    fun onVariableTextFieldTypeChanged(index: Int, textFieldType: TextFieldType) {
+        updateVariable(index) { variable ->
+            variable.copy(textFieldType = textFieldType)
         }
     }
 

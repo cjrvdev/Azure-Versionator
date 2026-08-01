@@ -40,6 +40,7 @@ import azureversionator.shared.generated.resources.download
 import azureversionator.shared.generated.resources.edit
 import azureversionator.shared.generated.resources.edit_profile
 import azureversionator.shared.generated.resources.new_version
+import azureversionator.shared.generated.resources.selected_profile
 import azureversionator.shared.generated.resources.settings
 import dev.cjrv.azureversionator.navigation.AttachmentBulkDownloader
 import dev.cjrv.azureversionator.navigation.EditProfile
@@ -100,7 +101,7 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             CustomDropdownField(
-                                label = state.selectedProfileName ?: "",
+                                label = stringResource(Res.string.selected_profile),
                                 options = state.profiles.map { it.id },
                                 selectedItem = state.selectedProfileId ?: "",
                                 onOptionSelected = { selectedId ->
