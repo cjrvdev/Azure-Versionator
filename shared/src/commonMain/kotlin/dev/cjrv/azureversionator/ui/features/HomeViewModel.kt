@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dev.cjrv.azureversionator.data.model.app.Profile
 import dev.cjrv.azureversionator.data.openurl.OpenUrlService
 import dev.cjrv.azureversionator.data.settings.AzureSettingsRepository
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,19 +23,27 @@ class HomeViewModel(private val openUrlService: OpenUrlService, private val sett
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             delay(1000L.milliseconds)
-            loadProfiles()
-            _state.update { it.copy(isLoading = false) }
+            settingsRepository.profiles
+                .combine(settingsRepository.activeProfileId) { profiles, activeProfileId ->
+                    profiles to activeProfileId
+                }
+                .collect { (profiles, activeProfileId) ->
+                    val selectedProfile = profiles.find { it.id == activeProfileId } ?: profiles.firstOrNull()
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            profiles = profiles,
+                            selectedProfileId = selectedProfile?.id,
+                            selectedProfileName = selectedProfile?.name
+                        )
+                    }
+                }
         }
-    }
-
-    private fun loadProfiles() {
-        val profiles = settingsRepository.loadProfiles()
-        _state.update { it.copy(profiles = profiles, selectedProfileId = profiles.first().id, selectedProfileName = profiles.first().name) }
     }
 
     fun onSelectedProfileChanged(profileId: String) {
         val selectedProfile = _state.value.profiles.find { it.id == profileId }
-        _state.update { it.copy(selectedProfileId = profileId, selectedProfileName = selectedProfile?.name) }
+        selectedProfile?.let { settingsRepository.setActiveProfile(it) }
     }
 
     fun openAboutMe() {
@@ -43,7 +52,6 @@ class HomeViewModel(private val openUrlService: OpenUrlService, private val sett
 
     fun createNewProfile() {
         val createdProfile = settingsRepository.createNewProfile()
-        loadProfiles()
         onSelectedProfileChanged(createdProfile.id)
     }
 
