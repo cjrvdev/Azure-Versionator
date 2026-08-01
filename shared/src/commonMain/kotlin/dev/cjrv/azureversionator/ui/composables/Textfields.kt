@@ -82,6 +82,7 @@ fun CustomMultilineTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     placeholder: String = "",
+    isPassword: Boolean = false,
     isError: Boolean = false,
     errorMessage: String? = null,
     keyboardType: KeyboardType = KeyboardType.Text
@@ -98,8 +99,13 @@ fun CustomMultilineTextField(
         supportingText = if (isError && errorMessage != null) {
             { Text(errorMessage) }
         } else null,
+        visualTransformation = if (isPassword) {
+            PasswordVisualTransformation()
+        } else {
+            VisualTransformation.None
+        },
         keyboardOptions = KeyboardOptions(
-            keyboardType = keyboardType,
+            keyboardType = if (isPassword) KeyboardType.Password else keyboardType,
             imeAction = ImeAction.Default
         )
     )

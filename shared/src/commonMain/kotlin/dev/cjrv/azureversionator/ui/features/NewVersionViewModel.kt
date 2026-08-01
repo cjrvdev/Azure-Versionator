@@ -8,6 +8,7 @@ import dev.cjrv.azureversionator.data.model.azure.AzureDevOpsConfig
 import dev.cjrv.azureversionator.data.model.azure.AzureDevOpsPreferencesFilter
 import dev.cjrv.azureversionator.data.model.azure.AzurePipeline
 import dev.cjrv.azureversionator.data.model.azure.AzureRepository
+import dev.cjrv.azureversionator.data.model.azure.AzureVariable
 import dev.cjrv.azureversionator.data.network.AzureDevOpsApi
 import dev.cjrv.azureversionator.data.settings.AzureSettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -76,6 +77,23 @@ class NewVersionViewModel(
                 pipelineIdError = null,
                 loadPipelinesError = null
             )
+        }
+    }
+
+    fun onVariableValueChanged(index: Int, newValue: String) {
+        _state.update { current ->
+            val selectedProfile = current.selectedProfile ?: return@update current
+            if (index !in selectedProfile.variables.indices) {
+                current
+            } else {
+                current.copy(
+                    selectedProfile = selectedProfile.copy(
+                        variables = selectedProfile.variables.updateVariable(index) { variable ->
+                            variable.copy(value = newValue)
+                        }
+                    )
+                )
+            }
         }
     }
 
@@ -263,6 +281,12 @@ class NewVersionViewModel(
             _state.value = _state.value.copy(pipelineIdError = null)
         }
 
+        if (s.selectedProfile?.variables?.any { it.isRequired && it.value.isBlank() } == true) {
+            isValid = false
+        }
+
+        _state.value = _state.value.copy(showValidationErrors = true)
+
         return isValid
     }
 
@@ -288,6 +312,17 @@ class NewVersionViewModel(
         }.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, selector))
 
         return filtered + remaining
+    }
+
+    private fun List<AzureVariable>.updateVariable(
+        index: Int,
+        transform: (AzureVariable) -> AzureVariable
+    ): List<AzureVariable> = mapIndexed { variableIndex, variable ->
+        if (variableIndex == index) {
+            transform(variable)
+        } else {
+            variable
+        }
     }
 
     data class UIState(
@@ -316,6 +351,7 @@ class NewVersionViewModel(
         val pipelineIdError: String? = null,
         val loadPipelinesError: String? = null,
 
+        val showValidationErrors: Boolean = false,
         val successMessage: String? = null,
         val generalError: String? = null
     )

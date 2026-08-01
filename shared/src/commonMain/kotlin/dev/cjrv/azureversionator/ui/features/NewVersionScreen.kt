@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -35,15 +36,12 @@ import azureversionator.shared.generated.resources.azure_repository_name_placeho
 import azureversionator.shared.generated.resources.new_version
 import azureversionator.shared.generated.resources.new_version_submit
 import azureversionator.shared.generated.resources.ok
-import azureversionator.shared.generated.resources.release_notes
-import azureversionator.shared.generated.resources.release_notes_build_number
-import azureversionator.shared.generated.resources.release_notes_build_number_placeholder
-import azureversionator.shared.generated.resources.release_notes_placeholder
-import azureversionator.shared.generated.resources.release_notes_version_name
-import azureversionator.shared.generated.resources.release_notes_version_name_placeholder
 import azureversionator.shared.generated.resources.return_text
 import azureversionator.shared.generated.resources.upload
+import azureversionator.shared.generated.resources.value_cannot_be_empty
 import azureversionator.shared.generated.resources.variables
+import dev.cjrv.azureversionator.data.model.azure.AzureVariable
+import dev.cjrv.azureversionator.data.model.azure.TextFieldType
 import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.ui.Screen
@@ -172,12 +170,11 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                                 errorMessage = state.branchNameError ?: state.loadBranchesError
                             )
                         }
-                        Text(
-                            text = stringResource(Res.string.variables),
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(top = MarginMedium)
+                        ProfileVariablesSection(
+                            variables = state.selectedProfile?.variables.orEmpty(),
+                            showValidationErrors = state.showValidationErrors,
+                            onVariableValueChanged = vm::onVariableValueChanged
                         )
-                        // QUE HAGO AQUI
 
                         CustomPrimaryButton(
                             text = stringResource(Res.string.new_version_submit),
@@ -196,5 +193,96 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ProfileVariablesSection(
+    variables: List<AzureVariable>,
+    showValidationErrors: Boolean,
+    onVariableValueChanged: (Int, String) -> Unit
+) {
+    if (variables.isEmpty()) return
+
+    val singleLineVariables = variables.withIndex()
+        .filter { it.value.textFieldType == TextFieldType.SingleLine }
+        .chunked(2)
+    val multilineVariables = variables.withIndex()
+        .filter { it.value.textFieldType == TextFieldType.Multiline }
+
+    Text(
+        text = stringResource(Res.string.variables),
+        style = MaterialTheme.typography.titleMedium,
+        modifier = Modifier.padding(top = MarginMedium)
+    )
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(MarginMedium),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        singleLineVariables.forEach { variablePair ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(MarginMedium),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                variablePair.forEach { indexedVariable ->
+                    VariableField(
+                        variable = indexedVariable.value,
+                        showValidationErrors = showValidationErrors,
+                        onValueChange = { value -> onVariableValueChanged(indexedVariable.index, value) },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
+                if (variablePair.size == 1) {
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+            }
+        }
+
+        multilineVariables.forEach { indexedVariable ->
+            VariableField(
+                variable = indexedVariable.value,
+                showValidationErrors = showValidationErrors,
+                onValueChange = { value -> onVariableValueChanged(indexedVariable.index, value) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 120.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun VariableField(
+    variable: AzureVariable,
+    showValidationErrors: Boolean,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val isError = showValidationErrors && variable.isRequired && variable.value.isBlank()
+    val errorMessage = if (isError) stringResource(Res.string.value_cannot_be_empty) else null
+
+    if (variable.textFieldType == TextFieldType.Multiline) {
+        CustomMultilineTextField(
+            label = variable.name,
+            value = variable.value,
+            onValueChange = onValueChange,
+            modifier = modifier,
+            isPassword = variable.isSecret,
+            isError = isError,
+            errorMessage = errorMessage
+        )
+    } else {
+        CustomTextField(
+            label = variable.name,
+            value = variable.value,
+            onValueChange = onValueChange,
+            modifier = modifier,
+            isPassword = variable.isSecret,
+            isError = isError,
+            errorMessage = errorMessage,
+            imeAction = ImeAction.Next
+        )
     }
 }
