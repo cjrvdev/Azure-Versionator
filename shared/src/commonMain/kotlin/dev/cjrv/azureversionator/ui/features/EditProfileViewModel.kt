@@ -1,5 +1,6 @@
 package dev.cjrv.azureversionator.ui.features
 
+import dev.cjrv.azureversionator.data.model.azure.AzureDevOpsPreferencesFilter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.cjrv.azureversionator.data.model.azure.AzureVariable
@@ -31,7 +32,10 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
                 selectedProfileName = activeProfile.name,
                 profileName = activeProfile.name,
                 teamProjectName = activeProfile.teamProjectName,
-                variables = activeProfile.variables
+                variables = activeProfile.variables,
+                branchFilter = activeProfile.filters.branchFilter.joinToString(";"),
+                pipelineFilter = activeProfile.filters.pipelineFilter.joinToString(";"),
+                repositoryFilter = activeProfile.filters.repositoryFilter.joinToString(";")
             )
         }
     }
@@ -96,6 +100,18 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
         }
     }
 
+    fun onBranchFilterChanged(newValue: String) {
+        _state.update { it.copy(branchFilter = newValue) }
+    }
+
+    fun onPipelineFilterChanged(newValue: String) {
+        _state.update { it.copy(pipelineFilter = newValue) }
+    }
+
+    fun onRepositoryFilterChanged(newValue: String) {
+        _state.update { it.copy(repositoryFilter = newValue) }
+    }
+
     fun removeProfile() {
         settingsRepository.deleteProfile(settingsRepository.getActiveProfile())
     }
@@ -110,7 +126,12 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
             activeProfile.copy(
                 name = state.value.profileName,
                 teamProjectName = state.value.teamProjectName,
-                variables = state.value.variables
+                variables = state.value.variables,
+                filters = AzureDevOpsPreferencesFilter(
+                    branchFilter = state.value.branchFilter.splitFilterValues(),
+                    pipelineFilter = state.value.pipelineFilter.splitFilterValues(),
+                    repositoryFilter = state.value.repositoryFilter.splitFilterValues()
+                )
             )
         )
         _state.update { it.copy(saveFeedback = SaveFeedback.Saved, showValidationErrors = false) }
@@ -153,6 +174,9 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
         return !teamProjectNameError && !hasInvalidVariables
     }
 
+    private fun String.splitFilterValues(): List<String> =
+        split(';').map { it.trim() }.filter { it.isNotEmpty() }
+
     enum class SaveFeedback {
         Saved,
         ValidationError
@@ -164,6 +188,9 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
         val selectedProfileName: String? = null,
         val profileName: String = "",
         val teamProjectName: String = "",
+        val branchFilter: String = "",
+        val pipelineFilter: String = "",
+        val repositoryFilter: String = "",
         val teamProjectNameError: Boolean = false,
         val variables: List<AzureVariable> = emptyList(),
         val showValidationErrors: Boolean = false,

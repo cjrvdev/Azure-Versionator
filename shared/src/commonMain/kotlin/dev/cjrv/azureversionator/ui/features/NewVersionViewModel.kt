@@ -39,9 +39,8 @@ class NewVersionViewModel(
                 )
             } else {
                 _state.value = _state.value.copy(isConfigurationValid = true, isLoading = true, selectedProfile = selectedProfile)
-                var filters = settingsRepository.loadFilters()
-                loadRepositories(config, filters)
-                loadPipelines(config, filters)
+                loadRepositories(config, selectedProfile.filters)
+                loadPipelines(config, selectedProfile.filters)
                 _state.value = _state.value.copy(isLoading = false)
             }
         }
@@ -161,12 +160,12 @@ class NewVersionViewModel(
             )
 
             val config = settingsRepository.loadConfig()
-            val filters = settingsRepository.loadFilters()
-            azureDevOpsApi.getBranches(config, repositoryId, _state.value.selectedProfile!!)
+            val selectedProfile = _state.value.selectedProfile!!
+            azureDevOpsApi.getBranches(config, repositoryId, selectedProfile)
                 .onSuccess { branches ->
                     _state.value = _state.value.copy(
                         isLoadingBranches = false,
-                        branches = sortWithFilteredFirst(branches, filters.branchFilter) { it.name },
+                        branches = sortWithFilteredFirst(branches, selectedProfile.filters.branchFilter) { it.name },
                         loadBranchesError = null,
                         isLoading = false
                     )

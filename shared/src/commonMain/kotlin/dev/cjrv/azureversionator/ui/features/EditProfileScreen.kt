@@ -36,6 +36,13 @@ import azureversionator.shared.generated.resources.azure_project_name_placeholde
 import azureversionator.shared.generated.resources.delete
 import azureversionator.shared.generated.resources.edit_profile
 import azureversionator.shared.generated.resources.edit_profile_validation_error
+import azureversionator.shared.generated.resources.filter_preferences
+import azureversionator.shared.generated.resources.filter_preferences_branch
+import azureversionator.shared.generated.resources.filter_preferences_branch_help
+import azureversionator.shared.generated.resources.filter_preferences_pipeline
+import azureversionator.shared.generated.resources.filter_preferences_pipeline_help
+import azureversionator.shared.generated.resources.filter_preferences_repository
+import azureversionator.shared.generated.resources.filter_preferences_repository_help
 import azureversionator.shared.generated.resources.input_textfield_type
 import azureversionator.shared.generated.resources.profile_name
 import azureversionator.shared.generated.resources.profile_name_placeholder
@@ -153,6 +160,14 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
                                 onVariableTextFieldTypeChanged = vm::onVariableTextFieldTypeChanged,
                                 onRemoveVariable = vm::removeVariable,
                                 onVariableRequiredChanged = vm::onVariableRequiredChanged
+                            )
+                        }
+                        item {
+                            FilterPreferencesSection(
+                                state = state,
+                                onPipelineFilterChange = vm::onPipelineFilterChanged,
+                                onRepositoryFilterChange = vm::onRepositoryFilterChanged,
+                                onBranchFilterChange = vm::onBranchFilterChanged
                             )
                         }
                         item {
@@ -344,4 +359,61 @@ private fun TeamProjectSection(
         errorMessage = stringResource(Res.string.value_cannot_be_empty),
         imeAction = ImeAction.Done,
     )
+}
+
+@Composable
+private fun FilterPreferencesSection(
+    state: EditProfileViewModel.UIState,
+    onPipelineFilterChange: (String) -> Unit,
+    onRepositoryFilterChange: (String) -> Unit,
+    onBranchFilterChange: (String) -> Unit
+) {
+    ExpandableSection(
+        title = {
+            Text(
+                text = stringResource(Res.string.filter_preferences),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(MarginMedium),
+            modifier = Modifier.padding(
+                start = MarginMedium,
+                end = MarginMedium,
+                bottom = MarginMedium
+            )
+        ) {
+            CustomTextFieldWithHelp(
+                label = stringResource(Res.string.filter_preferences_pipeline),
+                value = state.pipelineFilter,
+                helpText = stringResource(Res.string.filter_preferences_pipeline_help),
+                onValueChange = onPipelineFilterChange,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = stringResource(Res.string.filter_preferences_pipeline),
+                imeAction = ImeAction.Next
+            )
+
+            CustomTextFieldWithHelp(
+                label = stringResource(Res.string.filter_preferences_repository),
+                value = state.repositoryFilter,
+                helpText = stringResource(Res.string.filter_preferences_repository_help),
+                onValueChange = onRepositoryFilterChange,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = stringResource(Res.string.filter_preferences_repository),
+                imeAction = ImeAction.Next
+            )
+
+            CustomTextFieldWithHelp(
+                label = stringResource(Res.string.filter_preferences_branch),
+                value = state.branchFilter,
+                helpText = stringResource(Res.string.filter_preferences_branch_help),
+                onValueChange = onBranchFilterChange,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = stringResource(Res.string.filter_preferences_branch),
+                imeAction = ImeAction.Done
+            )
+        }
+    }
 }

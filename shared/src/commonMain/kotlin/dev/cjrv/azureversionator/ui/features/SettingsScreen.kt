@@ -33,13 +33,6 @@ import azureversionator.shared.generated.resources.azure_organization_placeholde
 import azureversionator.shared.generated.resources.azure_pat
 import azureversionator.shared.generated.resources.azure_pat_help
 import azureversionator.shared.generated.resources.azure_pat_placeholder
-import azureversionator.shared.generated.resources.filter_preferences
-import azureversionator.shared.generated.resources.filter_preferences_branch
-import azureversionator.shared.generated.resources.filter_preferences_branch_help
-import azureversionator.shared.generated.resources.filter_preferences_pipeline
-import azureversionator.shared.generated.resources.filter_preferences_pipeline_help
-import azureversionator.shared.generated.resources.filter_preferences_repository
-import azureversionator.shared.generated.resources.filter_preferences_repository_help
 import azureversionator.shared.generated.resources.save
 import azureversionator.shared.generated.resources.save_settings
 import azureversionator.shared.generated.resources.settings
@@ -114,12 +107,6 @@ fun SettingsScreen(onNavigateBack: () -> Unit) {
                             vm::onPersonalAccessTokenChange,
                             vm::onOrganizationChange
                         )
-                        FilterPreferences(
-                            state,
-                            vm::onPipelineFilterChange,
-                            vm::onRepositoryFilterChange,
-                            vm::onBranchFilterChange
-                        )
                         Spacer(modifier = Modifier.height(MarginSmall))
 
                         CustomPrimaryButton(
@@ -191,66 +178,3 @@ private fun ConnectionSettings(
     }
 }
 
-
-@Composable
-private fun FilterPreferences(
-    state: SettingsViewModel.UIState,
-    onPipelineFilterChange: (String) -> Unit,
-    onRepositoryFilterChange: (String) -> Unit,
-    onBranchFilterChange: (String) -> Unit
-) {
-    ExpandableSection(
-        title = {
-            Text(
-                text = stringResource(Res.string.filter_preferences),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
-    ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(MarginMedium),
-            modifier = Modifier.padding(
-                start = MarginMedium,
-                end = MarginMedium,
-                bottom = MarginMedium
-            )
-        ) {
-            CustomTextFieldWithHelp(
-                label = stringResource(Res.string.filter_preferences_pipeline),
-                value = state.pipelineFilter,
-                helpText = stringResource(Res.string.filter_preferences_pipeline_help),
-                onValueChange = onPipelineFilterChange,
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = stringResource(Res.string.filter_preferences_pipeline),
-                isError = state.pipelineFilterError != null,
-                errorMessage = state.pipelineFilterError,
-                imeAction = ImeAction.Next
-            )
-
-            CustomTextFieldWithHelp(
-                label = stringResource(Res.string.filter_preferences_repository),
-                value = state.repositoryFilter,
-                helpText = stringResource(Res.string.filter_preferences_repository_help),
-                onValueChange = onRepositoryFilterChange,
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = stringResource(Res.string.filter_preferences_repository),
-                isError = state.repositoryFilterError != null,
-                errorMessage = state.repositoryFilterError,
-                imeAction = ImeAction.Next
-            )
-
-            CustomTextFieldWithHelp(
-                label = stringResource(Res.string.filter_preferences_branch),
-                value = state.branchFilter,
-                helpText = stringResource(Res.string.filter_preferences_branch_help),
-                onValueChange = onBranchFilterChange,
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = stringResource(Res.string.filter_preferences_branch),
-                isError = state.branchFilterError != null,
-                errorMessage = state.branchFilterError,
-                imeAction = ImeAction.Done
-            )
-        }
-    }
-}

@@ -3,7 +3,6 @@ package dev.cjrv.azureversionator.data.settings
 import com.russhwolf.settings.Settings
 import dev.cjrv.azureversionator.data.model.app.Profile
 import dev.cjrv.azureversionator.data.model.azure.AzureDevOpsConfig
-import dev.cjrv.azureversionator.data.model.azure.AzureDevOpsPreferencesFilter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.json.Json
@@ -29,23 +28,6 @@ class AzureSettingsRepositoryImpl(
     override fun saveConfig(config: AzureDevOpsConfig) {
         settings.putString(KEY_ORGANIZATION, config.organization)
         settings.putString(KEY_PAT, config.personalAccessToken)
-    }
-
-    override fun loadFilters(): AzureDevOpsPreferencesFilter =
-        AzureDevOpsPreferencesFilter(
-            branchFilter = settings.getString(KEY_FILTER_BRANCH, "").split(';'),
-            pipelineFilter = settings.getString(KEY_FILTER_PIPELINE, "").split(';'),
-            repositoryFilter = settings.getString(KEY_FILTER_REPOSITORY, "").split(';'),
-        )
-
-    override fun saveFilters(
-        branches: String,
-        pipelines: String,
-        repositories: String
-    ) {
-        settings.putString(KEY_FILTER_BRANCH, branches)
-        settings.putString(KEY_FILTER_PIPELINE, pipelines)
-        settings.putString(KEY_FILTER_REPOSITORY, repositories)
     }
 
     override fun loadProfiles(): List<Profile> {
@@ -122,9 +104,6 @@ class AzureSettingsRepositoryImpl(
     private companion object {
         const val KEY_ORGANIZATION = "azure_organization"
         const val KEY_PAT = "azure_pat"
-        const val KEY_FILTER_BRANCH = "branch_filter"
-        const val KEY_FILTER_PIPELINE = "pipeline_filter"
-        const val KEY_FILTER_REPOSITORY = "repository_filter"
         const val KEY_PROFILES = "profiles"
         const val KEY_DEFAULT_SELECTED_PROFILE_ID = "default_profile"
     }

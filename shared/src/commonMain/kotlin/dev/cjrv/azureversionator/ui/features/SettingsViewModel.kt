@@ -20,15 +20,11 @@ class SettingsViewModel(
     init {
         viewModelScope.launch {
             val config = settingsRepository.loadConfig()
-            val filters = settingsRepository.loadFilters()
             _state.update {
                 it.copy(
                     isLoading = false,
                     organization = config.organization,
-                    personalAccessToken = config.personalAccessToken,
-                    branchFilter = filters.branchFilter.joinToString(separator = ";"),
-                    pipelineFilter = filters.pipelineFilter.joinToString(separator = ";"),
-                    repositoryFilter = filters.repositoryFilter.joinToString(separator = ";")
+                    personalAccessToken = config.personalAccessToken
                 )
             }
         }
@@ -40,15 +36,6 @@ class SettingsViewModel(
     fun onPersonalAccessTokenChange(value: String) =
         _state.update { it.copy(personalAccessToken = value) }
 
-    fun onBranchFilterChange(value: String) =
-        _state.update { it.copy(branchFilter = value) }
-
-    fun onRepositoryFilterChange(value: String) =
-        _state.update { it.copy(repositoryFilter = value) }
-
-    fun onPipelineFilterChange(value: String) =
-        _state.update { it.copy(pipelineFilter = value) }
-
     fun saveSettings() {
         if (!validate()) return
         val s = _state.value
@@ -57,13 +44,7 @@ class SettingsViewModel(
                 organization = s.organization,
                 personalAccessToken = s.personalAccessToken
             )
-        ).also {
-            settingsRepository.saveFilters(
-                branches = s.branchFilter,
-                pipelines = s.pipelineFilter,
-                repositories = s.repositoryFilter
-            )
-        }
+        )
         _state.update { it.copy(savedFeedback = true) }
     }
 
@@ -89,14 +70,8 @@ class SettingsViewModel(
         val isLoading: Boolean = true,
         val organization: String = "",
         val personalAccessToken: String = "",
-        val branchFilter: String = "",
-        val pipelineFilter: String = "",
-        val repositoryFilter: String = "",
         val organizationError: String? = null,
         val personalAccessTokenError: String? = null,
-        val branchFilterError: String? = null,
-        val pipelineFilterError: String? = null,
-        val repositoryFilterError: String? = null,
         val savedFeedback: Boolean = false,
     )
 }
