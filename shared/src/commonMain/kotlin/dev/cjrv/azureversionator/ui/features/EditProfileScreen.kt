@@ -17,10 +17,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
@@ -30,6 +34,8 @@ import azureversionator.shared.generated.resources.azure_project_name
 import azureversionator.shared.generated.resources.azure_project_name_placeholder
 import azureversionator.shared.generated.resources.delete
 import azureversionator.shared.generated.resources.edit_profile
+import azureversionator.shared.generated.resources.edit_profile_validation_error
+import azureversionator.shared.generated.resources.profile_saved
 import azureversionator.shared.generated.resources.remove_variable
 import azureversionator.shared.generated.resources.save_changes
 import azureversionator.shared.generated.resources.variable_is_secret
@@ -39,6 +45,8 @@ import azureversionator.shared.generated.resources.variables
 import dev.cjrv.azureversionator.data.model.azure.AzureVariable
 import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
+import dev.cjrv.azureversionator.theme.MarginSmall
+import dev.cjrv.azureversionator.theme.MarginTiny
 import dev.cjrv.azureversionator.ui.Screen
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryCompactButton
@@ -56,6 +64,23 @@ import org.koin.compose.viewmodel.koinViewModel
 fun EditProfileScreen(onNavigateBack: () -> Unit) {
     val vm = koinViewModel<EditProfileViewModel>()
     val state by vm.state.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val saveSuccessMessage = stringResource(Res.string.profile_saved)
+    val validationErrorMessage = stringResource(Res.string.edit_profile_validation_error)
+
+    LaunchedEffect(state.saveFeedback) {
+        when (state.saveFeedback) {
+            EditProfileViewModel.SaveFeedback.Saved -> {
+                snackbarHostState.showSnackbar(saveSuccessMessage)
+                vm.onSaveFeedbackConsumed()
+            }
+            EditProfileViewModel.SaveFeedback.ValidationError -> {
+                snackbarHostState.showSnackbar(validationErrorMessage)
+                vm.onSaveFeedbackConsumed()
+            }
+            null -> Unit
+        }
+    }
 
     Screen {
         Scaffold(
@@ -65,7 +90,8 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
                     hasBackButton = true,
                     onBackPressed = { onNavigateBack() }
                 )
-            }
+            },
+            snackbarHost = { SnackbarHost(snackbarHostState) }
         ) { innerPadding ->
             Box(
                 modifier = Modifier
@@ -143,7 +169,7 @@ fun VariablesSection(
             verticalArrangement = Arrangement.spacedBy(MarginMedium),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = MarginMedium, vertical = MarginMedium)
+                .padding(horizontal = MarginMedium)
         ) {
             state.variables.forEachIndexed { index, variable ->
                 VariableRow(
@@ -176,6 +202,15 @@ fun VariableRow(
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        IconButton(
+            onClick = onRemove
+        ) {
+            Icon(
+                imageVector = vectorResource(Res.drawable.delete),
+                contentDescription = stringResource(Res.string.remove_variable),
+                tint = MaterialTheme.colorScheme.error
+            )
+        }
         CustomTextField(
             label = stringResource(Res.string.variable_name),
             value = variable.name,
@@ -184,7 +219,7 @@ fun VariableRow(
             isPassword = false,
             imeAction = ImeAction.Next,
         )
-        Spacer(modifier = Modifier.width(MarginMedium))
+        Spacer(modifier = Modifier.width(MarginSmall))
         CustomTextField(
             label = stringResource(Res.string.variable_value),
             value = variable.value,
@@ -193,18 +228,11 @@ fun VariableRow(
             isPassword = variable.isSecret,
             imeAction = ImeAction.Next,
         )
-        Spacer(modifier = Modifier.width(MarginMedium))
         Checkbox(checked = variable.isSecret, onCheckedChange = onSecretChange)
         Text(
             text = stringResource(Res.string.variable_is_secret),
             color = MaterialTheme.colorScheme.onSurface,
         )
-        Spacer(modifier = Modifier.width(MarginMedium))
-        IconButton(
-            onClick = onRemove
-        ) {
-            Icon(imageVector = vectorResource(Res.drawable.delete), contentDescription = stringResource(Res.string.remove_variable))
-        }
     }
 }
 
@@ -237,7 +265,8 @@ private fun TeamProjectSection(
                 onValueChange = { onTeamProjectNameChanged(it) },
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = stringResource(Res.string.azure_project_name_placeholder),
-                isPassword = true,
+                isError = state.teamProjectNameError != null,
+                errorMessage = state.teamProjectNameError,
                 imeAction = ImeAction.Done,
             )
         }

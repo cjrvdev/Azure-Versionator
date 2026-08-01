@@ -73,10 +73,27 @@ class EditProfileViewModel(private val settingsRepository : AzureSettingsReposit
     }
 
     fun onTeamProjectNameChanged(newValue: String) {
-        _state.update { it.copy(teamProjectName = newValue) }
+        _state.update { it.copy(teamProjectName = newValue, teamProjectNameError = null) }
     }
 
-    fun onSaveChangesClicked() = Unit
+    fun onSaveChangesClicked() {
+        if (!validate()) {
+            _state.update { it.copy(saveFeedback = SaveFeedback.ValidationError) }
+            return
+        }
+        val activeProfile = settingsRepository.getActiveProfile()
+        settingsRepository.saveProfile(
+            activeProfile.copy(
+                teamProjectName = state.value.teamProjectName,
+                variables = state.value.variables
+            )
+        )
+        _state.update { it.copy(saveFeedback = SaveFeedback.Saved) }
+    }
+
+    fun onSaveFeedbackConsumed() {
+        _state.update { it.copy(saveFeedback = null) }
+    }
 
     private fun updateVariable(index: Int, transform: (AzureVariable) -> AzureVariable) {
         _state.update { current ->
@@ -96,11 +113,28 @@ class EditProfileViewModel(private val settingsRepository : AzureSettingsReposit
         }
     }
 
+    private fun validate(): Boolean {
+        val currentState = _state.value
+        val teamProjectNameError = if (currentState.teamProjectName.isBlank()) "Required" else null
+        val hasInvalidVariables = currentState.variables.any {
+            it.name.isBlank() || it.value.isBlank()
+        }
+        _state.update { it.copy(teamProjectNameError = teamProjectNameError) }
+        return teamProjectNameError == null && !hasInvalidVariables
+    }
+
+    enum class SaveFeedback {
+        Saved,
+        ValidationError
+    }
+
     data class UIState(
         val isLoading: Boolean = true,
         val selectedProfileId: String? = null,
         val selectedProfileName: String? = null,
         val teamProjectName : String = "",
-        val variables : List<AzureVariable> = emptyList()
+        val teamProjectNameError: String? = null,
+        val variables : List<AzureVariable> = emptyList(),
+        val saveFeedback: SaveFeedback? = null
     )
 }

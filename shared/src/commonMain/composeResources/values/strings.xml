@@ -8,6 +8,7 @@
     <string name="expand">Expand</string>
     <string name="collapse">Collapse</string>
     <string name="edit">Edit</string>
+    <string name="value_cannot_be_empty">Value cannot be empty</string>
 
     <!-- Azure DevOps Settings -->
     <string name="azure_devops_settings">Azure DevOps Settings</string>
@@ -58,9 +59,11 @@
     <string name="variables">Variables</string>"
     <string name="variable_name">Name</string>"
     <string name="variable_value">Value</string>"
-    <string name="variable_is_secret">Is Secret</string>"
+    <string name="variable_is_secret">Secret?</string>"
     <string name="add_variable">Add Variable</string>
     <string name="remove_variable">Remove</string>
     <string name="save_changes">Save changes</string>
+    <string name="profile_saved">Profile saved</string>
+    <string name="edit_profile_validation_error">Team Project and all variables are required</string>
 
 </resources>
