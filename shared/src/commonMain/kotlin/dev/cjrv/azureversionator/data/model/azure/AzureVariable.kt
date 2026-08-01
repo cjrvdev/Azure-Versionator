@@ -7,7 +7,8 @@ data class AzureVariable(
     var name: String,
     var value: String,
     var isSecret: Boolean = false,
-    var textFieldType: TextFieldType = TextFieldType.SingleLine
+    var textFieldType: TextFieldType = TextFieldType.SingleLine,
+    var isRequired: Boolean = true
 )
 
 @Serializable

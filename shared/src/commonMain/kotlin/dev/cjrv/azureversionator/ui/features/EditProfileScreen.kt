@@ -42,6 +42,7 @@ import azureversionator.shared.generated.resources.profile_name_placeholder
 import azureversionator.shared.generated.resources.profile_saved
 import azureversionator.shared.generated.resources.remove_profile
 import azureversionator.shared.generated.resources.remove_variable
+import azureversionator.shared.generated.resources.required
 import azureversionator.shared.generated.resources.save_changes
 import azureversionator.shared.generated.resources.value_cannot_be_empty
 import azureversionator.shared.generated.resources.variable_default_value
@@ -150,7 +151,8 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
                                 onVariableValueChanged = vm::onVariableValueChanged,
                                 onVariableSecretChanged = vm::onVariableSecretChanged,
                                 onVariableTextFieldTypeChanged = vm::onVariableTextFieldTypeChanged,
-                                onRemoveVariable = vm::removeVariable
+                                onRemoveVariable = vm::removeVariable,
+                                onVariableRequiredChanged = vm::onVariableRequiredChanged
                             )
                         }
                         item {
@@ -212,7 +214,8 @@ fun VariablesSection(
     onVariableValueChanged: (Int, String) -> Unit,
     onVariableSecretChanged: (Int, Boolean) -> Unit,
     onVariableTextFieldTypeChanged: (Int, TextFieldType) -> Unit,
-    onRemoveVariable: (Int) -> Unit
+    onRemoveVariable: (Int) -> Unit,
+    onVariableRequiredChanged: (Int, Boolean) -> Unit
 ) {
     ExpandableSection(
         title = {
@@ -235,6 +238,7 @@ fun VariablesSection(
                     onNameChange = { onVariableNameChanged(index, it) },
                     onValueChange = { onVariableValueChanged(index, it) },
                     onSecretChange = { onVariableSecretChanged(index, it) },
+                    onRequiredChange = { onVariableRequiredChanged(index, it) },
                     onVariableTextFieldTypeChanged = { onVariableTextFieldTypeChanged(index, it) },
                     onRemove = { onRemoveVariable(index) },
                     showValidationErrors = state.showValidationErrors,
@@ -258,6 +262,7 @@ fun VariableRow(
     onNameChange: (String) -> Unit,
     onValueChange: (String) -> Unit,
     onSecretChange: (Boolean) -> Unit,
+    onRequiredChange: (Boolean) -> Unit,
     onVariableTextFieldTypeChanged: (TextFieldType) -> Unit,
     onRemove: () -> Unit,
     showValidationErrors: Boolean,
@@ -273,14 +278,15 @@ fun VariableRow(
                 tint = MaterialTheme.colorScheme.error
             )
         }
+        Spacer(modifier = Modifier.width(MarginSmall))
         Column(modifier = Modifier.weight(1f)) {
             Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
                 CustomTextField(
                     label = stringResource(Res.string.variable_name),
                     value = variable.name,
                     onValueChange = onNameChange,
-                    modifier = Modifier,
                     isPassword = false,
+                    modifier = Modifier.weight(1f),
                     isError = showValidationErrors && variable.name.isBlank(),
                     errorMessage = stringResource(Res.string.value_cannot_be_empty),
                     imeAction = ImeAction.Next,
@@ -290,26 +296,35 @@ fun VariableRow(
                     label = stringResource(Res.string.input_textfield_type),
                     selectedItem = variable.textFieldType,
                     options = TextFieldType.entries,
+                    modifier = Modifier.weight(1f),
                     optionLabel = { it.name },
                     onOptionSelected = onVariableTextFieldTypeChanged
                 )
+                Row (verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = variable.isRequired, onCheckedChange = onRequiredChange)
+                    Text(
+                        text = stringResource(Res.string.required),
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(MarginSmall))
-            CustomTextField(
-                label = stringResource(Res.string.variable_default_value),
-                value = variable.value,
-                onValueChange = onValueChange,
-                modifier = Modifier.fillMaxWidth(),
-                isPassword = variable.isSecret,
-                imeAction = ImeAction.Next,
-            )
+            Row (modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+                CustomTextField(
+                    label = stringResource(Res.string.variable_default_value),
+                    value = variable.value,
+                    onValueChange = onValueChange,
+                    modifier = Modifier.weight(1f),
+                    isPassword = variable.isSecret,
+                    imeAction = ImeAction.Next,
+                )
+                Checkbox(checked = variable.isSecret, onCheckedChange = onSecretChange)
+                Text(
+                    text = stringResource(Res.string.variable_is_secret),
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
         }
-
-        Checkbox(checked = variable.isSecret, onCheckedChange = onSecretChange)
-        Text(
-            text = stringResource(Res.string.variable_is_secret),
-            color = MaterialTheme.colorScheme.onSurface,
-        )
     }
 }
 

@@ -77,6 +77,12 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
         }
     }
 
+    fun onVariableRequiredChanged(index: Int, isRequired: Boolean) {
+        updateVariable(index) { variable ->
+            variable.copy(isRequired = isRequired)
+        }
+    }
+
     fun onProfileNameChanged(newValue: String) {
         _state.update { it.copy(profileName = newValue) }
     }
