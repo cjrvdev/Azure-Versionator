@@ -7,13 +7,14 @@
     <string name="stay_here">Stay here</string>
     <string name="expand">Expand</string>
     <string name="collapse">Collapse</string>
+    <string name="edit">Edit</string>
 
     <!-- Azure DevOps Settings -->
     <string name="azure_devops_settings">Azure DevOps Settings</string>
     <string name="azure_connection_settings">Azure DevOps Connection Settings</string>
     <string name="azure_organization">Organization</string>
     <string name="azure_organization_placeholder">Organization name</string>
-    <string name="azure_project_name">Project</string>
+    <string name="azure_project_name">Team Project</string>
     <string name="azure_project_name_placeholder">Project name</string>
     <string name="azure_pat">Personal Access Token</string>
     <string name="azure_pat_placeholder">••••••••</string>
@@ -51,5 +52,15 @@
     <string name="workitem_id_placeholder">ID</string>
     <string name="workitem_id_help">ID of the User story, Task, Bug, etc...</string>
     <string name="select_download_path">Change save path</string>
+
+    <!-- Profiles -->
+    <string name="edit_profile">Edit Profile</string>"
+    <string name="variables">Variables</string>"
+    <string name="variable_name">Name</string>"
+    <string name="variable_value">Value</string>"
+    <string name="variable_is_secret">Is Secret</string>"
+    <string name="add_variable">Add Variable</string>
+    <string name="remove_variable">Remove</string>
+    <string name="save_changes">Save changes</string>
 
 </resources>

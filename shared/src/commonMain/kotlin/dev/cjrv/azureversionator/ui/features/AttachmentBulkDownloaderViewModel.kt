@@ -66,7 +66,11 @@ class AttachmentBulkDownloaderViewModel(
             val config = settingsRepository.loadConfig()
             val workItemId = _state.value.workitemId.trim()
 
-            val attachments = azureDevOpsApi.getWorkItemAttachments(config, workItemId, _state.value.selectedProfile!!)
+            val attachments = azureDevOpsApi.getWorkItemAttachments(
+                config,
+                workItemId,
+                _state.value.selectedProfile!!
+            )
                 .getOrElse { error ->
                     _state.update {
                         it.copy(
@@ -191,19 +195,19 @@ class AttachmentBulkDownloaderViewModel(
             }
         }
     }
-}
 
-data class UIState(
-    val isLoading: Boolean = true,
-    val isConfigurationValid: Boolean = true,
-    val workitemId: String = "",
-    val workitemIdError: String? = null,
-    val destinationPath: String = "",
-    val destinationPathError: String? = null,
-    val downloadingMessage: String? = null,
-    val downloadingMessageCurrentFileIndex: Float? = null,
-    val downloadingMessageFileTotalAmount: Float? = null,
-    val successMessage: String? = null,
-    val generalError: String? = null,
-    val selectedProfile : Profile? = null
-)
+    data class UIState(
+        val isLoading: Boolean = true,
+        val isConfigurationValid: Boolean = true,
+        val workitemId: String = "",
+        val workitemIdError: String? = null,
+        val destinationPath: String = "",
+        val destinationPathError: String? = null,
+        val downloadingMessage: String? = null,
+        val downloadingMessageCurrentFileIndex: Float? = null,
+        val downloadingMessageFileTotalAmount: Float? = null,
+        val successMessage: String? = null,
+        val generalError: String? = null,
+        val selectedProfile: Profile? = null
+    )
+}

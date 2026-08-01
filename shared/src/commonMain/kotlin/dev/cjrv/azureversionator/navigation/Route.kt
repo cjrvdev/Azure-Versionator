@@ -34,3 +34,6 @@ data object NewVersion : Route
 @Serializable
 data object AttachmentBulkDownloader : Route
 
+@Serializable
+data object EditProfile : Route
+

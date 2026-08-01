@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -36,9 +37,12 @@ import azureversionator.shared.generated.resources.add_task
 import azureversionator.shared.generated.resources.app_name
 import azureversionator.shared.generated.resources.attachment_bulk_downloader
 import azureversionator.shared.generated.resources.download
+import azureversionator.shared.generated.resources.edit
+import azureversionator.shared.generated.resources.edit_profile
 import azureversionator.shared.generated.resources.new_version
 import azureversionator.shared.generated.resources.settings
 import dev.cjrv.azureversionator.navigation.AttachmentBulkDownloader
+import dev.cjrv.azureversionator.navigation.EditProfile
 import dev.cjrv.azureversionator.navigation.NewVersion
 import dev.cjrv.azureversionator.navigation.Route
 import dev.cjrv.azureversionator.navigation.Settings
@@ -49,6 +53,7 @@ import dev.cjrv.azureversionator.ui.Screen
 import dev.cjrv.azureversionator.ui.composables.CustomDropdownField
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
 import dev.cjrv.azureversionator.ui.composables.CustomSecondaryButton
+import dev.cjrv.azureversionator.ui.composables.CustomSecondaryCompactButton
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
 import org.jetbrains.compose.resources.stringResource
@@ -89,8 +94,11 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                             )
                             .padding(MarginMedium)
                     ) {
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End,
-                            verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             CustomDropdownField(
                                 label = state.selectedProfileName ?: "",
                                 options = state.profiles.map { it.id },
@@ -100,7 +108,18 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                 }, optionLabel = { profileId ->
                                     state.profiles.find { it.id == profileId }?.name ?: ""
                                 },
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier.widthIn(max = 250.dp)
+                            )
+                            Spacer(modifier = Modifier.width(MarginMedium))
+                            CustomSecondaryCompactButton(
+                                text = stringResource(Res.string.edit_profile),
+                                onClick = { navigateToTarget(EditProfile) },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = vectorResource(Res.drawable.edit),
+                                        contentDescription = stringResource(Res.string.edit_profile)
+                                    )
+                                }
                             )
                             Spacer(modifier = Modifier.width(MarginMedium))
                             CustomSecondaryButton(
@@ -112,7 +131,8 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                         contentDescription = stringResource(Res.string.settings)
                                     )
                                 }
-                            ) }
+                            )
+                        }
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center,
@@ -134,14 +154,14 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                             )
                             Spacer(modifier = Modifier.height(MarginMedium))
                             CustomPrimaryButton(
-                                    stringResource(Res.string.attachment_bulk_downloader),
-                            onClick = { navigateToTarget(AttachmentBulkDownloader) },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = vectorResource(Res.drawable.download),
-                                    contentDescription = stringResource(Res.string.attachment_bulk_downloader)
-                                )
-                            }
+                                stringResource(Res.string.attachment_bulk_downloader),
+                                onClick = { navigateToTarget(AttachmentBulkDownloader) },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = vectorResource(Res.drawable.download),
+                                        contentDescription = stringResource(Res.string.attachment_bulk_downloader)
+                                    )
+                                }
                             )
                             Spacer(modifier = Modifier.height(MarginMedium))
                         }
