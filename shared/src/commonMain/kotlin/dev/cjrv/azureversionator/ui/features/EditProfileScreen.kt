@@ -76,10 +76,12 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
                 snackbarHostState.showSnackbar(saveSuccessMessage)
                 vm.onSaveFeedbackConsumed()
             }
+
             EditProfileViewModel.SaveFeedback.ValidationError -> {
                 snackbarHostState.showSnackbar(validationErrorMessage)
                 vm.onSaveFeedbackConsumed()
             }
+
             null -> Unit
         }
     }
@@ -273,34 +275,15 @@ private fun TeamProjectSection(
     state: EditProfileViewModel.UIState,
     onTeamProjectNameChanged: (String) -> Unit
 ) {
-    ExpandableSection(
-        title = {
-            Text(
-                text = stringResource(Res.string.azure_project_name),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
-    ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(MarginMedium),
-            modifier = Modifier.padding(
-                start = MarginMedium,
-                end = MarginMedium,
-                bottom = MarginMedium
-            )
-        ) {
-            CustomTextFieldWithHelp(
-                label = stringResource(Res.string.azure_project_name),
-                value = state.teamProjectName,
-                helpText = stringResource(Res.string.azure_project_name_placeholder),
-                onValueChange = { onTeamProjectNameChanged(it) },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = stringResource(Res.string.azure_project_name_placeholder),
-                isError = state.teamProjectNameError,
-                errorMessage = stringResource(Res.string.value_cannot_be_empty),
-                imeAction = ImeAction.Done,
-            )
-        }
-    }
+    CustomTextFieldWithHelp(
+        label = stringResource(Res.string.azure_project_name),
+        value = state.teamProjectName,
+        helpText = stringResource(Res.string.azure_project_name_placeholder),
+        onValueChange = { onTeamProjectNameChanged(it) },
+        modifier = Modifier.fillMaxWidth(),
+        placeholder = stringResource(Res.string.azure_project_name_placeholder),
+        isError = state.teamProjectNameError,
+        errorMessage = stringResource(Res.string.value_cannot_be_empty),
+        imeAction = ImeAction.Done,
+    )
 }
