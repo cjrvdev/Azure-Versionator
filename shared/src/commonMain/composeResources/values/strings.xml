@@ -58,7 +58,7 @@
     <string name="edit_profile">Edit Profile</string>"
     <string name="variables">Variables</string>"
     <string name="variable_name">Name</string>"
-    <string name="variable_value">Value</string>"
+    <string name="variable_default_value">Default Value</string>"
     <string name="variable_is_secret">Secret?</string>"
     <string name="add_variable">Add Variable</string>
     <string name="remove_variable">Remove</string>

@@ -125,7 +125,7 @@ class EditProfileViewModel(private val settingsRepository : AzureSettingsReposit
         val currentState = _state.value
         val teamProjectNameError = currentState.teamProjectName.isBlank()
         val hasInvalidVariables = currentState.variables.any {
-            it.name.isBlank() || it.value.isBlank()
+            it.name.isBlank()
         }
         _state.update { it.copy(teamProjectNameError = teamProjectNameError, showValidationErrors = true) }
         return !teamProjectNameError && !hasInvalidVariables

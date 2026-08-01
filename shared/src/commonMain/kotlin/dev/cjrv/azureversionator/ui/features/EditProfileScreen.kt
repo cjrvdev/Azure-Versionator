@@ -43,7 +43,7 @@ import azureversionator.shared.generated.resources.save_changes
 import azureversionator.shared.generated.resources.value_cannot_be_empty
 import azureversionator.shared.generated.resources.variable_is_secret
 import azureversionator.shared.generated.resources.variable_name
-import azureversionator.shared.generated.resources.variable_value
+import azureversionator.shared.generated.resources.variable_default_value
 import azureversionator.shared.generated.resources.variables
 import dev.cjrv.azureversionator.data.model.azure.AzureVariable
 import dev.cjrv.azureversionator.theme.CornerRadius
@@ -253,13 +253,11 @@ fun VariableRow(
         )
         Spacer(modifier = Modifier.width(MarginSmall))
         CustomTextField(
-            label = stringResource(Res.string.variable_value),
+            label = stringResource(Res.string.variable_default_value),
             value = variable.value,
             onValueChange = onValueChange,
             modifier = Modifier.weight(1f),
             isPassword = variable.isSecret,
-            isError = showValidationErrors && variable.value.isBlank(),
-            errorMessage = stringResource(Res.string.value_cannot_be_empty),
             imeAction = ImeAction.Next,
         )
         Checkbox(checked = variable.isSecret, onCheckedChange = onSecretChange)
