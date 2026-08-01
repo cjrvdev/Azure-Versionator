@@ -25,7 +25,6 @@ class NewVersionViewModel(
 
     init {
         viewModelScope.launch {
-            // Pre-load Azure configuration to validate it exists
             val config = settingsRepository.loadConfig()
             val selectedProfile = settingsRepository.getActiveProfile()
 
@@ -45,18 +44,6 @@ class NewVersionViewModel(
                 _state.value = _state.value.copy(isLoading = false)
             }
         }
-    }
-
-    fun onReleaseNotesChange(value: String) {
-        _state.value = _state.value.copy(releaseNotes = value, releaseNotesError = null)
-    }
-
-    fun onVersionNameChange(value: String) {
-        _state.value = _state.value.copy(versionName = value, versionNameError = null)
-    }
-
-    fun onBuildNumberChange(value: String) {
-        _state.value = _state.value.copy(buildNumber = value, buildNumberError = null)
     }
 
     fun onRepositorySelected(repository: AzureRepository) {
@@ -234,7 +221,7 @@ class NewVersionViewModel(
         var isValid = true
         val s = _state.value
 
-        if (s.versionName.isBlank()) {
+        /*if (s.versionName.isBlank()) {
             _state.value = _state.value.copy(versionNameError = "Version name cannot be empty")
             isValid = false
         } else {
@@ -253,7 +240,7 @@ class NewVersionViewModel(
             isValid = false
         } else {
             _state.value = _state.value.copy(releaseNotesError = null)
-        }
+        }*/
 
         if (s.selectedRepositoryId.isNullOrBlank()) {
             _state.value = _state.value.copy(repositoryIdError = "Repository ID cannot be empty")
@@ -310,25 +297,19 @@ class NewVersionViewModel(
         val branches: List<AzureBranch> = emptyList(),
         val selectedProfile : Profile? = null,
 
-        val versionName: String = "",
-        val versionNameError: String? = null,
-
-        val buildNumber: String = "",
-        val buildNumberError: String? = null,
-
-        val releaseNotes: String = "",
-        val releaseNotesError: String? = null,
-
+        //Repos
         val isLoadingRepositories: Boolean = false,
         val selectedRepositoryId: String? = null,
         val repositoryIdError: String? = null,
         val loadRepositoriesError: String? = null,
 
+        //Branches
         val isLoadingBranches: Boolean = false,
         val selectedBranchId: String? = null,
         val branchNameError: String? = null,
         val loadBranchesError: String? = null,
 
+        //Pipelines
         val isLoadingPipelines: Boolean = false,
         val pipelines: List<AzurePipeline> = emptyList(),
         val selectedPipelineId: String? = null,

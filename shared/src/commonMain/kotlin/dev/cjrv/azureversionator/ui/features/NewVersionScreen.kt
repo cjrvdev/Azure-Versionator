@@ -177,37 +177,8 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.padding(top = MarginMedium)
                         )
-                        Row(horizontalArrangement = Arrangement.spacedBy(MarginMedium)) {
-                            CustomTextField(
-                                label = stringResource(Res.string.release_notes_version_name),
-                                value = state.versionName,
-                                onValueChange = vm::onVersionNameChange,
-                                modifier = Modifier.fillMaxWidth().weight(1f),
-                                placeholder = stringResource(Res.string.release_notes_version_name_placeholder),
-                                isError = state.versionNameError != null,
-                                errorMessage = state.versionNameError,
-                                imeAction = ImeAction.Next
-                            )
-                            CustomTextField(
-                                label = stringResource(Res.string.release_notes_build_number),
-                                value = state.buildNumber,
-                                onValueChange = vm::onBuildNumberChange,
-                                modifier = Modifier.fillMaxWidth().weight(1f),
-                                placeholder = stringResource(Res.string.release_notes_build_number_placeholder),
-                                isError = state.buildNumberError != null,
-                                errorMessage = state.buildNumberError,
-                                imeAction = ImeAction.Next
-                            )
-                        }
-                        CustomMultilineTextField(
-                            label = stringResource(Res.string.release_notes),
-                            value = state.releaseNotes,
-                            onValueChange = vm::onReleaseNotesChange,
-                            modifier = Modifier.fillMaxWidth().heightIn(min = 400.dp),
-                            placeholder = stringResource(Res.string.release_notes_placeholder),
-                            isError = state.releaseNotesError != null,
-                            errorMessage = state.releaseNotesError,
-                        )
+                        // QUE HAGO AQUI
+
                         CustomPrimaryButton(
                             text = stringResource(Res.string.new_version_submit),
                             onClick = vm::createVersion,
