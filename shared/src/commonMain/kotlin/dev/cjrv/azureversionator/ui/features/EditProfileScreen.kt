@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Scaffold
@@ -78,7 +79,6 @@ import dev.cjrv.azureversionator.ui.Screen
 import dev.cjrv.azureversionator.ui.composables.CustomDropdownField
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryCompactButton
-import dev.cjrv.azureversionator.ui.composables.CustomSecondaryCompactButton
 import dev.cjrv.azureversionator.ui.composables.CustomTextField
 import dev.cjrv.azureversionator.ui.composables.CustomTextFieldWithHelp
 import dev.cjrv.azureversionator.ui.composables.ExpandableSection
@@ -228,18 +228,13 @@ private fun ProfileNameOrRemove(
             imeAction = ImeAction.Next
         )
         Spacer(modifier = Modifier.width(MarginSmall))
-        CustomSecondaryCompactButton(
-            text = stringResource(Res.string.remove_profile),
-            onClick = onRemoveProfileClick,
-            modifier = Modifier.align(Alignment.CenterVertically),
-            leadingIcon = {
-                Icon(
-                    imageVector = vectorResource(Res.drawable.delete),
-                    contentDescription = stringResource(Res.string.remove_profile),
-                    tint = MaterialTheme.colorScheme.error
-                )
-            }
-        )
+        IconButton(onClick = { onRemoveProfileClick() }) {
+            Icon(
+                imageVector = vectorResource(Res.drawable.delete),
+                contentDescription = stringResource(Res.string.remove_profile),
+                tint = MaterialTheme.colorScheme.error
+            )
+        }
     }
 }
 

@@ -1,5 +1,6 @@
 package dev.cjrv.azureversionator.ui.composables
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -15,7 +16,8 @@ import org.jetbrains.compose.resources.vectorResource
 fun TopAppBar(
     text: String,
     hasBackButton: Boolean = true,
-    onBackPressed: () -> Unit = {}
+    onBackPressed: () -> Unit = {},
+    actions: @Composable RowScope.() -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
         title = { Text(text, style = MaterialTheme.typography.titleLarge) },
@@ -25,6 +27,7 @@ fun TopAppBar(
             navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
             actionIconContentColor = MaterialTheme.colorScheme.onSurface
         ),
+        actions = actions,
         navigationIcon = {
             if (hasBackButton)
                 IconButton(onClick = onBackPressed) {
