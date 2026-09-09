@@ -19,12 +19,12 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
     init {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
-            loadVariables()
+            loadProfileConfiguration()
             _state.update { it.copy(isLoading = false) }
         }
     }
 
-    private fun loadVariables() {
+    private fun loadProfileConfiguration() {
         val activeProfile = settingsRepository.getActiveProfile()
         _state.update {
             it.copy(
@@ -32,6 +32,8 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
                 selectedProfileName = activeProfile.name,
                 profileName = activeProfile.name,
                 teamProjectName = activeProfile.teamProjectName,
+                organizationName = activeProfile.organizationName,
+                personalAccessToken = activeProfile.personalAccessToken,
                 variables = activeProfile.variables,
                 branchFilter = activeProfile.filters.branchFilter.joinToString(";"),
                 pipelineFilter = activeProfile.filters.pipelineFilter.joinToString(";"),
@@ -100,6 +102,22 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
         }
     }
 
+    fun onOrganizationChange(newValue: String) =
+        _state.update {
+            it.copy(
+                organizationName = newValue,
+                organizationNameError = it.showValidationErrors && newValue.isBlank()
+            )
+        }
+
+    fun onPersonalAccessTokenChange(newValue: String) =
+        _state.update {
+            it.copy(
+                personalAccessToken = newValue,
+                personalAccessTokenError = it.showValidationErrors && newValue.isBlank()
+            )
+        }
+
     fun onBranchFilterChanged(newValue: String) {
         _state.update { it.copy(branchFilter = newValue) }
     }
@@ -126,6 +144,8 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
             activeProfile.copy(
                 name = state.value.profileName,
                 teamProjectName = state.value.teamProjectName,
+                organizationName = state.value.organizationName,
+                personalAccessToken = state.value.personalAccessToken,
                 variables = state.value.variables,
                 filters = AzureDevOpsPreferencesFilter(
                     branchFilter = state.value.branchFilter.splitFilterValues(),
@@ -162,16 +182,20 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
     private fun validate(): Boolean {
         val currentState = _state.value
         val teamProjectNameError = currentState.teamProjectName.isBlank()
+        val organizationNameError = currentState.organizationName.isBlank()
+        val personalAccessTokenError = currentState.personalAccessToken.isBlank()
         val hasInvalidVariables = currentState.variables.any {
             it.name.isBlank()
         }
         _state.update {
             it.copy(
                 teamProjectNameError = teamProjectNameError,
+                organizationNameError = organizationNameError,
+                personalAccessTokenError = personalAccessTokenError,
                 showValidationErrors = true
             )
         }
-        return !teamProjectNameError && !hasInvalidVariables
+        return !teamProjectNameError && !organizationNameError && !personalAccessTokenError && !hasInvalidVariables
     }
 
     private fun String.splitFilterValues(): List<String> =
@@ -187,10 +211,14 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
         val selectedProfileId: String? = null,
         val selectedProfileName: String? = null,
         val profileName: String = "",
+        val organizationName: String = "",
+        val personalAccessToken: String = "",
         val teamProjectName: String = "",
         val branchFilter: String = "",
         val pipelineFilter: String = "",
         val repositoryFilter: String = "",
+        val organizationNameError: Boolean = false,
+        val personalAccessTokenError: Boolean = false,
         val teamProjectNameError: Boolean = false,
         val variables: List<AzureVariable> = emptyList(),
         val showValidationErrors: Boolean = false,

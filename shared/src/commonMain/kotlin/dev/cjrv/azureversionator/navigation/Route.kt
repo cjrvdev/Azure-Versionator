@@ -26,9 +26,6 @@ sealed interface Route : NavKey
 data object Home : Route
 
 @Serializable
-data object Settings : Route
-
-@Serializable
 data object NewVersion : Route
 
 @Serializable

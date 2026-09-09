@@ -27,12 +27,11 @@ class AttachmentBulkDownloaderViewModel(
 
     init {
         viewModelScope.launch {
-            val config = settingsRepository.loadConfig()
             val selectedProfile = settingsRepository.getActiveProfile()
 
-            val isConfigValid = config.organization.isNotBlank() &&
+            val isConfigValid = selectedProfile.organizationName.isNotBlank() &&
                     selectedProfile.teamProjectName.isNotBlank() &&
-                    config.personalAccessToken.isNotBlank()
+                    selectedProfile.personalAccessToken.isNotBlank()
 
             _state.update {
                 it.copy(
@@ -63,11 +62,9 @@ class AttachmentBulkDownloaderViewModel(
                 )
             }
 
-            val config = settingsRepository.loadConfig()
             val workItemId = _state.value.workitemId.trim()
 
             val attachments = azureDevOpsApi.getWorkItemAttachments(
-                config,
                 workItemId,
                 _state.value.selectedProfile!!
             )
@@ -105,7 +102,6 @@ class AttachmentBulkDownloaderViewModel(
                 }
 
                 val fileBytes = azureDevOpsApi.downloadAttachment(
-                    config = config,
                     attachmentUrl = attachment.url,
                     fileName = attachment.fileName,
                     selectedProfile = _state.value.selectedProfile!!

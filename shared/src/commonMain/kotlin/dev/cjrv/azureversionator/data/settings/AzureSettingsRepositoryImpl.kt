@@ -2,7 +2,6 @@ package dev.cjrv.azureversionator.data.settings
 
 import com.russhwolf.settings.Settings
 import dev.cjrv.azureversionator.data.model.app.Profile
-import dev.cjrv.azureversionator.data.model.azure.AzureDevOpsConfig
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.json.Json
@@ -18,16 +17,6 @@ class AzureSettingsRepositoryImpl(
 
     init {
         syncProfileState()
-    }
-
-    override fun loadConfig(): AzureDevOpsConfig = AzureDevOpsConfig(
-        organization = settings.getString(KEY_ORGANIZATION, ""),
-        personalAccessToken = settings.getString(KEY_PAT, ""),
-    )
-
-    override fun saveConfig(config: AzureDevOpsConfig) {
-        settings.putString(KEY_ORGANIZATION, config.organization)
-        settings.putString(KEY_PAT, config.personalAccessToken)
     }
 
     override fun loadProfiles(): List<Profile> {
@@ -65,6 +54,8 @@ class AzureSettingsRepositoryImpl(
         val defaultProfile = Profile(
             name = name,
             teamProjectName = "",
+            organizationName = "",
+            personalAccessToken = "",
             variables = emptyList()
         )
         saveProfile(defaultProfile)
@@ -78,6 +69,8 @@ class AzureSettingsRepositoryImpl(
             val defaultProfile = Profile(
                 name = "New profile",
                 teamProjectName = "",
+                organizationName = "",
+                personalAccessToken = "",
                 variables = emptyList()
             )
             val saveKey = "${KEY_PROFILES}_${defaultProfile.id}"
@@ -102,8 +95,6 @@ class AzureSettingsRepositoryImpl(
     }
 
     private companion object {
-        const val KEY_ORGANIZATION = "azure_organization"
-        const val KEY_PAT = "azure_pat"
         const val KEY_PROFILES = "profiles"
         const val KEY_DEFAULT_SELECTED_PROFILE_ID = "default_profile"
     }

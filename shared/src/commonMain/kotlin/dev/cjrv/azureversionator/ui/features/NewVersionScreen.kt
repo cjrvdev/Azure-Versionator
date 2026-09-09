@@ -155,7 +155,8 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                                 placeholder = stringResource(Res.string.azure_repository_name_placeholder),
                                 enabled = state.isConfigurationValid && !state.isLoadingRepositories,
                                 isError = state.repositoryIdError != null || state.loadRepositoriesError != null,
-                                errorMessage = state.repositoryIdError ?: state.loadRepositoriesError
+                                errorMessage = state.repositoryIdError
+                                    ?: state.loadRepositoriesError
                             )
                             CustomDropdownField(
                                 label = stringResource(Res.string.azure_branch_name),
@@ -170,6 +171,7 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                                 errorMessage = state.branchNameError ?: state.loadBranchesError
                             )
                         }
+
                         ProfileVariablesSection(
                             variables = state.selectedProfile?.variables.orEmpty(),
                             showValidationErrors = state.showValidationErrors,
@@ -229,7 +231,12 @@ private fun ProfileVariablesSection(
                     VariableField(
                         variable = indexedVariable.value,
                         showValidationErrors = showValidationErrors,
-                        onValueChange = { value -> onVariableValueChanged(indexedVariable.index, value) },
+                        onValueChange = { value ->
+                            onVariableValueChanged(
+                                indexedVariable.index,
+                                value
+                            )
+                        },
                         modifier = Modifier.weight(1f)
                     )
                 }

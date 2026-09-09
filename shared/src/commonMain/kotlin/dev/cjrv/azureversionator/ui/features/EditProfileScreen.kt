@@ -35,6 +35,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.add_variable
+import azureversionator.shared.generated.resources.azure_connection_settings
+import azureversionator.shared.generated.resources.azure_organization
+import azureversionator.shared.generated.resources.azure_organization_placeholder
+import azureversionator.shared.generated.resources.azure_pat
+import azureversionator.shared.generated.resources.azure_pat_help
+import azureversionator.shared.generated.resources.azure_pat_placeholder
 import azureversionator.shared.generated.resources.azure_project_name
 import azureversionator.shared.generated.resources.azure_project_name_placeholder
 import azureversionator.shared.generated.resources.delete
@@ -163,9 +169,11 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
                             )
                         }
                         item {
-                            TeamProjectSection(
+                            ConnectionSettings(
                                 state = state,
-                                onTeamProjectNameChanged = vm::onTeamProjectNameChanged
+                                onTeamProjectNameChanged = vm::onTeamProjectNameChanged,
+                                onPersonalAccessTokenChange = vm::onPersonalAccessTokenChange,
+                                onOrganizationChange = vm::onOrganizationChange
                             )
                         }
                         item {
@@ -380,21 +388,66 @@ fun VariableRow(
 }
 
 @Composable
-private fun TeamProjectSection(
+private fun ConnectionSettings(
     state: EditProfileViewModel.UIState,
+    onPersonalAccessTokenChange: (String) -> Unit,
+    onOrganizationChange: (String) -> Unit,
     onTeamProjectNameChanged: (String) -> Unit
 ) {
-    CustomTextFieldWithHelp(
-        label = stringResource(Res.string.azure_project_name),
-        value = state.teamProjectName,
-        helpText = stringResource(Res.string.azure_project_name_placeholder),
-        onValueChange = { onTeamProjectNameChanged(it) },
-        modifier = Modifier.fillMaxWidth(),
-        placeholder = stringResource(Res.string.azure_project_name_placeholder),
-        isError = state.teamProjectNameError,
-        errorMessage = stringResource(Res.string.value_cannot_be_empty),
-        imeAction = ImeAction.Done,
-    )
+    ExpandableSection(
+        title = {
+            Text(
+                text = stringResource(Res.string.azure_connection_settings),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(MarginMedium),
+            modifier = Modifier.padding(
+                start = MarginMedium,
+                end = MarginMedium,
+                bottom = MarginMedium
+            )
+        ) {
+            CustomTextFieldWithHelp(
+                label = stringResource(Res.string.azure_pat),
+                value = state.personalAccessToken,
+                helpText = stringResource(Res.string.azure_pat_help),
+                onValueChange = onPersonalAccessTokenChange,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = stringResource(Res.string.azure_pat_placeholder),
+                isPassword = true,
+                isError = state.personalAccessTokenError,
+                errorMessage = stringResource(Res.string.value_cannot_be_empty),
+                imeAction = ImeAction.Next,
+            )
+
+            CustomTextField(
+                label = stringResource(Res.string.azure_organization),
+                value = state.organizationName,
+                onValueChange = onOrganizationChange,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = stringResource(Res.string.azure_organization_placeholder),
+                isError = state.organizationNameError,
+                errorMessage = stringResource(Res.string.value_cannot_be_empty),
+                imeAction = ImeAction.Next
+            )
+
+            CustomTextFieldWithHelp(
+                label = stringResource(Res.string.azure_project_name),
+                value = state.teamProjectName,
+                helpText = stringResource(Res.string.azure_project_name_placeholder),
+                onValueChange = { onTeamProjectNameChanged(it) },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = stringResource(Res.string.azure_project_name_placeholder),
+                isError = state.teamProjectNameError,
+                errorMessage = stringResource(Res.string.value_cannot_be_empty),
+                imeAction = ImeAction.Done,
+            )
+        }
+    }
 }
 
 @Composable

@@ -33,21 +33,21 @@ fun Navigation() {
         backStack = navigator.backStack,
         onBack = { navigator.goBack() },
         transitionSpec = {
-            if (targetState.matchesRoute(Settings)) {
+            if (targetState.matchesRoute(EditProfile)) {
                 slideInVertically { it } togetherWith slideOutVertically { -it }
             } else {
                 fadeIn() togetherWith fadeOut()
             }
         },
         popTransitionSpec = {
-            if (initialState.matchesRoute(Settings)) {
+            if (initialState.matchesRoute(EditProfile)) {
                 slideInVertically { -it } togetherWith slideOutVertically { it }
             } else {
                 fadeIn() togetherWith fadeOut()
             }
         },
         predictivePopTransitionSpec = {
-            if (initialState.matchesRoute(Settings)) {
+            if (initialState.matchesRoute(EditProfile)) {
                 slideInVertically { -it } togetherWith slideOutVertically { it }
             } else {
                 fadeIn() togetherWith fadeOut()

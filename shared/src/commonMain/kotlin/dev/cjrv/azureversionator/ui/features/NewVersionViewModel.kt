@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.cjrv.azureversionator.data.model.app.Profile
 import dev.cjrv.azureversionator.data.model.azure.AzureBranch
-import dev.cjrv.azureversionator.data.model.azure.AzureDevOpsConfig
 import dev.cjrv.azureversionator.data.model.azure.AzureDevOpsPreferencesFilter
 import dev.cjrv.azureversionator.data.model.azure.AzurePipeline
 import dev.cjrv.azureversionator.data.model.azure.AzureRepository
@@ -26,11 +25,10 @@ class NewVersionViewModel(
 
     init {
         viewModelScope.launch {
-            val config = settingsRepository.loadConfig()
             val selectedProfile = settingsRepository.getActiveProfile()
 
-            val isConfigValid = config.organization.isNotBlank() && selectedProfile.teamProjectName.isNotBlank() &&
-                config.personalAccessToken.isNotBlank()
+            val isConfigValid = selectedProfile.organizationName.isNotBlank() && selectedProfile.teamProjectName.isNotBlank() &&
+                    selectedProfile.personalAccessToken.isNotBlank()
 
             if (!isConfigValid) {
                 _state.value = _state.value.copy(
@@ -39,8 +37,8 @@ class NewVersionViewModel(
                 )
             } else {
                 _state.value = _state.value.copy(isConfigurationValid = true, isLoading = true, selectedProfile = selectedProfile)
-                loadRepositories(config, selectedProfile.filters)
-                loadPipelines(config, selectedProfile.filters)
+                loadRepositories(selectedProfile.filters)
+                loadPipelines(selectedProfile.filters)
                 _state.value = _state.value.copy(isLoading = false)
             }
         }
@@ -104,9 +102,7 @@ class NewVersionViewModel(
             _state.value = _state.value.copy(isLoading = true, generalError = null)
 
             try {
-                val config = settingsRepository.loadConfig()
                 val result = azureDevOpsApi.runPipeline(
-                    config = config,
                     selectedProfile = _state.value.selectedProfile!!,
                     pipelineId = _state.value.selectedPipelineId.orEmpty(),
                     branchName = _state.value.selectedBranchId
@@ -159,9 +155,8 @@ class NewVersionViewModel(
                 isLoading = true
             )
 
-            val config = settingsRepository.loadConfig()
             val selectedProfile = _state.value.selectedProfile!!
-            azureDevOpsApi.getBranches(config, repositoryId, selectedProfile)
+            azureDevOpsApi.getBranches(repositoryId, selectedProfile)
                 .onSuccess { branches ->
                     _state.value = _state.value.copy(
                         isLoadingBranches = false,
@@ -182,12 +177,11 @@ class NewVersionViewModel(
     }
 
     private suspend fun loadRepositories(
-        config: AzureDevOpsConfig,
         filters: AzureDevOpsPreferencesFilter
     ) {
         _state.value = _state.value.copy(isLoadingRepositories = true, loadRepositoriesError = null)
 
-        azureDevOpsApi.getRepositories(config, _state.value.selectedProfile!!)
+        azureDevOpsApi.getRepositories(_state.value.selectedProfile!!)
             .onSuccess { repositories ->
                 _state.value = _state.value.copy(
                     isLoadingRepositories = false,
@@ -205,12 +199,11 @@ class NewVersionViewModel(
     }
 
     private suspend fun loadPipelines(
-        config: AzureDevOpsConfig,
         filters: AzureDevOpsPreferencesFilter
     ) {
         _state.value = _state.value.copy(isLoadingPipelines = true, loadPipelinesError = null)
 
-        azureDevOpsApi.getPipelines(config, _state.value.selectedProfile!!)
+        azureDevOpsApi.getPipelines(_state.value.selectedProfile!!)
             .onSuccess { pipelines ->
                 val selectedId = _state.value.selectedPipelineId
                 val nextSelectedId = when {
@@ -237,27 +230,6 @@ class NewVersionViewModel(
     fun validate(): Boolean {
         var isValid = true
         val s = _state.value
-
-        /*if (s.versionName.isBlank()) {
-            _state.value = _state.value.copy(versionNameError = "Version name cannot be empty")
-            isValid = false
-        } else {
-            _state.value = _state.value.copy(versionNameError = null)
-        }
-
-        if (s.buildNumber.isBlank()) {
-            _state.value = _state.value.copy(buildNumberError = "Build number cannot be empty")
-            isValid = false
-        } else {
-            _state.value = _state.value.copy(buildNumberError = null)
-        }
-
-        if (s.releaseNotes.isBlank()) {
-            _state.value = _state.value.copy(releaseNotesError = "Release notes cannot be empty")
-            isValid = false
-        } else {
-            _state.value = _state.value.copy(releaseNotesError = null)
-        }*/
 
         if (s.selectedRepositoryId.isNullOrBlank()) {
             _state.value = _state.value.copy(repositoryIdError = "Repository ID cannot be empty")

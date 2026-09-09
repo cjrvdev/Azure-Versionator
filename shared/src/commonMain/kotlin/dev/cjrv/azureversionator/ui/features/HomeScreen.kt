@@ -18,10 +18,10 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -52,19 +52,16 @@ import azureversionator.shared.generated.resources.profile_name
 import azureversionator.shared.generated.resources.profile_name_placeholder
 import azureversionator.shared.generated.resources.return_text
 import azureversionator.shared.generated.resources.selected_profile
-import azureversionator.shared.generated.resources.settings
 import dev.cjrv.azureversionator.navigation.AttachmentBulkDownloader
 import dev.cjrv.azureversionator.navigation.EditProfile
 import dev.cjrv.azureversionator.navigation.NewVersion
 import dev.cjrv.azureversionator.navigation.Route
-import dev.cjrv.azureversionator.navigation.Settings
 import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.theme.MarginSmall
 import dev.cjrv.azureversionator.ui.Screen
 import dev.cjrv.azureversionator.ui.composables.CustomDropdownField
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
-import dev.cjrv.azureversionator.ui.composables.CustomSecondaryButton
 import dev.cjrv.azureversionator.ui.composables.CustomSecondaryCompactButton
 import dev.cjrv.azureversionator.ui.composables.CustomTextField
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
@@ -182,17 +179,6 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                     Icon(
                                         imageVector = vectorResource(Res.drawable.edit),
                                         contentDescription = stringResource(Res.string.edit_profile)
-                                    )
-                                }
-                            )
-                            Spacer(modifier = Modifier.width(MarginMedium))
-                            CustomSecondaryButton(
-                                stringResource(Res.string.settings),
-                                onClick = { navigateToTarget(Settings) },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = vectorResource(Res.drawable.settings),
-                                        contentDescription = stringResource(Res.string.settings)
                                     )
                                 }
                             )
