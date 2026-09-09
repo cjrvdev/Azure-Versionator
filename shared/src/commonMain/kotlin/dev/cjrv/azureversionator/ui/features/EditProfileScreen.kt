@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,11 +22,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
@@ -44,12 +48,15 @@ import azureversionator.shared.generated.resources.filter_preferences_pipeline_h
 import azureversionator.shared.generated.resources.filter_preferences_repository
 import azureversionator.shared.generated.resources.filter_preferences_repository_help
 import azureversionator.shared.generated.resources.input_textfield_type
+import azureversionator.shared.generated.resources.ok
 import azureversionator.shared.generated.resources.profile_name
 import azureversionator.shared.generated.resources.profile_name_placeholder
 import azureversionator.shared.generated.resources.profile_saved
 import azureversionator.shared.generated.resources.remove_profile
+import azureversionator.shared.generated.resources.remove_profile_confirmation_message
 import azureversionator.shared.generated.resources.remove_variable
 import azureversionator.shared.generated.resources.required
+import azureversionator.shared.generated.resources.return_text
 import azureversionator.shared.generated.resources.save_changes
 import azureversionator.shared.generated.resources.value_cannot_be_empty
 import azureversionator.shared.generated.resources.variable_default_value
@@ -81,6 +88,7 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
     val vm = koinViewModel<EditProfileViewModel>()
     val state by vm.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    var showRemoveProfileConfirmation by remember { mutableStateOf(false) }
     val saveSuccessMessage = stringResource(Res.string.profile_saved)
     val validationErrorMessage = stringResource(Res.string.edit_profile_validation_error)
 
@@ -98,6 +106,17 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
 
             null -> Unit
         }
+    }
+
+    if (showRemoveProfileConfirmation) {
+        RemoveProfileConfirmationDialog(
+            onDismiss = { showRemoveProfileConfirmation = false },
+            onConfirm = {
+                showRemoveProfileConfirmation = false
+                vm.removeProfile()
+                onNavigateBack()
+            }
+        )
     }
 
     Screen {
@@ -140,8 +159,7 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
                             ProfileNameOrRemove(
                                 profileName = state.profileName,
                                 onProfileNameChanged = vm::onProfileNameChanged,
-                                removeProfile = vm::removeProfile,
-                                navigateBack = onNavigateBack
+                                onRemoveProfileClick = { showRemoveProfileConfirmation = true }
                             )
                         }
                         item {
@@ -190,8 +208,7 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
 private fun ProfileNameOrRemove(
     profileName: String,
     onProfileNameChanged: (String) -> Unit,
-    removeProfile: () -> Unit,
-    navigateBack: () -> Unit
+    onRemoveProfileClick: () -> Unit
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         CustomTextField(
@@ -205,10 +222,7 @@ private fun ProfileNameOrRemove(
         Spacer(modifier = Modifier.width(MarginSmall))
         CustomSecondaryCompactButton(
             text = stringResource(Res.string.remove_profile),
-            onClick = {
-                removeProfile()
-                navigateBack()
-            },
+            onClick = onRemoveProfileClick,
             modifier = Modifier.align(Alignment.CenterVertically),
             leadingIcon = {
                 Icon(
@@ -219,6 +233,28 @@ private fun ProfileNameOrRemove(
             }
         )
     }
+}
+
+@Composable
+private fun RemoveProfileConfirmationDialog(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(Res.string.remove_profile)) },
+        text = { Text(stringResource(Res.string.remove_profile_confirmation_message)) },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(Res.string.return_text))
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(stringResource(Res.string.ok))
+            }
+        }
+    )
 }
 
 @Composable
