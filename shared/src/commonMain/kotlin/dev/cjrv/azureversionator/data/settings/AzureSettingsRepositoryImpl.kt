@@ -58,7 +58,7 @@ class AzureSettingsRepositoryImpl(
     override fun getActiveProfile(): Profile {
         val profiles = syncProfileState()
         val selectedProfileId = _activeProfileId.value
-        return profiles.first { it.id == selectedProfileId }
+        return profiles.firstOrNull { it.id == selectedProfileId } ?: profiles.first()
     }
 
     override fun createNewProfile(): Profile {
