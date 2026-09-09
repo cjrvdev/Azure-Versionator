@@ -1,8 +1,8 @@
 package dev.cjrv.azureversionator.ui.composables
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +26,6 @@ import azureversionator.shared.generated.resources.arrow_drop_down
 import azureversionator.shared.generated.resources.arrow_drop_up
 import azureversionator.shared.generated.resources.collapse
 import azureversionator.shared.generated.resources.expand
-import dev.cjrv.azureversionator.theme.CornerRadius
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
@@ -36,32 +36,30 @@ fun ExpandableSection(
     content: @Composable () -> Unit
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
-    Column(
-        modifier = modifier
-            .background(
-                color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(
-                    CornerRadius
-                )
-            )
-            .fillMaxWidth()
+    
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        shape = RoundedCornerShape(4.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
     ) {
-        ExpandableSectionTitle(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { isExpanded = !isExpanded },
-            isExpanded = isExpanded,
-            title = title
-        )
+        Column(modifier = Modifier.fillMaxWidth()) {
+            ExpandableSectionTitle(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { isExpanded = !isExpanded },
+                isExpanded = isExpanded,
+                title = title
+            )
 
-        AnimatedVisibility(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(
-                    CornerRadius
-                ))
-                .fillMaxWidth(),
-            visible = isExpanded
-        ) {
-            content()
+            AnimatedVisibility(
+                modifier = Modifier.fillMaxWidth(),
+                visible = isExpanded
+            ) {
+                Column(modifier = Modifier.padding(bottom = 12.dp)) {
+                    content()
+                }
+            }
         }
     }
 }
@@ -72,15 +70,19 @@ fun ExpandableSectionTitle(
     isExpanded: Boolean,
     title: @Composable () -> Unit
 ) {
+    val icon = if (isExpanded) 
+        vectorResource(Res.drawable.arrow_drop_up) 
+    else 
+        vectorResource(Res.drawable.arrow_drop_down)
 
-    val icon =
-        if (isExpanded) vectorResource(Res.drawable.arrow_drop_up) else vectorResource(Res.drawable.arrow_drop_down)
-
-    Row(modifier = modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = modifier.padding(vertical = 12.dp, horizontal = 8.dp), 
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Image(
             modifier = Modifier.size(32.dp),
             imageVector = icon,
-            colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onPrimaryContainer),
+            colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary),
             contentDescription = if (isExpanded) stringResource(Res.string.collapse) else stringResource(Res.string.expand)
         )
         title()

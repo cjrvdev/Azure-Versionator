@@ -67,6 +67,7 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
     if (state.successMessage != null) {
         AlertDialog(
             onDismissRequest = { vm.onSuccessMessageConsumed() },
+            shape = RoundedCornerShape(4.dp),
             title = { Text("Success") },
             text = { Text(state.successMessage.orEmpty()) },
             dismissButton = {
@@ -91,6 +92,7 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
     if (state.generalError != null) {
         AlertDialog(
             onDismissRequest = { vm.onErrorConsumed() },
+            shape = RoundedCornerShape(4.dp),
             title = { Text("Error") },
             text = { Text(state.generalError.orEmpty()) },
             confirmButton = {

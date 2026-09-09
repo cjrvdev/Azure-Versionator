@@ -60,14 +60,12 @@ import azureversionator.shared.generated.resources.ok
 import azureversionator.shared.generated.resources.profile_name
 import azureversionator.shared.generated.resources.profile_name_placeholder
 import azureversionator.shared.generated.resources.return_text
-import azureversionator.shared.generated.resources.selected_profile
 import azureversionator.shared.generated.resources.system_profile_label
 import azureversionator.shared.generated.resources.trigger_pipeline_run_subtitle
 import dev.cjrv.azureversionator.navigation.AttachmentBulkDownloader
 import dev.cjrv.azureversionator.navigation.EditProfile
 import dev.cjrv.azureversionator.navigation.NewVersion
 import dev.cjrv.azureversionator.navigation.Route
-import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.theme.MarginSmall
 import dev.cjrv.azureversionator.ui.Screen
@@ -106,6 +104,7 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                             showNewProfileDialog = false
                             newProfileName = ""
                         },
+                        shape = RoundedCornerShape(4.dp),
                         title = { Text(stringResource(Res.string.new_profile)) },
                         text = {
                             CustomTextField(

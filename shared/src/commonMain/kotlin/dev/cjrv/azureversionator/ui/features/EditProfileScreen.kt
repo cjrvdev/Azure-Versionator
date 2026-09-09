@@ -34,8 +34,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.add_variable
 import azureversionator.shared.generated.resources.azure_connection_settings
@@ -247,6 +249,7 @@ private fun RemoveProfileConfirmationDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
+        shape = RoundedCornerShape(4.dp),
         title = { Text(stringResource(Res.string.remove_profile)) },
         text = { Text(stringResource(Res.string.remove_profile_confirmation_message)) },
         dismissButton = {
@@ -276,8 +279,11 @@ fun VariablesSection(
     ExpandableSection(
         title = {
             Text(
-                text = stringResource(Res.string.variables),
-                style = MaterialTheme.typography.titleMedium,
+                text = stringResource(Res.string.variables).uppercase(),
+                style = MaterialTheme.typography.labelMedium.copy(
+                    fontWeight = FontWeight.Black,
+                    letterSpacing = 1.sp
+                ),
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
@@ -394,8 +400,11 @@ private fun ConnectionSettings(
     ExpandableSection(
         title = {
             Text(
-                text = stringResource(Res.string.azure_connection_settings),
-                style = MaterialTheme.typography.titleMedium,
+                text = stringResource(Res.string.azure_connection_settings).uppercase(),
+                style = MaterialTheme.typography.labelMedium.copy(
+                    fontWeight = FontWeight.Black,
+                    letterSpacing = 1.sp
+                ),
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
@@ -457,8 +466,11 @@ private fun FilterPreferencesSection(
     ExpandableSection(
         title = {
             Text(
-                text = stringResource(Res.string.filter_preferences),
-                style = MaterialTheme.typography.titleMedium,
+                text = stringResource(Res.string.filter_preferences).uppercase(),
+                style = MaterialTheme.typography.labelMedium.copy(
+                    fontWeight = FontWeight.Black,
+                    letterSpacing = 1.sp
+                ),
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
