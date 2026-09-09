@@ -11,9 +11,11 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
@@ -25,16 +27,31 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.help
-import dev.cjrv.azureversionator.theme.CornerRadius
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.vectorResource
+
+@Composable
+private fun techTextFieldColors() = TextFieldDefaults.colors(
+    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.05f),
+    cursorColor = MaterialTheme.colorScheme.primary,
+    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+    unfocusedIndicatorColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+    focusedLabelColor = MaterialTheme.colorScheme.primary,
+    unfocusedLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+)
+
+private val TechCornerShape = RoundedCornerShape(4.dp)
 
 @Composable
 fun CustomTextField(
@@ -51,15 +68,23 @@ fun CustomTextField(
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
 
-    OutlinedTextField(
+    TextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(label) },
+        label = {
+            Text(
+                text = label.uppercase(),
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp
+            )
+        },
         placeholder = { Text(placeholder) },
         singleLine = true,
         modifier = modifier,
-        shape = RoundedCornerShape(CornerRadius),
+        shape = TechCornerShape,
         isError = isError,
+        colors = techTextFieldColors(),
         supportingText = if (isError && errorMessage != null) {
             { Text(errorMessage) }
         } else null,
@@ -87,15 +112,23 @@ fun CustomMultilineTextField(
     errorMessage: String? = null,
     keyboardType: KeyboardType = KeyboardType.Text
 ) {
-    OutlinedTextField(
+    TextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(label) },
+        label = {
+            Text(
+                text = label.uppercase(),
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp
+            )
+        },
         placeholder = { Text(placeholder) },
         singleLine = false,
         modifier = modifier,
-        shape = RoundedCornerShape(CornerRadius),
+        shape = TechCornerShape,
         isError = isError,
+        colors = techTextFieldColors(),
         supportingText = if (isError && errorMessage != null) {
             { Text(errorMessage) }
         } else null,
@@ -132,15 +165,25 @@ fun <T> CustomDropdownField(
         onExpandedChange = { if (enabled) expanded = !expanded },
         modifier = modifier
     ) {
-        OutlinedTextField(
+        TextField(
             value = selectedItem?.let(optionLabel).orEmpty(),
             onValueChange = {},
             readOnly = true,
             enabled = enabled,
-            label = { Text(label) },
+            label = if (label.isNotEmpty()) {
+                {
+                    Text(
+                        text = label.uppercase(),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    )
+                }
+            } else null,
             placeholder = { Text(placeholder) },
-            shape = RoundedCornerShape(CornerRadius),
+            shape = TechCornerShape,
             isError = isError,
+            colors = techTextFieldColors(),
             supportingText = if (isError && errorMessage != null) {
                 { Text(errorMessage) }
             } else null,
@@ -189,16 +232,24 @@ fun CustomTextFieldWithHelp(
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
 
-    OutlinedTextField(
+    TextField(
         value = value,
         onValueChange = onValueChange,
         enabled = enabled,
-        label = { Text(label) },
+        label = {
+            Text(
+                text = label.uppercase(),
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp
+            )
+        },
         placeholder = { Text(placeholder) },
         singleLine = true,
         modifier = modifier,
-        shape = RoundedCornerShape(CornerRadius),
+        shape = TechCornerShape,
         isError = isError,
+        colors = techTextFieldColors(),
         supportingText = if (isError && errorMessage != null) {
             { Text(errorMessage) }
         } else null,
@@ -212,7 +263,7 @@ fun CustomTextFieldWithHelp(
             imeAction = imeAction
         ),
         trailingIcon = {
-            if (helpText.isNullOrBlank()) return@OutlinedTextField
+            if (helpText.isNullOrBlank()) return@TextField
 
             val tooltipState = rememberTooltipState()
             val coroutineScope = rememberCoroutineScope()

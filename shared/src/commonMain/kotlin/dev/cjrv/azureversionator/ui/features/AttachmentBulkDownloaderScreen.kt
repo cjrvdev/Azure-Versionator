@@ -1,6 +1,7 @@
 package dev.cjrv.azureversionator.ui.features
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.attachment_bulk_downloader
 import azureversionator.shared.generated.resources.download
@@ -34,7 +36,6 @@ import azureversionator.shared.generated.resources.select_download_path
 import azureversionator.shared.generated.resources.workitem_id
 import azureversionator.shared.generated.resources.workitem_id_help
 import azureversionator.shared.generated.resources.workitem_id_placeholder
-import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.theme.MarginSmall
 import dev.cjrv.azureversionator.ui.Screen
@@ -119,9 +120,10 @@ fun AttachmentBulkDownloaderScreen(onNavigateBack: () -> Unit) {
                             .fillMaxSize()
                             .padding(MarginMedium)
                             .background(
-                                MaterialTheme.colorScheme.surfaceContainer,
-                                shape = RoundedCornerShape(CornerRadius)
+                                MaterialTheme.colorScheme.surface,
+                                shape = RoundedCornerShape(4.dp)
                             )
+                            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f), RoundedCornerShape(4.dp))
                             .padding(MarginMedium)
                             .verticalScroll(rememberScrollState())
                     ) {

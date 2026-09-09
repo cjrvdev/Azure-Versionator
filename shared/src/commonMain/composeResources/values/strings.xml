@@ -81,7 +81,7 @@
     <string name="system_profile_label">SYSTEM_PROFILE //</string>
     <string name="trigger_pipeline_run_subtitle">TRIGGER_PIPELINE_RUN</string>
     <string name="extract_data_objects_subtitle">EXTRACT_DATA_OBJECTS</string>
-    <string name="auth_by_label">AUTH_BY: </string>
+    <string name="auth_by_label">CREATED_BY: </string>
     <string name="author_name">CJRV.DEV </string>
 
 </resources>

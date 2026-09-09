@@ -1,6 +1,7 @@
 package dev.cjrv.azureversionator.ui.features
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,7 +43,6 @@ import azureversionator.shared.generated.resources.value_cannot_be_empty
 import azureversionator.shared.generated.resources.variables
 import dev.cjrv.azureversionator.data.model.azure.AzureVariable
 import dev.cjrv.azureversionator.data.model.azure.TextFieldType
-import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.ui.Screen
 import dev.cjrv.azureversionator.ui.composables.CustomDropdownField
@@ -126,9 +126,10 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                             .fillMaxSize()
                             .padding(MarginMedium)
                             .background(
-                                MaterialTheme.colorScheme.surfaceContainer,
-                                shape = RoundedCornerShape(CornerRadius)
+                                MaterialTheme.colorScheme.surface,
+                                shape = RoundedCornerShape(4.dp)
                             )
+                            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f), RoundedCornerShape(4.dp))
                             .padding(MarginMedium)
                             .verticalScroll(rememberScrollState())
                     ) {

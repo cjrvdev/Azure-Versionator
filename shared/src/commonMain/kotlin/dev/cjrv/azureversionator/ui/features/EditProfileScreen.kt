@@ -1,6 +1,7 @@
 package dev.cjrv.azureversionator.ui.features
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.add_variable
 import azureversionator.shared.generated.resources.azure_connection_settings
@@ -72,7 +74,6 @@ import azureversionator.shared.generated.resources.variable_name
 import azureversionator.shared.generated.resources.variables
 import dev.cjrv.azureversionator.data.model.azure.AzureVariable
 import dev.cjrv.azureversionator.data.model.azure.TextFieldType
-import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.theme.MarginSmall
 import dev.cjrv.azureversionator.ui.Screen
@@ -156,9 +157,10 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
                             .fillMaxSize()
                             .padding(MarginMedium)
                             .background(
-                                MaterialTheme.colorScheme.surfaceContainer,
-                                shape = RoundedCornerShape(CornerRadius)
+                                MaterialTheme.colorScheme.surface,
+                                shape = RoundedCornerShape(4.dp)
                             )
+                            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f), RoundedCornerShape(4.dp))
                             .padding(MarginMedium)
                     ) {
                         item {

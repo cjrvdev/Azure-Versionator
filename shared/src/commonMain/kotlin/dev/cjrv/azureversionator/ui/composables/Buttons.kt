@@ -19,11 +19,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dev.cjrv.azureversionator.theme.AzureVersionatorTheme
-import dev.cjrv.azureversionator.theme.CornerRadius
+
+private val TechButtonShape = RoundedCornerShape(4.dp)
 
 @Composable
 fun CustomPrimaryButton(
@@ -74,7 +77,7 @@ private fun PrimaryButton(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier.heightIn(min = style.minHeight),
-        shape = RoundedCornerShape(CornerRadius),
+        shape = TechButtonShape,
         contentPadding = style.contentPadding,
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -88,7 +91,13 @@ private fun PrimaryButton(
                 leadingIcon()
                 Spacer(modifier = Modifier.width(8.dp))
             }
-            Text(text = text, style = style.textStyle)
+            Text(
+                text = text.uppercase(),
+                style = style.textStyle.copy(
+                    fontWeight = FontWeight.Black,
+                    letterSpacing = 1.sp
+                )
+            )
         }
     }
 }
@@ -142,17 +151,18 @@ private fun SecondaryButton(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier.heightIn(min = style.minHeight),
-        shape = RoundedCornerShape(CornerRadius),
+        shape = TechButtonShape,
         border = BorderStroke(
             width = 1.5.dp,
             color = if (enabled) {
-                MaterialTheme.colorScheme.secondary.copy(alpha = 0.85f)
+                MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)
             } else {
                 MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
             }
         ),
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = MaterialTheme.colorScheme.secondary,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            contentColor = MaterialTheme.colorScheme.onSurface,
             disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
         ),
         contentPadding = style.contentPadding
@@ -162,7 +172,13 @@ private fun SecondaryButton(
                 leadingIcon()
                 Spacer(modifier = Modifier.width(8.dp))
             }
-            Text(text = text, style = style.textStyle)
+            Text(
+                text = text.uppercase(),
+                style = style.textStyle.copy(
+                    fontWeight = FontWeight.Black,
+                    letterSpacing = 1.sp
+                )
+            )
         }
     }
 }
