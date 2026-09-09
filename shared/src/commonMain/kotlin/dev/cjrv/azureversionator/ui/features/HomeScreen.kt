@@ -2,6 +2,7 @@ package dev.cjrv.azureversionator.ui.features
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,10 +15,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -36,9 +37,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.add
 import azureversionator.shared.generated.resources.add_task
@@ -88,7 +91,7 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(innerPadding)
             ) {
                 if (showNewProfileDialog) {
@@ -138,59 +141,60 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(MarginMedium)
-                            .background(
-                                MaterialTheme.colorScheme.surfaceContainer,
-                                shape = RoundedCornerShape(CornerRadius)
-                            )
-                            .padding(MarginMedium)
                     ) {
-                        // Profile Switcher Header
-                        Text(
-                            text = stringResource(Res.string.selected_profile),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
+                        // Profile System Header
+                        Surface(
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = RoundedCornerShape(CornerRadius),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)),
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                CustomDropdownField(
-                                    label = "",
-                                    options = state.profiles.map { it.id },
-                                    selectedItem = state.selectedProfileId ?: "",
-                                    onOptionSelected = { selectedId ->
-                                        vm.onSelectedProfileChanged(selectedId)
-                                    }, optionLabel = { profileId ->
-                                        state.profiles.find { it.id == profileId }?.name ?: ""
-                                    },
-                                    modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(MarginSmall))
-                            Row(modifier = Modifier.padding(top = 16.dp)) {
-                                IconButton(onClick = { navigateToTarget(EditProfile) }) {
-                                    Icon(
-                                        imageVector = vectorResource(Res.drawable.edit),
-                                        contentDescription = stringResource(Res.string.edit_profile),
-                                        tint = MaterialTheme.colorScheme.secondary
+                            Row(
+                                modifier = Modifier.padding(MarginMedium),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = "SYSTEM_PROFILE //",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    CustomDropdownField(
+                                        label = "",
+                                        options = state.profiles.map { it.id },
+                                        selectedItem = state.selectedProfileId ?: "",
+                                        onOptionSelected = { selectedId ->
+                                            vm.onSelectedProfileChanged(selectedId)
+                                        }, optionLabel = { profileId ->
+                                            state.profiles.find { it.id == profileId }?.name ?: ""
+                                        },
+                                        modifier = Modifier.fillMaxWidth()
                                     )
                                 }
-                                IconButton(onClick = { showNewProfileDialog = true }) {
-                                    Icon(
-                                        imageVector = vectorResource(Res.drawable.add),
-                                        contentDescription = stringResource(Res.string.new_profile),
-                                        tint = MaterialTheme.colorScheme.secondary
-                                    )
+                                Spacer(modifier = Modifier.width(MarginSmall))
+                                Row {
+                                    IconButton(onClick = { navigateToTarget(EditProfile) }) {
+                                        Icon(
+                                            imageVector = vectorResource(Res.drawable.edit),
+                                            contentDescription = stringResource(Res.string.edit_profile),
+                                            tint = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
+                                    IconButton(onClick = { showNewProfileDialog = true }) {
+                                        Icon(
+                                            imageVector = vectorResource(Res.drawable.add),
+                                            contentDescription = stringResource(Res.string.new_profile),
+                                            tint = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
                                 }
                             }
                         }
 
                         Spacer(modifier = Modifier.height(MarginMedium))
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        Spacer(modifier = Modifier.height(MarginMedium))
 
-                        // Main Actions
+                        // Operations Grid
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -198,50 +202,42 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                 .verticalScroll(rememberScrollState()),
                             verticalArrangement = Arrangement.spacedBy(MarginMedium)
                         ) {
-                            FeatureCard(
+                            OperationCard(
                                 title = stringResource(Res.string.new_version),
+                                subtitle = "TRIGGER_PIPELINE_RUN",
                                 icon = Res.drawable.add_task,
                                 onClick = { navigateToTarget(NewVersion) }
                             )
 
-                            FeatureCard(
+                            OperationCard(
                                 title = stringResource(Res.string.attachment_bulk_downloader),
+                                subtitle = "EXTRACT_DATA_OBJECTS",
                                 icon = Res.drawable.download,
                                 onClick = { navigateToTarget(AttachmentBulkDownloader) }
                             )
                         }
 
-                        // Footer
+                        // Terminal Footer
                         Box(
                             Modifier.fillMaxWidth().padding(top = MarginMedium),
-                            contentAlignment = Alignment.BottomEnd
+                            contentAlignment = Alignment.Center
                         ) {
-                            Surface(
-                                shape = RoundedCornerShape(CornerRadius),
-                                border = BorderStroke(
-                                    1.dp,
-                                    MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f)
-                                ),
-                                color = Color.Transparent,
-                                onClick = { vm.openAboutMe() }
-                            ) {
-                                Text(
-                                    modifier = Modifier.padding(horizontal = MarginSmall, vertical = 4.dp),
-                                    text = buildAnnotatedString {
-                                        withStyle(
-                                            style = SpanStyle(
-                                                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f)
-                                            )
-                                        ) {
-                                            append("Made by Cjrv.dev with ")
-                                        }
-                                        withStyle(style = SpanStyle(color = Color.Red)) {
-                                            append("♥")
-                                        }
-                                    },
-                                    style = MaterialTheme.typography.labelSmall
-                                )
-                            }
+                            Text(
+                                modifier = Modifier.clickable { vm.openAboutMe() },
+                                text = buildAnnotatedString {
+                                    withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))) {
+                                        append("AUTH_BY: ")
+                                    }
+                                    withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)) {
+                                        append("CJRV.DEV ")
+                                    }
+                                    withStyle(SpanStyle(color = Color.Red.copy(alpha = 0.7f))) {
+                                        append("♥")
+                                    }
+                                },
+                                style = MaterialTheme.typography.labelSmall,
+                                letterSpacing = 1.sp
+                            )
                         }
                     }
                 }
@@ -251,8 +247,9 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
 }
 
 @Composable
-private fun FeatureCard(
+private fun OperationCard(
     title: String,
+    subtitle: String,
     icon: DrawableResource,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -261,26 +258,42 @@ private fun FeatureCard(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(CornerRadius),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        tonalElevation = 2.dp,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.1f))
     ) {
         Row(
-            modifier = Modifier.padding(24.dp),
+            modifier = Modifier.padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = vectorResource(icon),
-                contentDescription = null,
-                modifier = Modifier.size(40.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = vectorResource(icon),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
             Spacer(modifier = Modifier.width(MarginMedium))
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Column {
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp
+                )
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.ExtraBold
+                )
+            }
         }
     }
 }
