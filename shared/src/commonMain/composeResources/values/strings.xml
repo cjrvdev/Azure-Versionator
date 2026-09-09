@@ -10,6 +10,7 @@
     <string name="edit">Edit</string>
     <string name="value_cannot_be_empty">Value cannot be empty</string>
     <string name="required">Required</string>
+    <string name="cancel">Cancel</string>
 
     <!-- Azure DevOps Settings -->
     <string name="azure_devops_settings">Azure DevOps Settings</string>

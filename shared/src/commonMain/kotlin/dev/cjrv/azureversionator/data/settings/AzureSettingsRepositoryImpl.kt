@@ -61,9 +61,9 @@ class AzureSettingsRepositoryImpl(
         return profiles.firstOrNull { it.id == selectedProfileId } ?: profiles.first()
     }
 
-    override fun createNewProfile(): Profile {
+    override fun createNewProfile(name: String): Profile {
         val defaultProfile = Profile(
-            name = "New profile",
+            name = name,
             teamProjectName = "",
             variables = emptyList()
         )

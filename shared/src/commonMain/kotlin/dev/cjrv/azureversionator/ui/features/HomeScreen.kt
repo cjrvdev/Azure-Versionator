@@ -21,15 +21,21 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import azureversionator.shared.generated.resources.Res
@@ -41,6 +47,10 @@ import azureversionator.shared.generated.resources.edit
 import azureversionator.shared.generated.resources.edit_profile
 import azureversionator.shared.generated.resources.new_profile
 import azureversionator.shared.generated.resources.new_version
+import azureversionator.shared.generated.resources.ok
+import azureversionator.shared.generated.resources.profile_name
+import azureversionator.shared.generated.resources.profile_name_placeholder
+import azureversionator.shared.generated.resources.return_text
 import azureversionator.shared.generated.resources.selected_profile
 import azureversionator.shared.generated.resources.settings
 import dev.cjrv.azureversionator.navigation.AttachmentBulkDownloader
@@ -56,6 +66,7 @@ import dev.cjrv.azureversionator.ui.composables.CustomDropdownField
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
 import dev.cjrv.azureversionator.ui.composables.CustomSecondaryButton
 import dev.cjrv.azureversionator.ui.composables.CustomSecondaryCompactButton
+import dev.cjrv.azureversionator.ui.composables.CustomTextField
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
 import org.jetbrains.compose.resources.stringResource
@@ -66,6 +77,8 @@ import org.koin.compose.viewmodel.koinViewModel
 fun HomeScreen(navigateToTarget: (Route) -> Unit) {
     val vm = koinViewModel<HomeViewModel>()
     val state by vm.state.collectAsState()
+    var showNewProfileDialog by remember { mutableStateOf(false) }
+    var newProfileName by remember { mutableStateOf("") }
 
     Screen {
         Scaffold(topBar = {
@@ -80,6 +93,44 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                     .background(MaterialTheme.colorScheme.surface)
                     .padding(innerPadding)
             ) {
+                if (showNewProfileDialog) {
+                    AlertDialog(
+                        onDismissRequest = {
+                            showNewProfileDialog = false
+                            newProfileName = ""
+                        },
+                        title = { Text(stringResource(Res.string.new_profile)) },
+                        text = {
+                            CustomTextField(
+                                label = stringResource(Res.string.profile_name),
+                                value = newProfileName,
+                                onValueChange = { newProfileName = it },
+                                placeholder = stringResource(Res.string.profile_name_placeholder),
+                                imeAction = ImeAction.Done
+                            )
+                        },
+                        dismissButton = {
+                            TextButton(onClick = {
+                                showNewProfileDialog = false
+                                newProfileName = ""
+                            }) {
+                                Text(stringResource(Res.string.return_text))
+                            }
+                        },
+                        confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    vm.createNewProfile(newProfileName.trim())
+                                    showNewProfileDialog = false
+                                    newProfileName = ""
+                                },
+                                enabled = newProfileName.trim().isNotEmpty()
+                            ) {
+                                Text(stringResource(Res.string.ok))
+                            }
+                        }
+                    )
+                }
                 if (state.isLoading) {
                     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                         InfiniteLoadingIndicator()
@@ -115,7 +166,7 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                             Spacer(modifier = Modifier.width(MarginMedium))
                             CustomSecondaryCompactButton(
                                 text = stringResource(Res.string.new_profile),
-                                onClick = { vm.createNewProfile() },
+                                onClick = { showNewProfileDialog = true },
                                 leadingIcon = {
                                     Icon(
                                         imageVector = vectorResource(Res.drawable.add_task),
@@ -220,4 +271,3 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
         }
     }
 }
-

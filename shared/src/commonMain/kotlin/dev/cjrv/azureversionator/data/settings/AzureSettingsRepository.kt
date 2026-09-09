@@ -17,5 +17,5 @@ interface AzureSettingsRepository {
     fun getProfile(id: String): Profile?
     fun setActiveProfile(profile: Profile)
     fun getActiveProfile(): Profile
-    fun createNewProfile() : Profile
+    fun createNewProfile(name: String) : Profile
 }

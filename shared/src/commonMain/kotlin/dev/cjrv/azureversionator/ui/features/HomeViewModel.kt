@@ -50,8 +50,8 @@ class HomeViewModel(private val openUrlService: OpenUrlService, private val sett
         openUrlService.openInBrowser("https://github.com/cjrvdev")
     }
 
-    fun createNewProfile() {
-        val createdProfile = settingsRepository.createNewProfile()
+    fun createNewProfile(name: String) {
+        val createdProfile = settingsRepository.createNewProfile(name)
         onSelectedProfileChanged(createdProfile.id)
     }
 
