@@ -47,9 +47,12 @@ import azureversionator.shared.generated.resources.add
 import azureversionator.shared.generated.resources.add_task
 import azureversionator.shared.generated.resources.app_name
 import azureversionator.shared.generated.resources.attachment_bulk_downloader
+import azureversionator.shared.generated.resources.auth_by_label
+import azureversionator.shared.generated.resources.author_name
 import azureversionator.shared.generated.resources.download
 import azureversionator.shared.generated.resources.edit
 import azureversionator.shared.generated.resources.edit_profile
+import azureversionator.shared.generated.resources.extract_data_objects_subtitle
 import azureversionator.shared.generated.resources.new_profile
 import azureversionator.shared.generated.resources.new_version
 import azureversionator.shared.generated.resources.ok
@@ -57,6 +60,8 @@ import azureversionator.shared.generated.resources.profile_name
 import azureversionator.shared.generated.resources.profile_name_placeholder
 import azureversionator.shared.generated.resources.return_text
 import azureversionator.shared.generated.resources.selected_profile
+import azureversionator.shared.generated.resources.system_profile_label
+import azureversionator.shared.generated.resources.trigger_pipeline_run_subtitle
 import dev.cjrv.azureversionator.navigation.AttachmentBulkDownloader
 import dev.cjrv.azureversionator.navigation.EditProfile
 import dev.cjrv.azureversionator.navigation.NewVersion
@@ -155,7 +160,7 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "SYSTEM_PROFILE //",
+                                        text = stringResource(Res.string.system_profile_label),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.primary,
                                         fontWeight = FontWeight.Bold
@@ -204,14 +209,14 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                         ) {
                             OperationCard(
                                 title = stringResource(Res.string.new_version),
-                                subtitle = "TRIGGER_PIPELINE_RUN",
+                                subtitle = stringResource(Res.string.trigger_pipeline_run_subtitle),
                                 icon = Res.drawable.add_task,
                                 onClick = { navigateToTarget(NewVersion) }
                             )
 
                             OperationCard(
                                 title = stringResource(Res.string.attachment_bulk_downloader),
-                                subtitle = "EXTRACT_DATA_OBJECTS",
+                                subtitle = stringResource(Res.string.extract_data_objects_subtitle),
                                 icon = Res.drawable.download,
                                 onClick = { navigateToTarget(AttachmentBulkDownloader) }
                             )
@@ -226,10 +231,10 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                 modifier = Modifier.clickable { vm.openAboutMe() },
                                 text = buildAnnotatedString {
                                     withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))) {
-                                        append("AUTH_BY: ")
+                                        append(stringResource(Res.string.auth_by_label))
                                     }
                                     withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)) {
-                                        append("CJRV.DEV ")
+                                        append(stringResource(Res.string.author_name))
                                     }
                                     withStyle(SpanStyle(color = Color.Red.copy(alpha = 0.7f))) {
                                         append("♥")
