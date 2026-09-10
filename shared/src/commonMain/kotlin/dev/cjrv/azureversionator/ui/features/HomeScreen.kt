@@ -53,14 +53,14 @@ import azureversionator.shared.generated.resources.author_name
 import azureversionator.shared.generated.resources.download
 import azureversionator.shared.generated.resources.edit
 import azureversionator.shared.generated.resources.edit_profile
-import azureversionator.shared.generated.resources.extract_data_objects_subtitle
+import azureversionator.shared.generated.resources.extract_workitem_attachments_subtitle
 import azureversionator.shared.generated.resources.new_profile
 import azureversionator.shared.generated.resources.new_version
 import azureversionator.shared.generated.resources.ok
 import azureversionator.shared.generated.resources.profile_name
 import azureversionator.shared.generated.resources.profile_name_placeholder
 import azureversionator.shared.generated.resources.return_text
-import azureversionator.shared.generated.resources.system_profile_label
+import azureversionator.shared.generated.resources.profile_label
 import azureversionator.shared.generated.resources.trigger_pipeline_run_subtitle
 import dev.cjrv.azureversionator.navigation.AttachmentBulkDownloader
 import dev.cjrv.azureversionator.navigation.EditProfile
@@ -166,7 +166,7 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = stringResource(Res.string.system_profile_label),
+                                        text = stringResource(Res.string.profile_label),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.primary,
                                         fontWeight = FontWeight.Bold
@@ -222,7 +222,7 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
 
                             OperationCard(
                                 title = stringResource(Res.string.attachment_bulk_downloader),
-                                subtitle = stringResource(Res.string.extract_data_objects_subtitle),
+                                subtitle = stringResource(Res.string.extract_workitem_attachments_subtitle),
                                 icon = Res.drawable.download,
                                 onClick = { navigateToTarget(AttachmentBulkDownloader) }
                             )
