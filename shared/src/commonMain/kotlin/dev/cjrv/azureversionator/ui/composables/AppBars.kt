@@ -8,15 +8,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.chevron_back
 import org.jetbrains.compose.resources.vectorResource
@@ -32,12 +29,9 @@ fun TopAppBar(
     Column(modifier = Modifier.fillMaxWidth()) {
         TopAppBar(
             title = {
-                Text(
-                    text = text.uppercase(),
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.Black,
-                        letterSpacing = 2.sp
-                    ),
+                TechTitle(
+                    text = text,
+                    style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                 )
             },

@@ -1,8 +1,6 @@
 package dev.cjrv.azureversionator.ui.features
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,7 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -36,10 +33,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.add_variable
 import azureversionator.shared.generated.resources.azure_connection_settings
@@ -88,6 +83,9 @@ import dev.cjrv.azureversionator.ui.composables.CustomTextField
 import dev.cjrv.azureversionator.ui.composables.CustomTextFieldWithHelp
 import dev.cjrv.azureversionator.ui.composables.ExpandableSection
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
+import dev.cjrv.azureversionator.ui.composables.TechCard
+import dev.cjrv.azureversionator.ui.composables.TechLabel
+import dev.cjrv.azureversionator.ui.composables.TechPanel
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -155,61 +153,61 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
                         InfiniteLoadingIndicator()
                     }
                 } else {
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(MarginMedium),
+                    TechPanel(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(MarginMedium)
-                            .background(
-                                MaterialTheme.colorScheme.surface,
-                                shape = RoundedCornerShape(4.dp)
-                            )
-                            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f), RoundedCornerShape(4.dp))
-                            .padding(MarginMedium)
                     ) {
-                        item {
-                            ProfileNameOrRemove(
-                                profileName = state.profileName,
-                                onProfileNameChanged = vm::onProfileNameChanged,
-                                onRemoveProfileClick = { showRemoveProfileConfirmation = true }
-                            )
-                        }
-                        item {
-                            ConnectionSettings(
-                                state = state,
-                                onTeamProjectNameChanged = vm::onTeamProjectNameChanged,
-                                onPersonalAccessTokenChange = vm::onPersonalAccessTokenChange,
-                                onOrganizationChange = vm::onOrganizationChange
-                            )
-                        }
-                        item {
-                            VariablesSection(
-                                state = state,
-                                onAddNewVariable = vm::addNewVariable,
-                                onVariableNameChanged = vm::onVariableNameChanged,
-                                onVariableValueChanged = vm::onVariableValueChanged,
-                                onVariableSecretChanged = vm::onVariableSecretChanged,
-                                onVariableTextFieldTypeChanged = vm::onVariableTextFieldTypeChanged,
-                                onRemoveVariable = vm::removeVariable,
-                                onVariableRequiredChanged = vm::onVariableRequiredChanged
-                            )
-                        }
-                        item {
-                            FilterPreferencesSection(
-                                state = state,
-                                onPipelineFilterChange = vm::onPipelineFilterChanged,
-                                onRepositoryFilterChange = vm::onRepositoryFilterChanged,
-                                onBranchFilterChange = vm::onBranchFilterChanged
-                            )
-                        }
-                        item {
-                            CustomPrimaryButton(
-                                text = stringResource(Res.string.save_changes),
-                                onClick = vm::onSaveChangesClicked,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = MarginMedium)
-                            )
+                        LazyColumn(
+                            verticalArrangement = Arrangement.spacedBy(MarginMedium),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(MarginMedium)
+                        ) {
+                            item {
+                                ProfileNameOrRemove(
+                                    profileName = state.profileName,
+                                    onProfileNameChanged = vm::onProfileNameChanged,
+                                    onRemoveProfileClick = { showRemoveProfileConfirmation = true }
+                                )
+                            }
+                            item {
+                                ConnectionSettings(
+                                    state = state,
+                                    onTeamProjectNameChanged = vm::onTeamProjectNameChanged,
+                                    onPersonalAccessTokenChange = vm::onPersonalAccessTokenChange,
+                                    onOrganizationChange = vm::onOrganizationChange
+                                )
+                            }
+                            item {
+                                VariablesSection(
+                                    state = state,
+                                    onAddNewVariable = vm::addNewVariable,
+                                    onVariableNameChanged = vm::onVariableNameChanged,
+                                    onVariableValueChanged = vm::onVariableValueChanged,
+                                    onVariableSecretChanged = vm::onVariableSecretChanged,
+                                    onVariableTextFieldTypeChanged = vm::onVariableTextFieldTypeChanged,
+                                    onRemoveVariable = vm::removeVariable,
+                                    onVariableRequiredChanged = vm::onVariableRequiredChanged
+                                )
+                            }
+                            item {
+                                FilterPreferencesSection(
+                                    state = state,
+                                    onPipelineFilterChange = vm::onPipelineFilterChanged,
+                                    onRepositoryFilterChange = vm::onRepositoryFilterChanged,
+                                    onBranchFilterChange = vm::onBranchFilterChanged
+                                )
+                            }
+                            item {
+                                CustomPrimaryButton(
+                                    text = stringResource(Res.string.save_changes),
+                                    onClick = vm::onSaveChangesClicked,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = MarginMedium)
+                                )
+                            }
                         }
                     }
                 }
@@ -234,11 +232,14 @@ private fun ProfileNameOrRemove(
             imeAction = ImeAction.Next
         )
         Spacer(modifier = Modifier.width(MarginSmall))
-        IconButton(onClick = { onRemoveProfileClick() }) {
+        IconButton(
+            onClick = onRemoveProfileClick,
+            modifier = Modifier.size(32.dp)
+        ) {
             Icon(
                 imageVector = vectorResource(Res.drawable.delete),
                 contentDescription = stringResource(Res.string.remove_profile),
-                tint = MaterialTheme.colorScheme.error
+                tint = MaterialTheme.colorScheme.error.copy(alpha = 0.9f)
             )
         }
     }
@@ -252,16 +253,19 @@ private fun RemoveProfileConfirmationDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(4.dp),
-        title = { Text(stringResource(Res.string.remove_profile)) },
+        title = { TechLabel(text = stringResource(Res.string.remove_profile)) },
         text = { Text(stringResource(Res.string.remove_profile_confirmation_message)) },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(Res.string.return_text))
+                TechLabel(
+                    text = stringResource(Res.string.return_text),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text(stringResource(Res.string.ok))
+                TechLabel(text = stringResource(Res.string.ok))
             }
         }
     )
@@ -280,13 +284,10 @@ fun VariablesSection(
 ) {
     ExpandableSection(
         title = {
-            Text(
-                text = stringResource(Res.string.variables).uppercase(),
-                style = MaterialTheme.typography.labelMedium.copy(
-                    fontWeight = FontWeight.Black,
-                    letterSpacing = 1.sp
-                ),
-                color = MaterialTheme.colorScheme.onSurface
+            TechLabel(
+                text = stringResource(Res.string.variables),
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.labelMedium
             )
         }
     ) {
@@ -332,11 +333,9 @@ fun VariableRow(
     showValidationErrors: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    Surface(
+    TechCard(
         modifier = modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.5f),
-        shape = RoundedCornerShape(4.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.1f))
+        color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.5f)
     ) {
         Row(
             modifier = Modifier.padding(MarginSmall),
@@ -349,12 +348,15 @@ fun VariableRow(
                 Icon(
                     imageVector = vectorResource(Res.drawable.delete),
                     contentDescription = stringResource(Res.string.remove_variable),
-                    tint = MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
+                    tint = MaterialTheme.colorScheme.error.copy(alpha = 0.9f)
                 )
             }
             Spacer(modifier = Modifier.width(MarginSmall))
             Column(modifier = Modifier.weight(1f)) {
-                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     CustomTextField(
                         label = stringResource(Res.string.variable_name),
                         value = variable.name,
@@ -376,16 +378,17 @@ fun VariableRow(
                     Spacer(modifier = Modifier.width(MarginSmall))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Checkbox(checked = variable.isRequired, onCheckedChange = onRequiredChange)
-                        Text(
-                            text = stringResource(Res.string.required).uppercase(),
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Bold,
+                        TechLabel(
+                            text = stringResource(Res.string.required),
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                         )
                     }
                 }
                 Spacer(modifier = Modifier.height(MarginSmall))
-                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     CustomTextField(
                         label = stringResource(Res.string.variable_default_value),
                         value = variable.value,
@@ -397,10 +400,8 @@ fun VariableRow(
                     Spacer(modifier = Modifier.width(MarginSmall))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Checkbox(checked = variable.isSecret, onCheckedChange = onSecretChange)
-                        Text(
-                            text = stringResource(Res.string.variable_is_secret).uppercase(),
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Bold,
+                        TechLabel(
+                            text = stringResource(Res.string.variable_is_secret),
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                         )
                     }
@@ -419,13 +420,10 @@ private fun ConnectionSettings(
 ) {
     ExpandableSection(
         title = {
-            Text(
-                text = stringResource(Res.string.azure_connection_settings).uppercase(),
-                style = MaterialTheme.typography.labelMedium.copy(
-                    fontWeight = FontWeight.Black,
-                    letterSpacing = 1.sp
-                ),
-                color = MaterialTheme.colorScheme.onSurface
+            TechLabel(
+                text = stringResource(Res.string.azure_connection_settings),
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.labelMedium
             )
         }
     ) {
@@ -485,13 +483,10 @@ private fun FilterPreferencesSection(
 ) {
     ExpandableSection(
         title = {
-            Text(
-                text = stringResource(Res.string.filter_preferences).uppercase(),
-                style = MaterialTheme.typography.labelMedium.copy(
-                    fontWeight = FontWeight.Black,
-                    letterSpacing = 1.sp
-                ),
-                color = MaterialTheme.colorScheme.onSurface
+            TechLabel(
+                text = stringResource(Res.string.filter_preferences),
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.labelMedium
             )
         }
     ) {

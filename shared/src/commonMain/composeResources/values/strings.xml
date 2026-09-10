@@ -83,5 +83,7 @@
     <string name="extract_workitem_attachments_subtitle">EXTRACT WORKITEM ATTACHMENTS</string>
     <string name="auth_by_label">CREATED BY: </string>
     <string name="author_name">CJRV.DEV </string>
+    <string name="success">SUCCESS</string>
+    <string name="error">ERROR</string>
 
 </resources>

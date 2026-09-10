@@ -1,6 +1,5 @@
 package dev.cjrv.azureversionator.ui.composables
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,7 +13,6 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -29,15 +27,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.help
+import dev.cjrv.azureversionator.theme.CornerRadius
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.vectorResource
 
@@ -52,8 +49,6 @@ private fun techTextFieldColors() = TextFieldDefaults.colors(
     focusedLabelColor = MaterialTheme.colorScheme.primary,
     unfocusedLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
 )
-
-private val TechCornerShape = RoundedCornerShape(4.dp)
 
 @Composable
 fun CustomTextField(
@@ -73,18 +68,11 @@ fun CustomTextField(
     TextField(
         value = value,
         onValueChange = onValueChange,
-        label = {
-            Text(
-                text = label.uppercase(),
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp
-            )
-        },
+        label = { TechLabel(text = label) },
         placeholder = { Text(placeholder) },
         singleLine = true,
         modifier = modifier,
-        shape = TechCornerShape,
+        shape = RoundedCornerShape(CornerRadius),
         isError = isError,
         colors = techTextFieldColors(),
         supportingText = if (isError && errorMessage != null) {
@@ -117,18 +105,11 @@ fun CustomMultilineTextField(
     TextField(
         value = value,
         onValueChange = onValueChange,
-        label = {
-            Text(
-                text = label.uppercase(),
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp
-            )
-        },
+        label = { TechLabel(text = label) },
         placeholder = { Text(placeholder) },
         singleLine = false,
         modifier = modifier,
-        shape = TechCornerShape,
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(CornerRadius),
         isError = isError,
         colors = techTextFieldColors(),
         supportingText = if (isError && errorMessage != null) {
@@ -173,17 +154,10 @@ fun <T> CustomDropdownField(
             readOnly = true,
             enabled = enabled,
             label = if (label.isNotEmpty()) {
-                {
-                    Text(
-                        text = label.uppercase(),
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp
-                    )
-                }
+                { TechLabel(text = label) }
             } else null,
             placeholder = { Text(placeholder) },
-            shape = TechCornerShape,
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(CornerRadius),
             isError = isError,
             colors = techTextFieldColors(),
             supportingText = if (isError && errorMessage != null) {
@@ -238,18 +212,11 @@ fun CustomTextFieldWithHelp(
         value = value,
         onValueChange = onValueChange,
         enabled = enabled,
-        label = {
-            Text(
-                text = label.uppercase(),
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp
-            )
-        },
+        label = { TechLabel(text = label) },
         placeholder = { Text(placeholder) },
         singleLine = true,
         modifier = modifier,
-        shape = TechCornerShape,
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(CornerRadius),
         isError = isError,
         colors = techTextFieldColors(),
         supportingText = if (isError && errorMessage != null) {
@@ -275,11 +242,9 @@ fun CustomTextFieldWithHelp(
                 ),
                 state = tooltipState,
                 tooltip = {
-                    Surface(
-                        shape = RoundedCornerShape(4.dp),
-                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)),
-                        tonalElevation = 4.dp
+                    TechCard(
+                        borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest
                     ) {
                         Text(
                             text = helpText,

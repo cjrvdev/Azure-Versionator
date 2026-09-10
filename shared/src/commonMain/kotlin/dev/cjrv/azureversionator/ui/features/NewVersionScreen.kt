@@ -1,7 +1,6 @@
 package dev.cjrv.azureversionator.ui.features
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,10 +33,12 @@ import azureversionator.shared.generated.resources.azure_pipeline_id
 import azureversionator.shared.generated.resources.azure_pipeline_id_placeholder
 import azureversionator.shared.generated.resources.azure_repository_name
 import azureversionator.shared.generated.resources.azure_repository_name_placeholder
+import azureversionator.shared.generated.resources.error
 import azureversionator.shared.generated.resources.new_version
 import azureversionator.shared.generated.resources.new_version_submit
 import azureversionator.shared.generated.resources.ok
 import azureversionator.shared.generated.resources.return_text
+import azureversionator.shared.generated.resources.success
 import azureversionator.shared.generated.resources.upload
 import azureversionator.shared.generated.resources.value_cannot_be_empty
 import azureversionator.shared.generated.resources.variables
@@ -50,6 +51,8 @@ import dev.cjrv.azureversionator.ui.composables.CustomMultilineTextField
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
 import dev.cjrv.azureversionator.ui.composables.CustomTextField
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
+import dev.cjrv.azureversionator.ui.composables.TechLabel
+import dev.cjrv.azureversionator.ui.composables.TechPanel
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -68,13 +71,13 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
         AlertDialog(
             onDismissRequest = { vm.onSuccessMessageConsumed() },
             shape = RoundedCornerShape(4.dp),
-            title = { Text("Success") },
+            title = { TechLabel(text = stringResource(Res.string.success)) },
             text = { Text(state.successMessage.orEmpty()) },
             dismissButton = {
                 TextButton(onClick = {
                     vm.onSuccessMessageConsumed()
                 }) {
-                    Text(stringResource(Res.string.return_text))
+                    TechLabel(text = stringResource(Res.string.return_text), color = MaterialTheme.colorScheme.onSurface)
                 }
             },
             confirmButton = {
@@ -82,7 +85,7 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                     vm.onSuccessMessageConsumed()
                     onNavigateBack()
                 }) {
-                    Text(stringResource(Res.string.ok))
+                    TechLabel(text = stringResource(Res.string.ok))
                 }
             }
         )
@@ -93,11 +96,11 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
         AlertDialog(
             onDismissRequest = { vm.onErrorConsumed() },
             shape = RoundedCornerShape(4.dp),
-            title = { Text("Error") },
+            title = { TechLabel(text = stringResource(Res.string.error)) },
             text = { Text(state.generalError.orEmpty()) },
             confirmButton = {
                 TextButton(onClick = { vm.onErrorConsumed() }) {
-                    Text(stringResource(Res.string.ok))
+                    TechLabel(text = stringResource(Res.string.ok))
                 }
             }
         )
@@ -122,78 +125,78 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                         InfiniteLoadingIndicator()
                     }
                 } else {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(MarginMedium),
+                    TechPanel(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(MarginMedium)
-                            .background(
-                                MaterialTheme.colorScheme.surface,
-                                shape = RoundedCornerShape(4.dp)
-                            )
-                            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f), RoundedCornerShape(4.dp))
-                            .padding(MarginMedium)
-                            .verticalScroll(rememberScrollState())
                     ) {
-                        CustomDropdownField(
-                            label = stringResource(Res.string.azure_pipeline_id),
-                            selectedItem = selectedPipeline,
-                            options = state.pipelines,
-                            optionLabel = { it.name },
-                            onOptionSelected = vm::onPipelineSelected,
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = stringResource(Res.string.azure_pipeline_id_placeholder),
-                            enabled = state.isConfigurationValid && !state.isLoadingPipelines,
-                            isError = state.pipelineIdError != null || state.loadPipelinesError != null,
-                            errorMessage = state.pipelineIdError ?: state.loadPipelinesError
-                        )
-                        Row(horizontalArrangement = Arrangement.spacedBy(MarginMedium)) {
-                            CustomDropdownField(
-                                label = stringResource(Res.string.azure_repository_name),
-                                selectedItem = selectedRepository,
-                                options = state.repositories,
-                                optionLabel = { it.name },
-                                onOptionSelected = vm::onRepositorySelected,
-                                modifier = Modifier.fillMaxWidth().weight(1f),
-                                placeholder = stringResource(Res.string.azure_repository_name_placeholder),
-                                enabled = state.isConfigurationValid && !state.isLoadingRepositories,
-                                isError = state.repositoryIdError != null || state.loadRepositoriesError != null,
-                                errorMessage = state.repositoryIdError
-                                    ?: state.loadRepositoriesError
-                            )
-                            CustomDropdownField(
-                                label = stringResource(Res.string.azure_branch_name),
-                                selectedItem = selectedBranch,
-                                options = state.branches,
-                                optionLabel = { it.name },
-                                onOptionSelected = vm::onBranchSelected,
-                                modifier = Modifier.fillMaxWidth().weight(1f),
-                                placeholder = stringResource(Res.string.azure_branch_name_placeholder),
-                                enabled = state.selectedRepositoryId != null && !state.isLoadingBranches,
-                                isError = state.branchNameError != null || state.loadBranchesError != null,
-                                errorMessage = state.branchNameError ?: state.loadBranchesError
-                            )
-                        }
-
-                        ProfileVariablesSection(
-                            variables = state.selectedProfile?.variables.orEmpty(),
-                            showValidationErrors = state.showValidationErrors,
-                            onVariableValueChanged = vm::onVariableValueChanged
-                        )
-
-                        CustomPrimaryButton(
-                            text = stringResource(Res.string.new_version_submit),
-                            onClick = vm::createVersion,
-                            enabled = state.isConfigurationValid,
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(MarginMedium),
                             modifier = Modifier
-                                .fillMaxWidth(),
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = vectorResource(Res.drawable.upload),
-                                    contentDescription = stringResource(Res.string.new_version_submit)
+                                .fillMaxSize()
+                                .padding(MarginMedium)
+                                .verticalScroll(rememberScrollState())
+                        ) {
+                            CustomDropdownField(
+                                label = stringResource(Res.string.azure_pipeline_id),
+                                selectedItem = selectedPipeline,
+                                options = state.pipelines,
+                                optionLabel = { it.name },
+                                onOptionSelected = vm::onPipelineSelected,
+                                modifier = Modifier.fillMaxWidth(),
+                                placeholder = stringResource(Res.string.azure_pipeline_id_placeholder),
+                                enabled = state.isConfigurationValid && !state.isLoadingPipelines,
+                                isError = state.pipelineIdError != null || state.loadPipelinesError != null,
+                                errorMessage = state.pipelineIdError ?: state.loadPipelinesError
+                            )
+                            Row(horizontalArrangement = Arrangement.spacedBy(MarginMedium)) {
+                                CustomDropdownField(
+                                    label = stringResource(Res.string.azure_repository_name),
+                                    selectedItem = selectedRepository,
+                                    options = state.repositories,
+                                    optionLabel = { it.name },
+                                    onOptionSelected = vm::onRepositorySelected,
+                                    modifier = Modifier.fillMaxWidth().weight(1f),
+                                    placeholder = stringResource(Res.string.azure_repository_name_placeholder),
+                                    enabled = state.isConfigurationValid && !state.isLoadingRepositories,
+                                    isError = state.repositoryIdError != null || state.loadRepositoriesError != null,
+                                    errorMessage = state.repositoryIdError
+                                        ?: state.loadRepositoriesError
+                                )
+                                CustomDropdownField(
+                                    label = stringResource(Res.string.azure_branch_name),
+                                    selectedItem = selectedBranch,
+                                    options = state.branches,
+                                    optionLabel = { it.name },
+                                    onOptionSelected = vm::onBranchSelected,
+                                    modifier = Modifier.fillMaxWidth().weight(1f),
+                                    placeholder = stringResource(Res.string.azure_branch_name_placeholder),
+                                    enabled = state.selectedRepositoryId != null && !state.isLoadingBranches,
+                                    isError = state.branchNameError != null || state.loadBranchesError != null,
+                                    errorMessage = state.branchNameError ?: state.loadBranchesError
                                 )
                             }
-                        )
+
+                            ProfileVariablesSection(
+                                variables = state.selectedProfile?.variables.orEmpty(),
+                                showValidationErrors = state.showValidationErrors,
+                                onVariableValueChanged = vm::onVariableValueChanged
+                            )
+
+                            CustomPrimaryButton(
+                                text = stringResource(Res.string.new_version_submit),
+                                onClick = vm::createVersion,
+                                enabled = state.isConfigurationValid,
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = vectorResource(Res.drawable.upload),
+                                        contentDescription = stringResource(Res.string.new_version_submit)
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -215,8 +218,9 @@ private fun ProfileVariablesSection(
     val multilineVariables = variables.withIndex()
         .filter { it.value.textFieldType == TextFieldType.Multiline }
 
-    Text(
+    TechLabel(
         text = stringResource(Res.string.variables),
+        color = MaterialTheme.colorScheme.onSurface,
         style = MaterialTheme.typography.titleMedium,
         modifier = Modifier.padding(top = MarginMedium)
     )
