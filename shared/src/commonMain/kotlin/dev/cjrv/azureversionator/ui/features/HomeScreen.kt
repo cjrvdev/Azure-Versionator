@@ -1,5 +1,6 @@
 package dev.cjrv.azureversionator.ui.features
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,14 +12,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -38,6 +42,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import azureversionator.shared.generated.resources.Res
+import azureversionator.shared.generated.resources.active_profile_label
 import azureversionator.shared.generated.resources.add
 import azureversionator.shared.generated.resources.add_task
 import azureversionator.shared.generated.resources.app_name
@@ -50,13 +55,13 @@ import azureversionator.shared.generated.resources.download
 import azureversionator.shared.generated.resources.edit
 import azureversionator.shared.generated.resources.edit_profile
 import azureversionator.shared.generated.resources.extract_workitem_attachments_subtitle
-import azureversionator.shared.generated.resources.new_profile
 import azureversionator.shared.generated.resources.new_build
+import azureversionator.shared.generated.resources.new_profile
 import azureversionator.shared.generated.resources.ok
-import azureversionator.shared.generated.resources.active_profile_label
 import azureversionator.shared.generated.resources.profile_name
 import azureversionator.shared.generated.resources.profile_name_placeholder
 import azureversionator.shared.generated.resources.return_text
+import azureversionator.shared.generated.resources.settings
 import azureversionator.shared.generated.resources.trigger_pipeline_run_subtitle
 import dev.cjrv.azureversionator.navigation.AttachmentBulkDownloader
 import dev.cjrv.azureversionator.navigation.EditProfile
@@ -156,54 +161,53 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                 .background(MaterialTheme.colorScheme.surface)
                         ) {
                             Column(modifier = Modifier.padding(MarginMedium)) {
-                                // Profile System Header
+                                // Profile Command Module
                                 TechCard(
                                     color = MaterialTheme.colorScheme.surfaceContainer,
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    Row(
-                                        modifier = Modifier.padding(MarginMedium),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Column(modifier = Modifier.weight(1f)) {
+                                    Column(modifier = Modifier.padding(MarginMedium)) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
                                             TechLabel(text = stringResource(Res.string.active_profile_label))
-                                            CustomDropdownField(
-                                                label = "",
-                                                options = state.profiles.map { it.id },
-                                                selectedItem = state.selectedProfileId ?: "",
-                                                onOptionSelected = { selectedId ->
-                                                    vm.onSelectedProfileChanged(selectedId)
-                                                }, optionLabel = { profileId ->
-                                                    state.profiles.find { it.id == profileId }?.name
-                                                        ?: ""
-                                                },
-                                                modifier = Modifier.fillMaxWidth()
-                                            )
-                                        }
-                                        Spacer(modifier = Modifier.width(MarginSmall))
-                                        Row {
-                                            IconButton(onClick = { vm.onCloneProfileClicked() }) {
-                                                Icon(
-                                                    imageVector = vectorResource(Res.drawable.copy),
+                                            Row(horizontalArrangement = Arrangement.spacedBy(MarginSmall)) {
+                                                TechActionButton(
+                                                    icon = Res.drawable.copy,
                                                     contentDescription = stringResource(Res.string.clone_profile),
-                                                    tint = MaterialTheme.colorScheme.onSurface
+                                                    onClick = { vm.onCloneProfileClicked() }
                                                 )
-                                            }
-                                            IconButton(onClick = { navigateToTarget(EditProfile) }) {
-                                                Icon(
-                                                    imageVector = vectorResource(Res.drawable.edit),
+                                                TechActionButton(
+                                                    icon = Res.drawable.settings,
                                                     contentDescription = stringResource(Res.string.edit_profile),
-                                                    tint = MaterialTheme.colorScheme.onSurface
+                                                    onClick = { navigateToTarget(EditProfile) }
                                                 )
-                                            }
-                                            IconButton(onClick = { showNewProfileDialog = true }) {
-                                                Icon(
-                                                    imageVector = vectorResource(Res.drawable.add),
+                                                TechActionButton(
+                                                    icon = Res.drawable.add,
                                                     contentDescription = stringResource(Res.string.new_profile),
-                                                    tint = MaterialTheme.colorScheme.onSurface
+                                                    onClick = { showNewProfileDialog = true },
+                                                    tint = MaterialTheme.colorScheme.primary,
+                                                    backgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
                                                 )
                                             }
                                         }
+                                        
+                                        Spacer(modifier = Modifier.height(MarginSmall))
+                                        
+                                        CustomDropdownField(
+                                            label = "",
+                                            options = state.profiles.map { it.id },
+                                            selectedItem = state.selectedProfileId ?: "",
+                                            onOptionSelected = { selectedId ->
+                                                vm.onSelectedProfileChanged(selectedId)
+                                            }, optionLabel = { profileId ->
+                                                state.profiles.find { it.id == profileId }?.name
+                                                    ?: ""
+                                            },
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
                                     }
                                 }
 
@@ -249,14 +253,43 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
 }
 
 @Composable
+private fun TechActionButton(
+    icon: DrawableResource,
+    contentDescription: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    tint: Color = MaterialTheme.colorScheme.onSurface,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh
+) {
+    Surface(
+        onClick = onClick,
+        modifier = modifier.size(34.dp),
+        shape = RoundedCornerShape(4.dp),
+        color = backgroundColor,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Icon(
+                imageVector = vectorResource(icon),
+                contentDescription = contentDescription,
+                modifier = Modifier.size(18.dp),
+                tint = tint
+            )
+        }
+    }
+}
+
+@Composable
 private fun CreatedByLabel(
     openAboutMe: () -> Unit,
 ) {
+    val authLabel = stringResource(Res.string.auth_by_label)
+    val author = stringResource(Res.string.author_name)
     Text(
         modifier = Modifier.clickable { openAboutMe() },
         text = buildAnnotatedString {
             withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))) {
-                append(stringResource(Res.string.auth_by_label))
+                append(authLabel)
             }
             withStyle(
                 SpanStyle(
@@ -264,7 +297,7 @@ private fun CreatedByLabel(
                     fontWeight = FontWeight.Bold
                 )
             ) {
-                append(stringResource(Res.string.author_name))
+                append(author)
             }
             withStyle(SpanStyle(color = Color.Red.copy(alpha = 0.7f))) {
                 append("♥")
