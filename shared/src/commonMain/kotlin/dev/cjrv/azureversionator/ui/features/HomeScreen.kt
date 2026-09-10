@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
@@ -52,7 +51,6 @@ import azureversionator.shared.generated.resources.author_name
 import azureversionator.shared.generated.resources.clone_profile
 import azureversionator.shared.generated.resources.copy
 import azureversionator.shared.generated.resources.download
-import azureversionator.shared.generated.resources.edit
 import azureversionator.shared.generated.resources.edit_profile
 import azureversionator.shared.generated.resources.extract_workitem_attachments_subtitle
 import azureversionator.shared.generated.resources.new_build
