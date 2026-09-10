@@ -34,7 +34,7 @@ android {
         applicationId = "dev.cjrv.azureversionator"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
+        versionCode = 10
         versionName = libs.versions.app.version.get()
     }
     packaging {
