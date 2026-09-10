@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -32,13 +31,13 @@ import azureversionator.shared.generated.resources.download_attachments
 import azureversionator.shared.generated.resources.error
 import azureversionator.shared.generated.resources.folder
 import azureversionator.shared.generated.resources.ok
+import azureversionator.shared.generated.resources.save_to
 import azureversionator.shared.generated.resources.select_download_path
 import azureversionator.shared.generated.resources.success
 import azureversionator.shared.generated.resources.workitem_id
 import azureversionator.shared.generated.resources.workitem_id_help
 import azureversionator.shared.generated.resources.workitem_id_placeholder
 import dev.cjrv.azureversionator.theme.MarginMedium
-import dev.cjrv.azureversionator.theme.MarginSmall
 import dev.cjrv.azureversionator.ui.Screen
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
 import dev.cjrv.azureversionator.ui.composables.CustomSecondaryCompactButton
@@ -100,7 +99,7 @@ fun AttachmentBulkDownloaderScreen(onNavigateBack: () -> Unit) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(innerPadding)
             ) {
                 if (state.isLoading) {
@@ -121,13 +120,13 @@ fun AttachmentBulkDownloaderScreen(onNavigateBack: () -> Unit) {
                 } else {
                     TechPanel(
                         modifier = Modifier
-                            .fillMaxSize()
+                            .fillMaxWidth()
                             .padding(MarginMedium)
                     ) {
                         Column(
                             verticalArrangement = Arrangement.spacedBy(MarginMedium),
                             modifier = Modifier
-                                .fillMaxSize()
+                                .fillMaxWidth()
                                 .padding(MarginMedium)
                                 .verticalScroll(rememberScrollState())
                         ) {
@@ -143,28 +142,23 @@ fun AttachmentBulkDownloaderScreen(onNavigateBack: () -> Unit) {
                                 keyboardType = KeyboardType.Number,
                                 imeAction = ImeAction.Next,
                             )
-
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(MarginSmall)
-                            ) {
-                                Text(
-                                    state.destinationPath,
-                                    modifier = Modifier.weight(1f),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                                CustomSecondaryCompactButton(
-                                    stringResource(Res.string.select_download_path),
-                                    leadingIcon = {
-                                        Icon(
-                                            imageVector = vectorResource(Res.drawable.folder),
-                                            contentDescription = stringResource(Res.string.select_download_path)
-                                        )
-                                    },
-                                    onClick = vm::onSelectDownloadPath
-                                )
-                            }
+                            Text(
+                                stringResource(Res.string.save_to) + state.destinationPath,
+                                modifier = Modifier.fillMaxWidth(),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            CustomSecondaryCompactButton(
+                                stringResource(Res.string.select_download_path),
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = vectorResource(Res.drawable.folder),
+                                        contentDescription = stringResource(Res.string.select_download_path)
+                                    )
+                                },
+                                onClick = vm::onSelectDownloadPath,
+                                modifier = Modifier.align(Alignment.End)
+                            )
 
                             CustomPrimaryButton(
                                 text = stringResource(Res.string.download_attachments),

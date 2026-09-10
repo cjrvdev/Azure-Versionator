@@ -117,7 +117,7 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(innerPadding)
             ) {
                 if (state.isLoading) {
@@ -127,13 +127,13 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                 } else {
                     TechPanel(
                         modifier = Modifier
-                            .fillMaxSize()
+                            .fillMaxWidth()
                             .padding(MarginMedium)
                     ) {
                         Column(
                             verticalArrangement = Arrangement.spacedBy(MarginMedium),
                             modifier = Modifier
-                                .fillMaxSize()
+                                .fillMaxWidth()
                                 .padding(MarginMedium)
                                 .verticalScroll(rememberScrollState())
                         ) {

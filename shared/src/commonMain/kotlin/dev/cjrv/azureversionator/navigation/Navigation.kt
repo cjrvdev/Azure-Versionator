@@ -2,8 +2,8 @@ package dev.cjrv.azureversionator.navigation
 
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
@@ -34,21 +34,21 @@ fun Navigation() {
         onBack = { navigator.goBack() },
         transitionSpec = {
             if (targetState.matchesRoute(EditProfile)) {
-                slideInVertically { it } togetherWith slideOutVertically { -it }
+                slideInHorizontally { it } togetherWith slideOutHorizontally { -it }
             } else {
                 fadeIn() togetherWith fadeOut()
             }
         },
         popTransitionSpec = {
             if (initialState.matchesRoute(EditProfile)) {
-                slideInVertically { -it } togetherWith slideOutVertically { it }
+                slideInHorizontally { -it } togetherWith slideOutHorizontally { it }
             } else {
                 fadeIn() togetherWith fadeOut()
             }
         },
         predictivePopTransitionSpec = {
             if (initialState.matchesRoute(EditProfile)) {
-                slideInVertically { -it } togetherWith slideOutVertically { it }
+                slideInHorizontally { -it } togetherWith slideOutHorizontally { it }
             } else {
                 fadeIn() togetherWith fadeOut()
             }

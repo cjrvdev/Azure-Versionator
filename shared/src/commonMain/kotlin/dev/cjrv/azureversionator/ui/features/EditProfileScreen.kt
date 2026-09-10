@@ -142,7 +142,7 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(innerPadding)
             ) {
                 if (state.isLoading) {
@@ -155,13 +155,13 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
                 } else {
                     TechPanel(
                         modifier = Modifier
-                            .fillMaxSize()
+                            .fillMaxWidth()
                             .padding(MarginMedium)
                     ) {
                         LazyColumn(
                             verticalArrangement = Arrangement.spacedBy(MarginMedium),
                             modifier = Modifier
-                                .fillMaxSize()
+                                .fillMaxWidth()
                                 .padding(MarginMedium)
                         ) {
                             item {

@@ -42,6 +42,7 @@
     <string name="workitem_id_placeholder">ID</string>
     <string name="workitem_id_help">ID of the User story, Task, Bug, etc...</string>
     <string name="select_download_path">Change save path</string>
+    <string name="save_to">Save to: </string>
 
     <!-- Profiles -->
     <string name="edit_profile">Edit Profile</string>
