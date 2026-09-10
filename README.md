@@ -12,11 +12,16 @@ Designed with an industrial "Cyber-Tech" aesthetic, it offers a fast and efficie
 
 ## ✨ Key Features
 
-- **🛡️ Multi-Profile Management**: Create, edit, and **clone** profiles with unique Azure DevOps configurations (PAT, Organization, Project).
-- **⚙️ Trigger Builds**: A streamlined interface to launch pipeline runs on specific branches and repositories.
-- **📥 Attachment Downloader**: Bulk download work item attachments with automated naming and organization.
-- **🎨 Industrial UI**: A custom-built design system with a high-contrast dark theme, "laser" borders, and technical labels.
+- **🛡️ Multi-Profile Management**: Create multiple profiles with unique Azure DevOps configurations for each organization or team project you need.
+- **🎨 Dynamic UI**: Supports Light and Dark mode.
 - **💻 Desktop & Mobile**: Seamless experience between your workstation and your phone.
+- **🦥LAZY-FRIENDLY** features created to simplify some of the unnecessary long tasks in Azure DevOps. Feel free to suggest new ones by creating a New Issue.
+
+---
+
+## ✔️ Current actions
+- **⚙️ Trigger Builds**: Launch pipeline runs on specific branches and repositories with ease by creating variable templates that are much faster to fill.
+- **📥 Attachment Downloader**: Bulk download work item attachments in one click! Supports **any** type of workitem. 
 
 ---
 
@@ -43,3 +48,5 @@ Designed with an industrial "Cyber-Tech" aesthetic, it offers a fast and efficie
 
 ---
 *Note: This project is in active development. Feel free to open issues or contribute!*
+
+*Also... yes, this ReadMe was done with AI. Lazyness is real*
