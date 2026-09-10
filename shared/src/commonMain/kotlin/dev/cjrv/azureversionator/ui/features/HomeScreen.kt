@@ -51,7 +51,7 @@ import azureversionator.shared.generated.resources.edit
 import azureversionator.shared.generated.resources.edit_profile
 import azureversionator.shared.generated.resources.extract_workitem_attachments_subtitle
 import azureversionator.shared.generated.resources.new_profile
-import azureversionator.shared.generated.resources.new_version
+import azureversionator.shared.generated.resources.new_build
 import azureversionator.shared.generated.resources.ok
 import azureversionator.shared.generated.resources.active_profile_label
 import azureversionator.shared.generated.resources.profile_name
@@ -218,7 +218,7 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                     verticalArrangement = Arrangement.spacedBy(MarginMedium)
                                 ) {
                                     OperationCard(
-                                        title = stringResource(Res.string.new_version),
+                                        title = stringResource(Res.string.new_build),
                                         subtitle = stringResource(Res.string.trigger_pipeline_run_subtitle),
                                         icon = Res.drawable.add_task,
                                         onClick = { navigateToTarget(NewVersion) }

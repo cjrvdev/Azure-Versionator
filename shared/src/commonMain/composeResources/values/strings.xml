@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Azure Versionator</string>
-    <string name="new_version">Create new version</string>
+    <string name="new_build">Create new build</string>
     <string name="settings">General Settings</string>
     <string name="ok">OK</string>
     <string name="return_text">Return</string>
@@ -49,7 +49,7 @@
     <string name="new_version_submit">Submit New Version</string>
 
     <!-- Attachment bulk downloader -->
-    <string name="attachment_bulk_downloader">Workitem Attachment Bulk Downloader</string>
+    <string name="attachment_bulk_downloader">Attachment Downloader</string>
     <string name="download_attachments">Download attachments</string>
     <string name="workitem_id">Workitem ID</string>
     <string name="workitem_id_placeholder">ID</string>

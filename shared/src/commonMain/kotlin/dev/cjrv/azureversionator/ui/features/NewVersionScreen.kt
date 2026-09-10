@@ -34,7 +34,7 @@ import azureversionator.shared.generated.resources.azure_pipeline_id_placeholder
 import azureversionator.shared.generated.resources.azure_repository_name
 import azureversionator.shared.generated.resources.azure_repository_name_placeholder
 import azureversionator.shared.generated.resources.error
-import azureversionator.shared.generated.resources.new_version
+import azureversionator.shared.generated.resources.new_build
 import azureversionator.shared.generated.resources.new_version_submit
 import azureversionator.shared.generated.resources.ok
 import azureversionator.shared.generated.resources.return_text
@@ -109,7 +109,7 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
     Screen {
         Scaffold(topBar = {
             TopAppBar(
-                stringResource(Res.string.new_version),
+                stringResource(Res.string.new_build),
                 hasBackButton = true,
                 onBackPressed = { onNavigateBack() }
             )
