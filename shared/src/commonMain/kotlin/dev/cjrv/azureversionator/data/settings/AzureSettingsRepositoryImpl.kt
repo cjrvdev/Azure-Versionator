@@ -5,6 +5,7 @@ import dev.cjrv.azureversionator.data.model.app.Profile
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.json.Json
+import kotlin.uuid.Uuid
 
 class AzureSettingsRepositoryImpl(
     private val settings: Settings
@@ -62,6 +63,16 @@ class AzureSettingsRepositoryImpl(
         setActiveProfile(defaultProfile)
 
         return defaultProfile
+    }
+
+    override fun cloneProfile(profile: Profile): Profile {
+        val clonedProfile = profile.copy(
+            id = Uuid.random().toString(),
+            name = "${profile.name} (Copy)"
+        )
+        saveProfile(clonedProfile)
+        setActiveProfile(clonedProfile)
+        return clonedProfile
     }
 
     private fun syncProfileState(): List<Profile> {

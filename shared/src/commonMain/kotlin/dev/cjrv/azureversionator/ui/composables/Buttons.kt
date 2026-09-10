@@ -9,15 +9,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -88,7 +87,11 @@ private fun PrimaryButton(
                 leadingIcon()
                 Spacer(modifier = Modifier.width(8.dp))
             }
-            Text(text = text, style = style.textStyle)
+            TechLabel(
+                text = text,
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = style.textStyle
+            )
         }
     }
 }
@@ -146,13 +149,14 @@ private fun SecondaryButton(
         border = BorderStroke(
             width = 1.5.dp,
             color = if (enabled) {
-                MaterialTheme.colorScheme.secondary.copy(alpha = 0.85f)
+                MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)
             } else {
                 MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
             }
         ),
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = MaterialTheme.colorScheme.secondary,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            contentColor = MaterialTheme.colorScheme.onSurface,
             disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
         ),
         contentPadding = style.contentPadding
@@ -162,7 +166,11 @@ private fun SecondaryButton(
                 leadingIcon()
                 Spacer(modifier = Modifier.width(8.dp))
             }
-            Text(text = text, style = style.textStyle)
+            TechLabel(
+                text = text,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = style.textStyle
+            )
         }
     }
 }

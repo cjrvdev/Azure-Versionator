@@ -1,19 +1,15 @@
 <resources>
     <string name="app_name">Azure Versionator</string>
-    <string name="new_version">Create new version</string>
-    <string name="settings">General Settings</string>
+    <string name="new_build">Create new build</string>
     <string name="ok">OK</string>
     <string name="return_text">Return</string>
-    <string name="stay_here">Stay here</string>
     <string name="expand">Expand</string>
     <string name="collapse">Collapse</string>
     <string name="edit">Edit</string>
     <string name="value_cannot_be_empty">Value cannot be empty</string>
     <string name="required">Required</string>
-    <string name="cancel">Cancel</string>
 
     <!-- Azure DevOps Settings -->
-    <string name="azure_devops_settings">Azure DevOps Settings</string>
     <string name="azure_connection_settings">Azure DevOps Connection Settings</string>
     <string name="azure_organization">Organization</string>
     <string name="azure_organization_placeholder">Organization name</string>
@@ -27,8 +23,6 @@
     <string name="azure_repository_name_placeholder">Select a repository</string>
     <string name="azure_branch_name">Branch</string>
     <string name="azure_branch_name_placeholder">Select a branch</string>
-    <string name="save_settings">Save settings</string>
-    <string name="settings_saved">Settings saved</string>
     <string name="azure_pat_help">PAT must have 'Repo' READ and 'Pipeline' READ AND WRITE permissions</string>
     <string name="filter_preferences">Pipeline Filter Preferences (optional)</string>
     <string name="filter_preferences_branch">Branches</string>
@@ -39,17 +33,10 @@
     <string name="filter_preferences_pipeline_help">Semicolon separated list of pipeline IDs to show first</string>
 
     <!-- Version Settings -->
-    <string name="new_version_settings">New version settings</string>
-    <string name="release_notes">Release Notes</string>
-    <string name="release_notes_placeholder">Write here the changes added to the new version</string>
-    <string name="release_notes_version_name">Version name</string>
-    <string name="release_notes_version_name_placeholder">Major.minor.patch</string>
-    <string name="release_notes_build_number">Build number</string>
-    <string name="release_notes_build_number_placeholder">1234</string>
-    <string name="new_version_submit">Submit New Version</string>
+    <string name="new_build_submit">Submit New Build</string>
 
     <!-- Attachment bulk downloader -->
-    <string name="attachment_bulk_downloader">Workitem Attachment Bulk Downloader</string>
+    <string name="attachment_bulk_downloader">Attachment Downloader</string>
     <string name="download_attachments">Download attachments</string>
     <string name="workitem_id">Workitem ID</string>
     <string name="workitem_id_placeholder">ID</string>
@@ -57,14 +44,15 @@
     <string name="select_download_path">Change save path</string>
 
     <!-- Profiles -->
-    <string name="edit_profile">Edit Profile</string>"
+    <string name="edit_profile">Edit Profile</string>
     <string name="new_profile">New Profile</string>
+    <string name="clone_profile">Clone Profile</string>
     <string name="remove_profile">Remove Profile</string>
     <string name="remove_profile_confirmation_message">Are you sure you want to remove this profile?</string>
-    <string name="variables">Variables</string>"
-    <string name="variable_name">Name</string>"
-    <string name="variable_default_value">Default Value</string>"
-    <string name="variable_is_secret">Secret?</string>"
+    <string name="variables">Variables</string>
+    <string name="variable_name">Name</string>
+    <string name="variable_default_value">Default Value</string>
+    <string name="variable_is_secret">Secret?</string>
     <string name="add_variable">Add Variable</string>
     <string name="remove_variable">Remove</string>
     <string name="save_changes">Save changes</string>
@@ -72,9 +60,17 @@
     <string name="edit_profile_validation_error">Team Project and all variables are required</string>
     <string name="profile_name">Profile name</string>
     <string name="profile_name_placeholder">Profile name</string>
-    <string name="selected_profile">Selected profile</string>
     <string name="input_textfield_type">Textfield type</string>
     <string name="input_textfield_type_singleline">Single line</string>
     <string name="input_textfield_type_multiline">Multiline</string>
+
+    <!-- Home UI Tech Styles -->
+    <string name="active_profile_label">ACTIVE PROFILE</string>
+    <string name="trigger_pipeline_run_subtitle">TRIGGER PIPELINE RUN</string>
+    <string name="extract_workitem_attachments_subtitle">EXTRACT WORKITEM ATTACHMENTS</string>
+    <string name="auth_by_label">CREATED BY: </string>
+    <string name="author_name">CJRV.DEV </string>
+    <string name="success">SUCCESS</string>
+    <string name="error">ERROR</string>
 
 </resources>

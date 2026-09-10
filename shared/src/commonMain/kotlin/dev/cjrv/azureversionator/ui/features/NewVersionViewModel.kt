@@ -205,15 +205,12 @@ class NewVersionViewModel(
 
         azureDevOpsApi.getPipelines(_state.value.selectedProfile!!)
             .onSuccess { pipelines ->
-                val selectedId = _state.value.selectedPipelineId
-                val nextSelectedId = when {
-                    selectedId != null && pipelines.any { it.id == selectedId } -> selectedId
-                    else -> pipelines.firstOrNull()?.id
-                }
+                val sortedPipelines = sortWithFilteredFirst(pipelines, filters.pipelineFilter) { it.name }
+                val nextSelectedId = sortedPipelines.firstOrNull()?.id
 
                 _state.value = _state.value.copy(
                     isLoadingPipelines = false,
-                    pipelines = sortWithFilteredFirst(pipelines, filters.pipelineFilter) { it.name },
+                    pipelines = sortedPipelines,
                     selectedPipelineId = nextSelectedId,
                     loadPipelinesError = null
                 )

@@ -1,9 +1,9 @@
 package dev.cjrv.azureversionator.ui.composables
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -11,9 +11,10 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RichTooltip
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
@@ -29,12 +30,25 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.help
 import dev.cjrv.azureversionator.theme.CornerRadius
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.vectorResource
+
+@Composable
+private fun techTextFieldColors() = TextFieldDefaults.colors(
+    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.05f),
+    cursorColor = MaterialTheme.colorScheme.primary,
+    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+    unfocusedIndicatorColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+    focusedLabelColor = MaterialTheme.colorScheme.primary,
+    unfocusedLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+)
 
 @Composable
 fun CustomTextField(
@@ -51,15 +65,16 @@ fun CustomTextField(
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
 
-    OutlinedTextField(
+    TextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(label) },
+        label = { TechLabel(text = label) },
         placeholder = { Text(placeholder) },
         singleLine = true,
         modifier = modifier,
         shape = RoundedCornerShape(CornerRadius),
         isError = isError,
+        colors = techTextFieldColors(),
         supportingText = if (isError && errorMessage != null) {
             { Text(errorMessage) }
         } else null,
@@ -87,15 +102,16 @@ fun CustomMultilineTextField(
     errorMessage: String? = null,
     keyboardType: KeyboardType = KeyboardType.Text
 ) {
-    OutlinedTextField(
+    TextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(label) },
+        label = { TechLabel(text = label) },
         placeholder = { Text(placeholder) },
         singleLine = false,
         modifier = modifier,
-        shape = RoundedCornerShape(CornerRadius),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(CornerRadius),
         isError = isError,
+        colors = techTextFieldColors(),
         supportingText = if (isError && errorMessage != null) {
             { Text(errorMessage) }
         } else null,
@@ -132,15 +148,18 @@ fun <T> CustomDropdownField(
         onExpandedChange = { if (enabled) expanded = !expanded },
         modifier = modifier
     ) {
-        OutlinedTextField(
+        TextField(
             value = selectedItem?.let(optionLabel).orEmpty(),
             onValueChange = {},
             readOnly = true,
             enabled = enabled,
-            label = { Text(label) },
+            label = if (label.isNotEmpty()) {
+                { TechLabel(text = label) }
+            } else null,
             placeholder = { Text(placeholder) },
-            shape = RoundedCornerShape(CornerRadius),
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(CornerRadius),
             isError = isError,
+            colors = techTextFieldColors(),
             supportingText = if (isError && errorMessage != null) {
                 { Text(errorMessage) }
             } else null,
@@ -155,13 +174,19 @@ fun <T> CustomDropdownField(
                 .fillMaxWidth()
         )
 
-        DropdownMenu(
+        ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(optionLabel(option)) },
+                    text = { 
+                        Text(
+                            text = optionLabel(option),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        ) 
+                    },
                     onClick = {
                         onOptionSelected(option)
                         expanded = false
@@ -189,16 +214,17 @@ fun CustomTextFieldWithHelp(
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
 
-    OutlinedTextField(
+    TextField(
         value = value,
         onValueChange = onValueChange,
         enabled = enabled,
-        label = { Text(label) },
+        label = { TechLabel(text = label) },
         placeholder = { Text(placeholder) },
         singleLine = true,
         modifier = modifier,
-        shape = RoundedCornerShape(CornerRadius),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(CornerRadius),
         isError = isError,
+        colors = techTextFieldColors(),
         supportingText = if (isError && errorMessage != null) {
             { Text(errorMessage) }
         } else null,
@@ -212,7 +238,7 @@ fun CustomTextFieldWithHelp(
             imeAction = imeAction
         ),
         trailingIcon = {
-            if (helpText.isNullOrBlank()) return@OutlinedTextField
+            if (helpText.isNullOrBlank()) return@TextField
 
             val tooltipState = rememberTooltipState()
             val coroutineScope = rememberCoroutineScope()
@@ -222,7 +248,17 @@ fun CustomTextFieldWithHelp(
                 ),
                 state = tooltipState,
                 tooltip = {
-                    RichTooltip(tonalElevation = 4.dp) { Text(helpText) }
+                    TechCard(
+                        borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest
+                    ) {
+                        Text(
+                            text = helpText,
+                            modifier = Modifier.padding(12.dp),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                 },
             ) {
                 IconButton(onClick = {

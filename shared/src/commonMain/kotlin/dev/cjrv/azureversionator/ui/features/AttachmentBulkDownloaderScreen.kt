@@ -24,17 +24,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.attachment_bulk_downloader
 import azureversionator.shared.generated.resources.download
 import azureversionator.shared.generated.resources.download_attachments
+import azureversionator.shared.generated.resources.error
 import azureversionator.shared.generated.resources.folder
 import azureversionator.shared.generated.resources.ok
 import azureversionator.shared.generated.resources.select_download_path
+import azureversionator.shared.generated.resources.success
 import azureversionator.shared.generated.resources.workitem_id
 import azureversionator.shared.generated.resources.workitem_id_help
 import azureversionator.shared.generated.resources.workitem_id_placeholder
-import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.theme.MarginSmall
 import dev.cjrv.azureversionator.ui.Screen
@@ -43,6 +45,8 @@ import dev.cjrv.azureversionator.ui.composables.CustomSecondaryCompactButton
 import dev.cjrv.azureversionator.ui.composables.CustomTextFieldWithHelp
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
 import dev.cjrv.azureversionator.ui.composables.LinearFiniteLoadingIndicator
+import dev.cjrv.azureversionator.ui.composables.TechLabel
+import dev.cjrv.azureversionator.ui.composables.TechPanel
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -56,13 +60,14 @@ fun AttachmentBulkDownloaderScreen(onNavigateBack: () -> Unit) {
     if (state.successMessage != null) {
         AlertDialog(
             onDismissRequest = { vm.onSuccessMessageConsumed() },
-            title = { Text("Success") },
+            shape = RoundedCornerShape(4.dp),
+            title = { TechLabel(text = stringResource(Res.string.success)) },
             text = { Text(state.successMessage.orEmpty()) },
             confirmButton = {
                 TextButton(onClick = {
                     vm.onSuccessMessageConsumed()
                 }) {
-                    Text(stringResource(Res.string.ok))
+                    TechLabel(text = stringResource(Res.string.ok))
                 }
             }
         )
@@ -71,11 +76,12 @@ fun AttachmentBulkDownloaderScreen(onNavigateBack: () -> Unit) {
     if (state.generalError != null) {
         AlertDialog(
             onDismissRequest = { vm.onErrorConsumed() },
-            title = { Text("Error") },
+            shape = RoundedCornerShape(4.dp),
+            title = { TechLabel(text = stringResource(Res.string.error)) },
             text = { Text(state.generalError.orEmpty()) },
             confirmButton = {
                 TextButton(onClick = { vm.onErrorConsumed() }) {
-                    Text(stringResource(Res.string.ok))
+                    TechLabel(text = stringResource(Res.string.ok))
                 }
             }
         )
@@ -113,65 +119,66 @@ fun AttachmentBulkDownloaderScreen(onNavigateBack: () -> Unit) {
                         }
                     }
                 } else {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(MarginMedium),
+                    TechPanel(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(MarginMedium)
-                            .background(
-                                MaterialTheme.colorScheme.surfaceContainer,
-                                shape = RoundedCornerShape(CornerRadius)
-                            )
-                            .padding(MarginMedium)
-                            .verticalScroll(rememberScrollState())
                     ) {
-                        CustomTextFieldWithHelp(
-                            label = stringResource(Res.string.workitem_id),
-                            value = state.workitemId,
-                            helpText = stringResource(Res.string.workitem_id_help),
-                            onValueChange = vm::onWorkitemIdChange,
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = stringResource(Res.string.workitem_id_placeholder),
-                            isError = state.workitemIdError != null,
-                            errorMessage = state.workitemIdError,
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Next,
-                        )
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(MarginSmall)
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(MarginMedium),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(MarginMedium)
+                                .verticalScroll(rememberScrollState())
                         ) {
-                            Text(
-                                state.destinationPath,
-                                modifier = Modifier.weight(1f),
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurface
+                            CustomTextFieldWithHelp(
+                                label = stringResource(Res.string.workitem_id),
+                                value = state.workitemId,
+                                helpText = stringResource(Res.string.workitem_id_help),
+                                onValueChange = vm::onWorkitemIdChange,
+                                modifier = Modifier.fillMaxWidth(),
+                                placeholder = stringResource(Res.string.workitem_id_placeholder),
+                                isError = state.workitemIdError != null,
+                                errorMessage = state.workitemIdError,
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Next,
                             )
-                            CustomSecondaryCompactButton(
-                                stringResource(Res.string.select_download_path),
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = vectorResource(Res.drawable.folder),
-                                        contentDescription = stringResource(Res.string.select_download_path)
-                                    )
-                                },
-                                onClick = vm::onSelectDownloadPath
-                            )
-                        }
 
-                        CustomPrimaryButton(
-                            text = stringResource(Res.string.download_attachments),
-                            onClick = vm::downloadAttachments,
-                            enabled = state.isConfigurationValid,
-                            modifier = Modifier.fillMaxWidth(),
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = vectorResource(Res.drawable.download),
-                                    contentDescription = stringResource(Res.string.download_attachments)
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(MarginSmall)
+                            ) {
+                                Text(
+                                    state.destinationPath,
+                                    modifier = Modifier.weight(1f),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                CustomSecondaryCompactButton(
+                                    stringResource(Res.string.select_download_path),
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = vectorResource(Res.drawable.folder),
+                                            contentDescription = stringResource(Res.string.select_download_path)
+                                        )
+                                    },
+                                    onClick = vm::onSelectDownloadPath
                                 )
                             }
-                        )
+
+                            CustomPrimaryButton(
+                                text = stringResource(Res.string.download_attachments),
+                                onClick = vm::downloadAttachments,
+                                enabled = state.isConfigurationValid,
+                                modifier = Modifier.fillMaxWidth(),
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = vectorResource(Res.drawable.download),
+                                        contentDescription = stringResource(Res.string.download_attachments)
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
             }

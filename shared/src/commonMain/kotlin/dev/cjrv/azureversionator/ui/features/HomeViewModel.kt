@@ -55,6 +55,13 @@ class HomeViewModel(private val openUrlService: OpenUrlService, private val sett
         onSelectedProfileChanged(createdProfile.id)
     }
 
+    fun onCloneProfileClicked() {
+        val currentProfileId = _state.value.selectedProfileId ?: return
+        val currentProfile = _state.value.profiles.find { it.id == currentProfileId } ?: return
+        val clonedProfile = settingsRepository.cloneProfile(currentProfile)
+        onSelectedProfileChanged(clonedProfile.id)
+    }
+
     data class UIState(
         val isLoading: Boolean = true,
         val selectedProfileId : String? = null,
