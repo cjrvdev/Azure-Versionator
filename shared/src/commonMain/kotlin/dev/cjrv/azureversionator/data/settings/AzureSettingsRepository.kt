@@ -14,4 +14,5 @@ interface AzureSettingsRepository {
     fun setActiveProfile(profile: Profile)
     fun getActiveProfile(): Profile
     fun createNewProfile(name: String) : Profile
+    fun cloneProfile(profile: Profile) : Profile
 }

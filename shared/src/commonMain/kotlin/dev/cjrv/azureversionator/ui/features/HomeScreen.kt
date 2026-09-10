@@ -44,6 +44,8 @@ import azureversionator.shared.generated.resources.app_name
 import azureversionator.shared.generated.resources.attachment_bulk_downloader
 import azureversionator.shared.generated.resources.auth_by_label
 import azureversionator.shared.generated.resources.author_name
+import azureversionator.shared.generated.resources.clone_profile
+import azureversionator.shared.generated.resources.copy
 import azureversionator.shared.generated.resources.download
 import azureversionator.shared.generated.resources.edit
 import azureversionator.shared.generated.resources.edit_profile
@@ -51,7 +53,7 @@ import azureversionator.shared.generated.resources.extract_workitem_attachments_
 import azureversionator.shared.generated.resources.new_profile
 import azureversionator.shared.generated.resources.new_version
 import azureversionator.shared.generated.resources.ok
-import azureversionator.shared.generated.resources.profile_label
+import azureversionator.shared.generated.resources.active_profile_label
 import azureversionator.shared.generated.resources.profile_name
 import azureversionator.shared.generated.resources.profile_name_placeholder
 import azureversionator.shared.generated.resources.return_text
@@ -118,7 +120,10 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                 showNewProfileDialog = false
                                 newProfileName = ""
                             }) {
-                                TechLabel(text = stringResource(Res.string.return_text), color = MaterialTheme.colorScheme.onSurface)
+                                TechLabel(
+                                    text = stringResource(Res.string.return_text),
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
                             }
                         },
                         confirmButton = {
@@ -161,7 +166,7 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Column(modifier = Modifier.weight(1f)) {
-                                            TechLabel(text = stringResource(Res.string.profile_label))
+                                            TechLabel(text = stringResource(Res.string.active_profile_label))
                                             CustomDropdownField(
                                                 label = "",
                                                 options = state.profiles.map { it.id },
@@ -169,13 +174,21 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                                 onOptionSelected = { selectedId ->
                                                     vm.onSelectedProfileChanged(selectedId)
                                                 }, optionLabel = { profileId ->
-                                                    state.profiles.find { it.id == profileId }?.name ?: ""
+                                                    state.profiles.find { it.id == profileId }?.name
+                                                        ?: ""
                                                 },
                                                 modifier = Modifier.fillMaxWidth()
                                             )
                                         }
                                         Spacer(modifier = Modifier.width(MarginSmall))
                                         Row {
+                                            IconButton(onClick = { vm.onCloneProfileClicked() }) {
+                                                Icon(
+                                                    imageVector = vectorResource(Res.drawable.copy),
+                                                    contentDescription = stringResource(Res.string.clone_profile),
+                                                    tint = MaterialTheme.colorScheme.onSurface
+                                                )
+                                            }
                                             IconButton(onClick = { navigateToTarget(EditProfile) }) {
                                                 Icon(
                                                     imageVector = vectorResource(Res.drawable.edit),
