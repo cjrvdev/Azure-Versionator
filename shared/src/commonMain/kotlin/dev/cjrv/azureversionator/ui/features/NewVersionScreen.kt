@@ -35,7 +35,7 @@ import azureversionator.shared.generated.resources.azure_repository_name
 import azureversionator.shared.generated.resources.azure_repository_name_placeholder
 import azureversionator.shared.generated.resources.error
 import azureversionator.shared.generated.resources.new_build
-import azureversionator.shared.generated.resources.new_version_submit
+import azureversionator.shared.generated.resources.new_build_submit
 import azureversionator.shared.generated.resources.ok
 import azureversionator.shared.generated.resources.return_text
 import azureversionator.shared.generated.resources.success
@@ -184,7 +184,7 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                             )
 
                             CustomPrimaryButton(
-                                text = stringResource(Res.string.new_version_submit),
+                                text = stringResource(Res.string.new_build_submit),
                                 onClick = vm::createVersion,
                                 enabled = state.isConfigurationValid,
                                 modifier = Modifier
@@ -192,7 +192,7 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                                 leadingIcon = {
                                     Icon(
                                         imageVector = vectorResource(Res.drawable.upload),
-                                        contentDescription = stringResource(Res.string.new_version_submit)
+                                        contentDescription = stringResource(Res.string.new_build_submit)
                                     )
                                 }
                             )
