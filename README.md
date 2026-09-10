@@ -44,7 +44,7 @@ Designed with an industrial "Cyber-Tech" aesthetic, it offers a fast and efficie
 - **Google Play Store**: [Get it on Google Play](https://play.google.com/store/apps/details?id=dev.cjrv.azureversionator) (Coming Soon)
 
 #### 🖥️ Desktop (JVM)
-- Download the executable for your OS (Windows/macOS/Linux) from the [GitHub Releases](https://github.com/cjrvdev/Azure-Versionator/releases/latest) page.
+- Download the executable for your OS (Windows/macOS) from the [GitHub Releases](https://github.com/cjrvdev/Azure-Versionator/releases/latest) page.
 
 ---
 *Note: This project is in active development. Feel free to open issues or contribute!*
