@@ -66,6 +66,10 @@
     <string name="input_textfield_type">Textfield type</string>
     <string name="input_textfield_type_singleline">Single line</string>
     <string name="input_textfield_type_multiline">Multiline</string>
+    <string name="create_new_pat">Create New PAT</string>
+    <string name="open_azure_settings">Open Azure Settings</string>
+    <string name="create_pat_help">Before creating a new token...</string>
+    <string name="create_pat_help_message">PAT must have:\n -'Repo' READ permission\n -'Pipeline' READ AND WRITE permissions</string>
 
     <!-- Home UI Tech Styles -->
     <string name="active_profile_label">ACTIVE PROFILE</string>

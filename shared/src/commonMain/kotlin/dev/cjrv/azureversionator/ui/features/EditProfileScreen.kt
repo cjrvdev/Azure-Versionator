@@ -41,10 +41,12 @@ import azureversionator.shared.generated.resources.azure_connection_settings
 import azureversionator.shared.generated.resources.azure_organization
 import azureversionator.shared.generated.resources.azure_organization_placeholder
 import azureversionator.shared.generated.resources.azure_pat
-import azureversionator.shared.generated.resources.azure_pat_help
 import azureversionator.shared.generated.resources.azure_pat_placeholder
 import azureversionator.shared.generated.resources.azure_project_name
 import azureversionator.shared.generated.resources.azure_project_name_placeholder
+import azureversionator.shared.generated.resources.create_new_pat
+import azureversionator.shared.generated.resources.create_pat_help
+import azureversionator.shared.generated.resources.create_pat_help_message
 import azureversionator.shared.generated.resources.delete
 import azureversionator.shared.generated.resources.edit_profile
 import azureversionator.shared.generated.resources.edit_profile_validation_error
@@ -59,6 +61,7 @@ import azureversionator.shared.generated.resources.filter_preferences_repository
 import azureversionator.shared.generated.resources.filter_preferences_repository_help
 import azureversionator.shared.generated.resources.input_textfield_type
 import azureversionator.shared.generated.resources.ok
+import azureversionator.shared.generated.resources.open_azure_settings
 import azureversionator.shared.generated.resources.profile_name
 import azureversionator.shared.generated.resources.profile_name_placeholder
 import azureversionator.shared.generated.resources.profile_saved
@@ -81,6 +84,7 @@ import dev.cjrv.azureversionator.ui.Screen
 import dev.cjrv.azureversionator.ui.composables.CustomDropdownField
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryCompactButton
+import dev.cjrv.azureversionator.ui.composables.CustomSecondaryCompactButton
 import dev.cjrv.azureversionator.ui.composables.CustomTextField
 import dev.cjrv.azureversionator.ui.composables.CustomTextFieldWithHelp
 import dev.cjrv.azureversionator.ui.composables.ExpandableSection
@@ -100,6 +104,7 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
     val state by vm.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     var showRemoveProfileConfirmation by remember { mutableStateOf(false) }
+    var showCreatePATHelpDialog by remember { mutableStateOf(false) }
     val saveSuccessMessage = stringResource(Res.string.profile_saved)
     val validationErrorMessage = stringResource(Res.string.edit_profile_validation_error)
 
@@ -126,6 +131,15 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
                 showRemoveProfileConfirmation = false
                 vm.removeProfile()
                 onNavigateBack()
+            }
+        )
+    }
+
+    if (showCreatePATHelpDialog) {
+        CreatePATHelpDialog(
+            onDismiss = { showCreatePATHelpDialog = false },
+            onConfirm = {
+                vm.openAzureSettingsWebsite()
             }
         )
     }
@@ -176,6 +190,7 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
                             item {
                                 ConnectionSettings(
                                     state = state,
+                                    onShowCreatePATHelpDialog = { showCreatePATHelpDialog = true },
                                     onTeamProjectNameChanged = vm::onTeamProjectNameChanged,
                                     onPersonalAccessTokenChange = vm::onPersonalAccessTokenChange,
                                     onOrganizationChange = vm::onOrganizationChange
@@ -269,6 +284,32 @@ private fun RemoveProfileConfirmationDialog(
         confirmButton = {
             TextButton(onClick = onConfirm) {
                 TechLabel(text = stringResource(Res.string.ok))
+            }
+        }
+    )
+}
+
+@Composable
+private fun CreatePATHelpDialog(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        shape = RoundedCornerShape(4.dp),
+        title = { TechLabel(text = stringResource(Res.string.create_pat_help)) },
+        text = { Text(stringResource(Res.string.create_pat_help_message)) },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                TechLabel(
+                    text = stringResource(Res.string.return_text),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                TechLabel(text = stringResource(Res.string.open_azure_settings))
             }
         }
     )
@@ -417,6 +458,7 @@ fun VariableRow(
 @Composable
 private fun ConnectionSettings(
     state: EditProfileViewModel.UIState,
+    onShowCreatePATHelpDialog: () -> Unit,
     onPersonalAccessTokenChange: (String) -> Unit,
     onOrganizationChange: (String) -> Unit,
     onTeamProjectNameChanged: (String) -> Unit
@@ -438,19 +480,6 @@ private fun ConnectionSettings(
                 bottom = MarginMedium
             )
         ) {
-            CustomTextFieldWithHelp(
-                label = stringResource(Res.string.azure_pat),
-                value = state.personalAccessToken,
-                helpText = stringResource(Res.string.azure_pat_help),
-                onValueChange = onPersonalAccessTokenChange,
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = stringResource(Res.string.azure_pat_placeholder),
-                isPassword = true,
-                isError = state.personalAccessTokenError,
-                errorMessage = stringResource(Res.string.value_cannot_be_empty),
-                imeAction = ImeAction.Next,
-            )
-
             CustomTextField(
                 label = stringResource(Res.string.azure_organization),
                 value = state.organizationName,
@@ -461,6 +490,28 @@ private fun ConnectionSettings(
                 errorMessage = stringResource(Res.string.value_cannot_be_empty),
                 imeAction = ImeAction.Next
             )
+
+            Row (modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                CustomTextField(
+                    label = stringResource(Res.string.azure_pat),
+                    value = state.personalAccessToken,
+                    onValueChange = onPersonalAccessTokenChange,
+                    modifier = Modifier.weight(1f),
+                    placeholder = stringResource(Res.string.azure_pat_placeholder),
+                    isPassword = true,
+                    isError = state.personalAccessTokenError,
+                    errorMessage = stringResource(Res.string.value_cannot_be_empty),
+                    imeAction = ImeAction.Next,
+                )
+                Spacer(modifier = Modifier.width(MarginSmall))
+                CustomSecondaryCompactButton(
+                    text = stringResource(Res.string.create_new_pat),
+                    onClick = { onShowCreatePATHelpDialog() },
+                    modifier = Modifier
+                        .height(48.dp)
+                        .padding(top = 8.dp)
+                )
+            }
 
             CustomTextFieldWithHelp(
                 label = stringResource(Res.string.azure_project_name),

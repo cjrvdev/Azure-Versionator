@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.cjrv.azureversionator.data.model.azure.AzureVariable
 import dev.cjrv.azureversionator.data.model.azure.TextFieldType
+import dev.cjrv.azureversionator.data.openurl.OpenUrlService
 import dev.cjrv.azureversionator.data.settings.AzureSettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class EditProfileViewModel(private val settingsRepository: AzureSettingsRepository) : ViewModel() {
+class EditProfileViewModel(private val settingsRepository: AzureSettingsRepository, private val openUrlService: OpenUrlService) : ViewModel() {
     private val _state = MutableStateFlow(UIState())
     val state: StateFlow<UIState> = _state.asStateFlow()
 
@@ -107,7 +108,8 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
         _state.update {
             it.copy(
                 organizationName = newValue,
-                organizationNameError = it.showValidationErrors && newValue.isBlank()
+                organizationNameError = it.showValidationErrors && newValue.isBlank(),
+                canExecuteCreateNewPat = newValue.isNotBlank()
             )
         }
 
@@ -204,6 +206,10 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
         return !teamProjectNameError && !organizationNameError && !personalAccessTokenError && !hasInvalidVariables
     }
 
+    fun openAzureSettingsWebsite() {
+        openUrlService.openInBrowser("https://dev.azure.com/${state.value.organizationName}/_usersSettings/tokens")
+    }
+
     private fun String.splitFilterValues(): List<String> =
         split(';').map { it.trim() }.filter { it.isNotEmpty() }
 
@@ -229,6 +235,7 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
         val teamProjectNameError: Boolean = false,
         val variables: List<AzureVariable> = emptyList(),
         val showValidationErrors: Boolean = false,
-        val saveFeedback: SaveFeedback? = null
+        val saveFeedback: SaveFeedback? = null,
+        val canExecuteCreateNewPat: Boolean = false
     )
 }
