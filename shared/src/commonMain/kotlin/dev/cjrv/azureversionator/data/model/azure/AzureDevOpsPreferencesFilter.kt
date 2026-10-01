@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class AzureDevOpsPreferencesFilter(
     val branchFilter: List<String> = emptyList(),
     val pipelineFilter: List<String> = emptyList(),
-    val repositoryFilter: List<String> = emptyList()
+    val repositoryFilter: List<String> = emptyList(),
+    val excludeBranchFilter: List<String> = emptyList(),
 )

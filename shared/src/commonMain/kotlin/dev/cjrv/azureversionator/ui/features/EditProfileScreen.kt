@@ -51,6 +51,8 @@ import azureversionator.shared.generated.resources.edit_profile_validation_error
 import azureversionator.shared.generated.resources.filter_preferences
 import azureversionator.shared.generated.resources.filter_preferences_branch
 import azureversionator.shared.generated.resources.filter_preferences_branch_help
+import azureversionator.shared.generated.resources.filter_preferences_exclude_branch
+import azureversionator.shared.generated.resources.filter_preferences_exclude_branch_help
 import azureversionator.shared.generated.resources.filter_preferences_pipeline
 import azureversionator.shared.generated.resources.filter_preferences_pipeline_help
 import azureversionator.shared.generated.resources.filter_preferences_repository
@@ -196,7 +198,8 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
                                     state = state,
                                     onPipelineFilterChange = vm::onPipelineFilterChanged,
                                     onRepositoryFilterChange = vm::onRepositoryFilterChanged,
-                                    onBranchFilterChange = vm::onBranchFilterChanged
+                                    onBranchFilterChange = vm::onBranchFilterChanged,
+                                    onExcludeBranchFilterChange = vm::onExcludeBranchFilterChanged
                                 )
                             }
                             item {
@@ -479,7 +482,8 @@ private fun FilterPreferencesSection(
     state: EditProfileViewModel.UIState,
     onPipelineFilterChange: (String) -> Unit,
     onRepositoryFilterChange: (String) -> Unit,
-    onBranchFilterChange: (String) -> Unit
+    onBranchFilterChange: (String) -> Unit,
+    onExcludeBranchFilterChange: (String) -> Unit
 ) {
     ExpandableSection(
         title = {
@@ -525,6 +529,16 @@ private fun FilterPreferencesSection(
                 onValueChange = onBranchFilterChange,
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = stringResource(Res.string.filter_preferences_branch),
+                imeAction = ImeAction.Next
+            )
+
+            CustomTextFieldWithHelp(
+                label = stringResource(Res.string.filter_preferences_exclude_branch),
+                value = state.excludeBranchFilter,
+                helpText = stringResource(Res.string.filter_preferences_exclude_branch_help),
+                onValueChange = onExcludeBranchFilterChange,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = stringResource(Res.string.filter_preferences_exclude_branch),
                 imeAction = ImeAction.Done
             )
         }

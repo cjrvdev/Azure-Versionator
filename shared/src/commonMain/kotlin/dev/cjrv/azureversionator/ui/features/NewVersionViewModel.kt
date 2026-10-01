@@ -160,7 +160,7 @@ class NewVersionViewModel(
                 .onSuccess { branches ->
                     _state.value = _state.value.copy(
                         isLoadingBranches = false,
-                        branches = sortWithFilteredFirst(branches, selectedProfile.filters.branchFilter) { it.name },
+                        branches = sortWithFilteredFirst(branches, selectedProfile.filters.branchFilter, selectedProfile.filters.excludeBranchFilter) { it.name },
                         loadBranchesError = null,
                         isLoading = false
                     )
@@ -261,6 +261,7 @@ class NewVersionViewModel(
     private fun <T> sortWithFilteredFirst(
         items: List<T>,
         filters: List<String>,
+        excludeItems : List<String> = emptyList(),
         selector: (T) -> String
     ): List<T> {
         if (filters.isEmpty()) {
@@ -279,7 +280,11 @@ class NewVersionViewModel(
             }
         }.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, selector))
 
-        return filtered + remaining
+        return (filtered + remaining).filterNot { item ->
+            excludeItems.any { exclude ->
+                selector(item).contains(exclude, ignoreCase = true)
+            }
+        }
     }
 
     private fun List<AzureVariable>.updateVariable(

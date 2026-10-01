@@ -37,7 +37,8 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
                 variables = activeProfile.variables,
                 branchFilter = activeProfile.filters.branchFilter.joinToString(";"),
                 pipelineFilter = activeProfile.filters.pipelineFilter.joinToString(";"),
-                repositoryFilter = activeProfile.filters.repositoryFilter.joinToString(";")
+                repositoryFilter = activeProfile.filters.repositoryFilter.joinToString(";"),
+                excludeBranchFilter = activeProfile.filters.excludeBranchFilter.joinToString(";")
             )
         }
     }
@@ -122,6 +123,10 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
         _state.update { it.copy(branchFilter = newValue) }
     }
 
+    fun onExcludeBranchFilterChanged(newValue: String) {
+        _state.update { it.copy(excludeBranchFilter = newValue) }
+    }
+
     fun onPipelineFilterChanged(newValue: String) {
         _state.update { it.copy(pipelineFilter = newValue) }
     }
@@ -150,7 +155,8 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
                 filters = AzureDevOpsPreferencesFilter(
                     branchFilter = state.value.branchFilter.splitFilterValues(),
                     pipelineFilter = state.value.pipelineFilter.splitFilterValues(),
-                    repositoryFilter = state.value.repositoryFilter.splitFilterValues()
+                    repositoryFilter = state.value.repositoryFilter.splitFilterValues(),
+                    excludeBranchFilter = state.value.excludeBranchFilter.splitFilterValues()
                 )
             )
         )
@@ -215,6 +221,7 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
         val personalAccessToken: String = "",
         val teamProjectName: String = "",
         val branchFilter: String = "",
+        val excludeBranchFilter: String = "",
         val pipelineFilter: String = "",
         val repositoryFilter: String = "",
         val organizationNameError: Boolean = false,
