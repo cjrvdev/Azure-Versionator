@@ -507,6 +507,7 @@ private fun ConnectionSettings(
                 CustomSecondaryCompactButton(
                     text = stringResource(Res.string.create_new_pat),
                     onClick = { onShowCreatePATHelpDialog() },
+                    enabled = state.canExecuteCreateNewPat,
                     modifier = Modifier
                         .height(48.dp)
                         .padding(top = 8.dp)

@@ -39,7 +39,8 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
                 branchFilter = activeProfile.filters.branchFilter.joinToString(";"),
                 pipelineFilter = activeProfile.filters.pipelineFilter.joinToString(";"),
                 repositoryFilter = activeProfile.filters.repositoryFilter.joinToString(";"),
-                excludeBranchFilter = activeProfile.filters.excludeBranchFilter.joinToString(";")
+                excludeBranchFilter = activeProfile.filters.excludeBranchFilter.joinToString(";"),
+                canExecuteCreateNewPat = activeProfile.organizationName.isNotBlank()
             )
         }
     }

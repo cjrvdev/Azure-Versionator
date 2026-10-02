@@ -206,6 +206,7 @@ fun ButtonsPreview() {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.padding(16.dp)) {
             CustomSecondaryButton(text = "Secondary Regular")
             CustomSecondaryCompactButton(text = "Secondary Compact")
+            CustomSecondaryCompactButton(text = "Secondary Compact disabled", enabled = false)
             CustomPrimaryButton(
                 text = "Primary Regular",
             )
