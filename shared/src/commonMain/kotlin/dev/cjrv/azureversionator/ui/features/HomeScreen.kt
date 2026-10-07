@@ -3,6 +3,7 @@ package dev.cjrv.azureversionator.ui.features
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -32,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -50,14 +53,18 @@ import azureversionator.shared.generated.resources.auth_by_label
 import azureversionator.shared.generated.resources.author_name
 import azureversionator.shared.generated.resources.clone_profile
 import azureversionator.shared.generated.resources.copy
+import azureversionator.shared.generated.resources.dark_mode
+import azureversionator.shared.generated.resources.delete
 import azureversionator.shared.generated.resources.download
 import azureversionator.shared.generated.resources.edit_profile
 import azureversionator.shared.generated.resources.extract_workitem_attachments_subtitle
+import azureversionator.shared.generated.resources.light_mode
 import azureversionator.shared.generated.resources.new_build
 import azureversionator.shared.generated.resources.new_profile
 import azureversionator.shared.generated.resources.ok
 import azureversionator.shared.generated.resources.profile_name
 import azureversionator.shared.generated.resources.profile_name_placeholder
+import azureversionator.shared.generated.resources.remove_profile
 import azureversionator.shared.generated.resources.return_text
 import azureversionator.shared.generated.resources.settings
 import azureversionator.shared.generated.resources.trigger_pipeline_run_subtitle
@@ -171,7 +178,11 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
                                             TechLabel(text = stringResource(Res.string.active_profile_label))
-                                            Row(horizontalArrangement = Arrangement.spacedBy(MarginSmall)) {
+                                            Row(
+                                                horizontalArrangement = Arrangement.spacedBy(
+                                                    MarginSmall
+                                                )
+                                            ) {
                                                 TechActionButton(
                                                     icon = Res.drawable.copy,
                                                     contentDescription = stringResource(Res.string.clone_profile),
@@ -187,13 +198,15 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                                     contentDescription = stringResource(Res.string.new_profile),
                                                     onClick = { showNewProfileDialog = true },
                                                     tint = MaterialTheme.colorScheme.primary,
-                                                    backgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                                                    backgroundColor = MaterialTheme.colorScheme.primary.copy(
+                                                        alpha = 0.1f
+                                                    )
                                                 )
                                             }
                                         }
-                                        
+
                                         Spacer(modifier = Modifier.height(MarginSmall))
-                                        
+
                                         CustomDropdownField(
                                             label = "",
                                             options = state.profiles.map { it.id },
@@ -235,11 +248,23 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                 }
 
                                 // Terminal Footer
-                                Box(
+                                Row(
                                     Modifier.fillMaxWidth().padding(top = MarginMedium),
-                                    contentAlignment = Alignment.Center
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    CreatedByLabel(openAboutMe = vm::openAboutMe)
+                                    Box(modifier = Modifier.weight(1f))
+                                    Box(
+                                        modifier = Modifier.weight(1f),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CreatedByLabel(openAboutMe = vm::openAboutMe)
+                                    }
+                                    Box(
+                                        modifier = Modifier.weight(1f),
+                                        contentAlignment = Alignment.CenterEnd
+                                    ) {
+                                        ThemeLanguageSelector({})
+                                    }
                                 }
                             }
                         }
@@ -304,6 +329,20 @@ private fun CreatedByLabel(
         style = MaterialTheme.typography.labelSmall,
         letterSpacing = 1.sp
     )
+}
+
+@Composable
+fun ThemeLanguageSelector(toggleTheme: () -> Unit = {}) {
+    IconButton(
+        onClick = { toggleTheme() },
+        modifier = Modifier.size(20.dp)
+    ) {
+        Icon(
+            imageVector = if (isSystemInDarkTheme()) vectorResource(Res.drawable.light_mode) else vectorResource(Res.drawable.dark_mode),
+            contentDescription = if (isSystemInDarkTheme()) stringResource(Res.string.light_mode) else stringResource(Res.string.dark_mode),
+            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)
+        )
+    }
 }
 
 @Composable
