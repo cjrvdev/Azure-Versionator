@@ -2,8 +2,8 @@ package dev.cjrv.azureversionator.di
 
 import dev.cjrv.azureversionator.navigation.AttachmentBulkDownloader
 import dev.cjrv.azureversionator.navigation.EditProfile
-import dev.cjrv.azureversionator.navigation.Navigator
 import dev.cjrv.azureversionator.navigation.Home
+import dev.cjrv.azureversionator.navigation.Navigator
 import dev.cjrv.azureversionator.navigation.NewVersion
 import dev.cjrv.azureversionator.ui.features.AttachmentBulkDownloaderScreen
 import dev.cjrv.azureversionator.ui.features.EditProfileScreen

@@ -4,13 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.cjrv.azureversionator.data.model.app.Profile
 import dev.cjrv.azureversionator.data.openurl.OpenUrlService
-import dev.cjrv.azureversionator.data.settings.AzureSettingsRepository
 import dev.cjrv.azureversionator.data.settings.AppSettingsRepository
-import kotlinx.coroutines.flow.combine
+import dev.cjrv.azureversionator.data.settings.AzureSettingsRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds

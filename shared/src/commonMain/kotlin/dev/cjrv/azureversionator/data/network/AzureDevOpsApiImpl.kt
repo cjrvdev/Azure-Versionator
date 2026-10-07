@@ -17,10 +17,10 @@ import io.ktor.http.ContentType
 import io.ktor.http.URLBuilder
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 class AzureDevOpsApiImpl(
     private val httpClient: HttpClient

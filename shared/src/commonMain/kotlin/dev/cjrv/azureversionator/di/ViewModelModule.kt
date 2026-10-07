@@ -1,9 +1,9 @@
 package dev.cjrv.azureversionator.di
 
-import dev.cjrv.azureversionator.ui.features.HomeViewModel
-import dev.cjrv.azureversionator.ui.features.NewVersionViewModel
 import dev.cjrv.azureversionator.ui.features.AttachmentBulkDownloaderViewModel
 import dev.cjrv.azureversionator.ui.features.EditProfileViewModel
+import dev.cjrv.azureversionator.ui.features.HomeViewModel
+import dev.cjrv.azureversionator.ui.features.NewVersionViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 

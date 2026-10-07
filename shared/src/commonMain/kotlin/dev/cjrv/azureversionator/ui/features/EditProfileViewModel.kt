@@ -1,8 +1,8 @@
 package dev.cjrv.azureversionator.ui.features
 
-import dev.cjrv.azureversionator.data.model.azure.AzureDevOpsPreferencesFilter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.cjrv.azureversionator.data.model.azure.AzureDevOpsPreferencesFilter
 import dev.cjrv.azureversionator.data.model.azure.AzureVariable
 import dev.cjrv.azureversionator.data.model.azure.TextFieldType
 import dev.cjrv.azureversionator.data.openurl.OpenUrlService
