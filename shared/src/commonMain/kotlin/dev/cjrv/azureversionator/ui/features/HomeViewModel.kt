@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dev.cjrv.azureversionator.data.model.app.Profile
 import dev.cjrv.azureversionator.data.openurl.OpenUrlService
 import dev.cjrv.azureversionator.data.settings.AzureSettingsRepository
+import dev.cjrv.azureversionator.data.settings.AppSettingsRepository
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
-class HomeViewModel(private val openUrlService: OpenUrlService, private val settingsRepository: AzureSettingsRepository) : ViewModel() {
+class HomeViewModel(
+    private val openUrlService: OpenUrlService,
+    private val azureSettingsRepository: AzureSettingsRepository,
+    private val appSettingsRepository: AppSettingsRepository
+) : ViewModel() {
 
     private val _state = MutableStateFlow(UIState())
     val state: StateFlow<UIState> = _state.asStateFlow()
@@ -23,8 +28,8 @@ class HomeViewModel(private val openUrlService: OpenUrlService, private val sett
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             delay(1000L.milliseconds)
-            settingsRepository.profiles
-                .combine(settingsRepository.activeProfileId) { profiles, activeProfileId ->
+            azureSettingsRepository.profiles
+                .combine(azureSettingsRepository.activeProfileId) { profiles, activeProfileId ->
                     profiles to activeProfileId
                 }
                 .collect { (profiles, activeProfileId) ->
@@ -43,22 +48,26 @@ class HomeViewModel(private val openUrlService: OpenUrlService, private val sett
 
     fun onSelectedProfileChanged(profileId: String) {
         val selectedProfile = _state.value.profiles.find { it.id == profileId }
-        selectedProfile?.let { settingsRepository.setActiveProfile(it) }
+        selectedProfile?.let { azureSettingsRepository.setActiveProfile(it) }
     }
 
     fun openAboutMe() {
         openUrlService.openInBrowser("https://github.com/cjrvdev")
     }
 
+    fun toggleTheme() {
+        appSettingsRepository.toggleTheme()
+    }
+
     fun createNewProfile(name: String) {
-        val createdProfile = settingsRepository.createNewProfile(name)
+        val createdProfile = azureSettingsRepository.createNewProfile(name)
         onSelectedProfileChanged(createdProfile.id)
     }
 
     fun onCloneProfileClicked() {
         val currentProfileId = _state.value.selectedProfileId ?: return
         val currentProfile = _state.value.profiles.find { it.id == currentProfileId } ?: return
-        val clonedProfile = settingsRepository.cloneProfile(currentProfile)
+        val clonedProfile = azureSettingsRepository.cloneProfile(currentProfile)
         onSelectedProfileChanged(clonedProfile.id)
     }
 

@@ -3,7 +3,6 @@ package dev.cjrv.azureversionator.ui.features
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -54,7 +52,6 @@ import azureversionator.shared.generated.resources.author_name
 import azureversionator.shared.generated.resources.clone_profile
 import azureversionator.shared.generated.resources.copy
 import azureversionator.shared.generated.resources.dark_mode
-import azureversionator.shared.generated.resources.delete
 import azureversionator.shared.generated.resources.download
 import azureversionator.shared.generated.resources.edit_profile
 import azureversionator.shared.generated.resources.extract_workitem_attachments_subtitle
@@ -64,7 +61,6 @@ import azureversionator.shared.generated.resources.new_profile
 import azureversionator.shared.generated.resources.ok
 import azureversionator.shared.generated.resources.profile_name
 import azureversionator.shared.generated.resources.profile_name_placeholder
-import azureversionator.shared.generated.resources.remove_profile
 import azureversionator.shared.generated.resources.return_text
 import azureversionator.shared.generated.resources.settings
 import azureversionator.shared.generated.resources.trigger_pipeline_run_subtitle
@@ -72,6 +68,7 @@ import dev.cjrv.azureversionator.navigation.AttachmentBulkDownloader
 import dev.cjrv.azureversionator.navigation.EditProfile
 import dev.cjrv.azureversionator.navigation.NewVersion
 import dev.cjrv.azureversionator.navigation.Route
+import dev.cjrv.azureversionator.theme.LocalDarkTheme
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.theme.MarginSmall
 import dev.cjrv.azureversionator.ui.Screen
@@ -263,7 +260,7 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                         modifier = Modifier.weight(1f),
                                         contentAlignment = Alignment.CenterEnd
                                     ) {
-                                        ThemeLanguageSelector({})
+                                        ThemeLanguageSelector(toggleTheme = vm::toggleTheme)
                                     }
                                 }
                             }
@@ -332,14 +329,15 @@ private fun CreatedByLabel(
 }
 
 @Composable
-fun ThemeLanguageSelector(toggleTheme: () -> Unit = {}) {
+fun ThemeLanguageSelector(toggleTheme: () -> Unit) {
+    val darkTheme = LocalDarkTheme.current
     IconButton(
         onClick = { toggleTheme() },
         modifier = Modifier.size(20.dp)
     ) {
         Icon(
-            imageVector = if (isSystemInDarkTheme()) vectorResource(Res.drawable.light_mode) else vectorResource(Res.drawable.dark_mode),
-            contentDescription = if (isSystemInDarkTheme()) stringResource(Res.string.light_mode) else stringResource(Res.string.dark_mode),
+            imageVector = if (darkTheme) vectorResource(Res.drawable.light_mode) else vectorResource(Res.drawable.dark_mode),
+            contentDescription = if (darkTheme) stringResource(Res.string.light_mode) else stringResource(Res.string.dark_mode),
             tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)
         )
     }

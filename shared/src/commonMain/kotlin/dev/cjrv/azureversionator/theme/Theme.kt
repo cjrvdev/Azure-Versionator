@@ -1,11 +1,13 @@
 package dev.cjrv.azureversionator.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
+
+val LocalDarkTheme = staticCompositionLocalOf { false }
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -83,15 +85,16 @@ private val darkScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDark,
 )
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AzureVersionatorTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    MaterialExpressiveTheme(
-        colorScheme = if (darkTheme) darkScheme else lightScheme,
-        typography = AzureTypography(),
-        content = content,
-    )
+    CompositionLocalProvider(LocalDarkTheme provides darkTheme) {
+        MaterialExpressiveTheme(
+            colorScheme = if (darkTheme) darkScheme else lightScheme,
+            typography = AzureTypography(),
+            content = content,
+        )
+    }
 }

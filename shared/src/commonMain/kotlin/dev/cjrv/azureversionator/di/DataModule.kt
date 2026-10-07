@@ -6,6 +6,8 @@ import dev.cjrv.azureversionator.data.network.AzureDevOpsApiImpl
 import dev.cjrv.azureversionator.data.network.defaultHttpEngine
 import dev.cjrv.azureversionator.data.settings.AzureSettingsRepository
 import dev.cjrv.azureversionator.data.settings.AzureSettingsRepositoryImpl
+import dev.cjrv.azureversionator.data.settings.AppSettingsRepository
+import dev.cjrv.azureversionator.data.settings.AppSettingsRepositoryImpl
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
@@ -16,6 +18,7 @@ val dataModule = module {
     single<Settings> { Settings() }
 
     single<AzureSettingsRepository> { AzureSettingsRepositoryImpl(get()) }
+    single<AppSettingsRepository> { AppSettingsRepositoryImpl(get()) }
 
     single<HttpClient> {
         HttpClient(defaultHttpEngine()) {
@@ -30,4 +33,3 @@ val dataModule = module {
 
     single<AzureDevOpsApi> { AzureDevOpsApiImpl(get()) }
 }
-
