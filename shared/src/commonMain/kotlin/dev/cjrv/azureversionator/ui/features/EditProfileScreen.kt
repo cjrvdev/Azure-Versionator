@@ -5,11 +5,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -82,6 +85,7 @@ import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.theme.MarginSmall
 import dev.cjrv.azureversionator.ui.Screen
 import dev.cjrv.azureversionator.ui.composables.CustomDropdownField
+import dev.cjrv.azureversionator.ui.composables.CustomMultilineTextField
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryCompactButton
 import dev.cjrv.azureversionator.ui.composables.CustomSecondaryCompactButton
@@ -412,75 +416,93 @@ fun VariableRow(
         modifier = modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.5f)
     ) {
-        Row(
+        Column(
             modifier = Modifier.padding(MarginSmall),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(MarginSmall)
+            verticalArrangement = Arrangement.spacedBy(MarginSmall)
         ) {
-            TechActionButton(
-                icon = Res.drawable.delete,
-                contentDescription = stringResource(Res.string.remove_variable),
-                onClick = onRemove,
-                modifier = Modifier.size(32.dp),
-                tint = MaterialTheme.colorScheme.error.copy(alpha = 0.9f)
-            )
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(MarginSmall)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(MarginSmall)
             ) {
-                Row(
+                CustomTextField(
+                    label = stringResource(Res.string.variable_name),
+                    value = variable.name,
+                    onValueChange = onNameChange,
+                    modifier = Modifier.weight(1f),
+                    isError = showValidationErrors && variable.name.isBlank(),
+                    errorMessage = stringResource(Res.string.value_cannot_be_empty),
+                    imeAction = ImeAction.Next,
+                )
+                CustomDropdownField(
+                    label = stringResource(Res.string.input_textfield_type),
+                    selectedItem = variable.textFieldType,
+                    options = TextFieldType.entries,
+                    modifier = Modifier.weight(1f),
+                    optionLabel = { it.name },
+                    onOptionSelected = onVariableTextFieldTypeChanged
+                )
+                TechActionButton(
+                    icon = Res.drawable.delete,
+                    contentDescription = stringResource(Res.string.remove_variable),
+                    onClick = onRemove,
+                    modifier = Modifier.size(32.dp),
+                    tint = MaterialTheme.colorScheme.error.copy(alpha = 0.9f)
+                )
+            }
+            if (variable.textFieldType == TextFieldType.Multiline) {
+                CustomMultilineTextField(
+                    label = stringResource(Res.string.variable_default_value),
+                    value = variable.value,
+                    onValueChange = onValueChange,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 120.dp),
+                    isPassword = variable.isSecret
+                )
+            } else {
+                CustomTextField(
+                    label = stringResource(Res.string.variable_default_value),
+                    value = variable.value,
+                    onValueChange = onValueChange,
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(MarginSmall)
-                ) {
-                    CustomTextField(
-                        label = stringResource(Res.string.variable_name),
-                        value = variable.name,
-                        onValueChange = onNameChange,
-                        modifier = Modifier.weight(1f),
-                        isError = showValidationErrors && variable.name.isBlank(),
-                        errorMessage = stringResource(Res.string.value_cannot_be_empty),
-                        imeAction = ImeAction.Next,
-                    )
-                    CustomDropdownField(
-                        label = stringResource(Res.string.input_textfield_type),
-                        selectedItem = variable.textFieldType,
-                        options = TextFieldType.entries,
-                        modifier = Modifier.weight(1f),
-                        optionLabel = { it.name },
-                        onOptionSelected = onVariableTextFieldTypeChanged
-                    )
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Checkbox(checked = variable.isRequired, onCheckedChange = onRequiredChange)
-                        TechLabel(
-                            text = stringResource(Res.string.required),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        )
-                    }
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(MarginSmall)
-                ) {
-                    CustomTextField(
-                        label = stringResource(Res.string.variable_default_value),
-                        value = variable.value,
-                        onValueChange = onValueChange,
-                        modifier = Modifier.weight(1f),
-                        isPassword = variable.isSecret,
-                        imeAction = ImeAction.Next,
-                    )
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Checkbox(checked = variable.isSecret, onCheckedChange = onSecretChange)
-                        TechLabel(
-                            text = stringResource(Res.string.variable_is_secret),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        )
-                    }
-                }
+                    isPassword = variable.isSecret,
+                    imeAction = ImeAction.Next,
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                VariableOption(
+                    label = stringResource(Res.string.required),
+                    checked = variable.isRequired,
+                    onCheckedChange = onRequiredChange
+                )
+                Spacer(modifier = Modifier.width(MarginMedium))
+                VariableOption(
+                    label = stringResource(Res.string.variable_is_secret),
+                    checked = variable.isSecret,
+                    onCheckedChange = onSecretChange
+                )
             }
         }
+    }
+}
+
+@Composable
+private fun VariableOption(
+    label: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Checkbox(checked = checked, onCheckedChange = onCheckedChange)
+        TechLabel(
+            text = label,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+        )
     }
 }
 
