@@ -5,19 +5,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -63,10 +59,10 @@ import azureversionator.shared.generated.resources.filter_preferences_repository
 import azureversionator.shared.generated.resources.input_textfield_type
 import azureversionator.shared.generated.resources.ok
 import azureversionator.shared.generated.resources.open_azure_settings
+import azureversionator.shared.generated.resources.profile_exported
 import azureversionator.shared.generated.resources.profile_name
 import azureversionator.shared.generated.resources.profile_name_placeholder
 import azureversionator.shared.generated.resources.profile_saved
-import azureversionator.shared.generated.resources.profile_exported
 import azureversionator.shared.generated.resources.profile_transfer_error
 import azureversionator.shared.generated.resources.remove_profile
 import azureversionator.shared.generated.resources.remove_profile_confirmation_message
@@ -93,12 +89,12 @@ import dev.cjrv.azureversionator.ui.composables.CustomTextField
 import dev.cjrv.azureversionator.ui.composables.CustomTextFieldWithHelp
 import dev.cjrv.azureversionator.ui.composables.ExpandableSection
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
+import dev.cjrv.azureversionator.ui.composables.TechActionButton
 import dev.cjrv.azureversionator.ui.composables.TechCard
 import dev.cjrv.azureversionator.ui.composables.TechLabel
 import dev.cjrv.azureversionator.ui.composables.TechPanel
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.viewmodel.koinViewModel
 
 
@@ -264,34 +260,34 @@ private fun ProfileNameOrRemove(
     onRemoveProfileClick: () -> Unit,
     onExportProfileClick: () -> Unit
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        CustomTextField(
-            label = stringResource(Res.string.profile_name),
-            value = profileName,
-            onValueChange = onProfileNameChanged,
-            modifier = Modifier.weight(1f),
-            placeholder = stringResource(Res.string.profile_name_placeholder),
-            imeAction = ImeAction.Next
-        )
-        Spacer(modifier = Modifier.width(MarginSmall))
-        IconButton(
-            onClick = onExportProfileClick,
-            modifier = Modifier.size(32.dp)
+    TechCard(
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(MarginMedium),
+            horizontalArrangement = Arrangement.spacedBy(MarginSmall)
         ) {
-            Icon(
-                imageVector = vectorResource(Res.drawable.upload),
-                contentDescription = stringResource(Res.string.export_profile),
-                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)
+            CustomTextField(
+                label = stringResource(Res.string.profile_name),
+                value = profileName,
+                onValueChange = onProfileNameChanged,
+                modifier = Modifier.weight(1f),
+                placeholder = stringResource(Res.string.profile_name_placeholder),
+                imeAction = ImeAction.Next
             )
-        }
-        Spacer(modifier = Modifier.width(MarginSmall))
-        IconButton(
-            onClick = onRemoveProfileClick,
-            modifier = Modifier.size(32.dp)
-        ) {
-            Icon(
-                imageVector = vectorResource(Res.drawable.delete),
+            TechActionButton(
+                icon = Res.drawable.upload,
+                contentDescription = stringResource(Res.string.export_profile),
+                onClick = onExportProfileClick,
+                modifier = Modifier.size(32.dp),
+            )
+            TechActionButton(
+                icon = Res.drawable.delete,
                 contentDescription = stringResource(Res.string.remove_profile),
+                onClick = onRemoveProfileClick,
+                modifier = Modifier.size(32.dp),
                 tint = MaterialTheme.colorScheme.error.copy(alpha = 0.9f)
             )
         }
@@ -418,23 +414,24 @@ fun VariableRow(
     ) {
         Row(
             modifier = Modifier.padding(MarginSmall),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(MarginSmall)
         ) {
-            IconButton(
+            TechActionButton(
+                icon = Res.drawable.delete,
+                contentDescription = stringResource(Res.string.remove_variable),
                 onClick = onRemove,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(32.dp),
+                tint = MaterialTheme.colorScheme.error.copy(alpha = 0.9f)
+            )
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(MarginSmall)
             ) {
-                Icon(
-                    imageVector = vectorResource(Res.drawable.delete),
-                    contentDescription = stringResource(Res.string.remove_variable),
-                    tint = MaterialTheme.colorScheme.error.copy(alpha = 0.9f)
-                )
-            }
-            Spacer(modifier = Modifier.width(MarginSmall))
-            Column(modifier = Modifier.weight(1f)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(MarginSmall)
                 ) {
                     CustomTextField(
                         label = stringResource(Res.string.variable_name),
@@ -445,7 +442,6 @@ fun VariableRow(
                         errorMessage = stringResource(Res.string.value_cannot_be_empty),
                         imeAction = ImeAction.Next,
                     )
-                    Spacer(modifier = Modifier.width(MarginSmall))
                     CustomDropdownField(
                         label = stringResource(Res.string.input_textfield_type),
                         selectedItem = variable.textFieldType,
@@ -454,7 +450,6 @@ fun VariableRow(
                         optionLabel = { it.name },
                         onOptionSelected = onVariableTextFieldTypeChanged
                     )
-                    Spacer(modifier = Modifier.width(MarginSmall))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Checkbox(checked = variable.isRequired, onCheckedChange = onRequiredChange)
                         TechLabel(
@@ -463,10 +458,10 @@ fun VariableRow(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(MarginSmall))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(MarginSmall)
                 ) {
                     CustomTextField(
                         label = stringResource(Res.string.variable_default_value),
@@ -476,7 +471,6 @@ fun VariableRow(
                         isPassword = variable.isSecret,
                         imeAction = ImeAction.Next,
                     )
-                    Spacer(modifier = Modifier.width(MarginSmall))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Checkbox(checked = variable.isSecret, onCheckedChange = onSecretChange)
                         TechLabel(
@@ -526,7 +520,11 @@ private fun ConnectionSettings(
                 imeAction = ImeAction.Next
             )
 
-            Row (modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(MarginSmall)
+            ) {
                 CustomTextField(
                     label = stringResource(Res.string.azure_pat),
                     value = state.personalAccessToken,
@@ -538,7 +536,6 @@ private fun ConnectionSettings(
                     errorMessage = stringResource(Res.string.value_cannot_be_empty),
                     imeAction = ImeAction.Next,
                 )
-                Spacer(modifier = Modifier.width(MarginSmall))
                 CustomSecondaryCompactButton(
                     text = stringResource(Res.string.create_new_pat),
                     onClick = { onShowCreatePATHelpDialog() },

@@ -81,6 +81,7 @@ import dev.cjrv.azureversionator.ui.Screen
 import dev.cjrv.azureversionator.ui.composables.CustomDropdownField
 import dev.cjrv.azureversionator.ui.composables.CustomTextField
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
+import dev.cjrv.azureversionator.ui.composables.TechActionButton
 import dev.cjrv.azureversionator.ui.composables.TechCard
 import dev.cjrv.azureversionator.ui.composables.TechIcon
 import dev.cjrv.azureversionator.ui.composables.TechLabel
@@ -301,33 +302,6 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun TechActionButton(
-    icon: DrawableResource,
-    contentDescription: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    tint: Color = MaterialTheme.colorScheme.onSurface,
-    backgroundColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh
-) {
-    Surface(
-        onClick = onClick,
-        modifier = modifier.size(34.dp),
-        shape = RoundedCornerShape(4.dp),
-        color = backgroundColor,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
-    ) {
-        Box(contentAlignment = Alignment.Center) {
-            Icon(
-                imageVector = vectorResource(icon),
-                contentDescription = contentDescription,
-                modifier = Modifier.size(18.dp),
-                tint = tint
-            )
         }
     }
 }

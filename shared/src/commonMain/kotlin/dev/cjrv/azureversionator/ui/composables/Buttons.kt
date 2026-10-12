@@ -2,27 +2,36 @@ package dev.cjrv.azureversionator.ui.composables
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import azureversionator.shared.generated.resources.Res
+import azureversionator.shared.generated.resources.light_mode
 import dev.cjrv.azureversionator.theme.AzureVersionatorTheme
 import dev.cjrv.azureversionator.theme.CornerRadius
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.vectorResource
 
 @Composable
 fun CustomPrimaryButton(
@@ -175,6 +184,33 @@ private fun SecondaryButton(
     }
 }
 
+@Composable
+fun TechActionButton(
+    icon: DrawableResource,
+    contentDescription: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    tint: Color = MaterialTheme.colorScheme.onSurface,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh
+) {
+    Surface(
+        onClick = onClick,
+        modifier = modifier.size(34.dp),
+        shape = RoundedCornerShape(4.dp),
+        color = backgroundColor,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Icon(
+                imageVector = vectorResource(icon),
+                contentDescription = contentDescription,
+                modifier = Modifier.size(18.dp),
+                tint = tint
+            )
+        }
+    }
+}
+
 private data class ButtonStyle(
     val minHeight: Dp,
     val contentPadding: PaddingValues,
@@ -215,6 +251,11 @@ fun ButtonsPreview() {
             CustomPrimaryButton(
                 text = "Primary Disabled",
                 enabled = false
+            )
+            TechActionButton(
+                icon = Res.drawable.light_mode,
+                contentDescription = "Light Mode",
+                onClick = {}
             )
         }
     }
