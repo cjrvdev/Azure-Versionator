@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.cjrv.azureversionator.data.model.app.Profile
 import dev.cjrv.azureversionator.data.openurl.OpenUrlService
+import dev.cjrv.azureversionator.data.profiles.ProfileTransferResult
+import dev.cjrv.azureversionator.data.profiles.ProfileTransferService
 import dev.cjrv.azureversionator.data.settings.AppSettingsRepository
 import dev.cjrv.azureversionator.data.settings.AzureSettingsRepository
 import kotlinx.coroutines.delay
@@ -18,7 +20,8 @@ import kotlin.time.Duration.Companion.milliseconds
 class HomeViewModel(
     private val openUrlService: OpenUrlService,
     private val azureSettingsRepository: AzureSettingsRepository,
-    private val appSettingsRepository: AppSettingsRepository
+    private val appSettingsRepository: AppSettingsRepository,
+    private val profileTransferService: ProfileTransferService
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(UIState())
@@ -71,10 +74,37 @@ class HomeViewModel(
         onSelectedProfileChanged(clonedProfile.id)
     }
 
+    fun onImportProfileClicked() {
+        viewModelScope.launch {
+            when (profileTransferService.importProfile()) {
+                ProfileTransferResult.Imported -> _state.update {
+                    it.copy(profileTransferFeedback = ProfileTransferFeedback.Imported)
+                }
+
+                is ProfileTransferResult.Failed -> _state.update {
+                    it.copy(profileTransferFeedback = ProfileTransferFeedback.Error)
+                }
+
+                ProfileTransferResult.Cancelled -> Unit
+                ProfileTransferResult.Exported -> error("Unexpected profile transfer result")
+            }
+        }
+    }
+
+    fun onProfileTransferFeedbackConsumed() {
+        _state.update { it.copy(profileTransferFeedback = null) }
+    }
+
+    enum class ProfileTransferFeedback {
+        Imported,
+        Error
+    }
+
     data class UIState(
         val isLoading: Boolean = true,
         val selectedProfileId : String? = null,
         val selectedProfileName : String? = null,
-        val profiles : List<Profile> = emptyList()
+        val profiles : List<Profile> = emptyList(),
+        val profileTransferFeedback: ProfileTransferFeedback? = null
     )
 }

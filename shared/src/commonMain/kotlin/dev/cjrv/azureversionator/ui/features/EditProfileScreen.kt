@@ -50,6 +50,7 @@ import azureversionator.shared.generated.resources.create_pat_help_message
 import azureversionator.shared.generated.resources.delete
 import azureversionator.shared.generated.resources.edit_profile
 import azureversionator.shared.generated.resources.edit_profile_validation_error
+import azureversionator.shared.generated.resources.export_profile
 import azureversionator.shared.generated.resources.filter_preferences
 import azureversionator.shared.generated.resources.filter_preferences_branch
 import azureversionator.shared.generated.resources.filter_preferences_branch_help
@@ -65,12 +66,15 @@ import azureversionator.shared.generated.resources.open_azure_settings
 import azureversionator.shared.generated.resources.profile_name
 import azureversionator.shared.generated.resources.profile_name_placeholder
 import azureversionator.shared.generated.resources.profile_saved
+import azureversionator.shared.generated.resources.profile_exported
+import azureversionator.shared.generated.resources.profile_transfer_error
 import azureversionator.shared.generated.resources.remove_profile
 import azureversionator.shared.generated.resources.remove_profile_confirmation_message
 import azureversionator.shared.generated.resources.remove_variable
 import azureversionator.shared.generated.resources.required
 import azureversionator.shared.generated.resources.return_text
 import azureversionator.shared.generated.resources.save_changes
+import azureversionator.shared.generated.resources.upload
 import azureversionator.shared.generated.resources.value_cannot_be_empty
 import azureversionator.shared.generated.resources.variable_default_value
 import azureversionator.shared.generated.resources.variable_is_secret
@@ -107,6 +111,8 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
     var showCreatePATHelpDialog by remember { mutableStateOf(false) }
     val saveSuccessMessage = stringResource(Res.string.profile_saved)
     val validationErrorMessage = stringResource(Res.string.edit_profile_validation_error)
+    val profileExportedMessage = stringResource(Res.string.profile_exported)
+    val profileTransferErrorMessage = stringResource(Res.string.profile_transfer_error)
 
     LaunchedEffect(state.saveFeedback) {
         when (state.saveFeedback) {
@@ -118,6 +124,22 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
             EditProfileViewModel.SaveFeedback.ValidationError -> {
                 snackbarHostState.showSnackbar(validationErrorMessage)
                 vm.onSaveFeedbackConsumed()
+            }
+
+            null -> Unit
+        }
+    }
+
+    LaunchedEffect(state.profileTransferFeedback) {
+        when (state.profileTransferFeedback) {
+            EditProfileViewModel.ProfileTransferFeedback.Exported -> {
+                snackbarHostState.showSnackbar(profileExportedMessage)
+                vm.onProfileTransferFeedbackConsumed()
+            }
+
+            EditProfileViewModel.ProfileTransferFeedback.Error -> {
+                snackbarHostState.showSnackbar(profileTransferErrorMessage)
+                vm.onProfileTransferFeedbackConsumed()
             }
 
             null -> Unit
@@ -184,7 +206,8 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
                                 ProfileNameOrRemove(
                                     profileName = state.profileName,
                                     onProfileNameChanged = vm::onProfileNameChanged,
-                                    onRemoveProfileClick = { showRemoveProfileConfirmation = true }
+                                    onRemoveProfileClick = { showRemoveProfileConfirmation = true },
+                                    onExportProfileClick = vm::onExportProfileClicked
                                 )
                             }
                             item {
@@ -238,7 +261,8 @@ fun EditProfileScreen(onNavigateBack: () -> Unit) {
 private fun ProfileNameOrRemove(
     profileName: String,
     onProfileNameChanged: (String) -> Unit,
-    onRemoveProfileClick: () -> Unit
+    onRemoveProfileClick: () -> Unit,
+    onExportProfileClick: () -> Unit
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         CustomTextField(
@@ -249,6 +273,17 @@ private fun ProfileNameOrRemove(
             placeholder = stringResource(Res.string.profile_name_placeholder),
             imeAction = ImeAction.Next
         )
+        Spacer(modifier = Modifier.width(MarginSmall))
+        IconButton(
+            onClick = onExportProfileClick,
+            modifier = Modifier.size(32.dp)
+        ) {
+            Icon(
+                imageVector = vectorResource(Res.drawable.upload),
+                contentDescription = stringResource(Res.string.export_profile),
+                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)
+            )
+        }
         Spacer(modifier = Modifier.width(MarginSmall))
         IconButton(
             onClick = onRemoveProfileClick,

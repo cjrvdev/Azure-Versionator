@@ -4,6 +4,7 @@ import com.russhwolf.settings.Settings
 import dev.cjrv.azureversionator.data.network.AzureDevOpsApi
 import dev.cjrv.azureversionator.data.network.AzureDevOpsApiImpl
 import dev.cjrv.azureversionator.data.network.defaultHttpEngine
+import dev.cjrv.azureversionator.data.profiles.ProfileTransferService
 import dev.cjrv.azureversionator.data.settings.AppSettingsRepository
 import dev.cjrv.azureversionator.data.settings.AppSettingsRepositoryImpl
 import dev.cjrv.azureversionator.data.settings.AzureSettingsRepository
@@ -19,6 +20,7 @@ val dataModule = module {
 
     single<AzureSettingsRepository> { AzureSettingsRepositoryImpl(get()) }
     single<AppSettingsRepository> { AppSettingsRepositoryImpl(get()) }
+    single { ProfileTransferService(get()) }
 
     single<HttpClient> {
         HttpClient(defaultHttpEngine()) {

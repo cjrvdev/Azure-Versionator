@@ -6,6 +6,8 @@ import dev.cjrv.azureversionator.data.model.azure.AzureDevOpsPreferencesFilter
 import dev.cjrv.azureversionator.data.model.azure.AzureVariable
 import dev.cjrv.azureversionator.data.model.azure.TextFieldType
 import dev.cjrv.azureversionator.data.openurl.OpenUrlService
+import dev.cjrv.azureversionator.data.profiles.ProfileTransferResult
+import dev.cjrv.azureversionator.data.profiles.ProfileTransferService
 import dev.cjrv.azureversionator.data.settings.AzureSettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +15,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class EditProfileViewModel(private val settingsRepository: AzureSettingsRepository, private val openUrlService: OpenUrlService) : ViewModel() {
+class EditProfileViewModel(
+    private val settingsRepository: AzureSettingsRepository,
+    private val openUrlService: OpenUrlService,
+    private val profileTransferService: ProfileTransferService
+) : ViewModel() {
     private val _state = MutableStateFlow(UIState())
     val state: StateFlow<UIState> = _state.asStateFlow()
 
@@ -170,6 +176,27 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
         _state.update { it.copy(saveFeedback = null) }
     }
 
+    fun onExportProfileClicked() {
+        viewModelScope.launch {
+            when (profileTransferService.exportActiveProfile()) {
+                ProfileTransferResult.Exported -> _state.update {
+                    it.copy(profileTransferFeedback = ProfileTransferFeedback.Exported)
+                }
+
+                is ProfileTransferResult.Failed -> _state.update {
+                    it.copy(profileTransferFeedback = ProfileTransferFeedback.Error)
+                }
+
+                ProfileTransferResult.Cancelled -> Unit
+                ProfileTransferResult.Imported -> error("Unexpected profile transfer result")
+            }
+        }
+    }
+
+    fun onProfileTransferFeedbackConsumed() {
+        _state.update { it.copy(profileTransferFeedback = null) }
+    }
+
     private fun updateVariable(index: Int, transform: (AzureVariable) -> AzureVariable) {
         _state.update { current ->
             if (index !in current.variables.indices) {
@@ -219,6 +246,11 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
         ValidationError
     }
 
+    enum class ProfileTransferFeedback {
+        Exported,
+        Error
+    }
+
     data class UIState(
         val isLoading: Boolean = true,
         val selectedProfileId: String? = null,
@@ -237,6 +269,7 @@ class EditProfileViewModel(private val settingsRepository: AzureSettingsReposito
         val variables: List<AzureVariable> = emptyList(),
         val showValidationErrors: Boolean = false,
         val saveFeedback: SaveFeedback? = null,
-        val canExecuteCreateNewPat: Boolean = false
+        val canExecuteCreateNewPat: Boolean = false,
+        val profileTransferFeedback: ProfileTransferFeedback? = null
     )
 }

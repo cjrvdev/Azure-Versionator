@@ -22,10 +22,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,12 +58,15 @@ import azureversionator.shared.generated.resources.dark_mode
 import azureversionator.shared.generated.resources.download
 import azureversionator.shared.generated.resources.edit_profile
 import azureversionator.shared.generated.resources.extract_workitem_attachments_subtitle
+import azureversionator.shared.generated.resources.import_profile
 import azureversionator.shared.generated.resources.light_mode
 import azureversionator.shared.generated.resources.new_build
 import azureversionator.shared.generated.resources.new_profile
 import azureversionator.shared.generated.resources.ok
+import azureversionator.shared.generated.resources.profile_imported
 import azureversionator.shared.generated.resources.profile_name
 import azureversionator.shared.generated.resources.profile_name_placeholder
+import azureversionator.shared.generated.resources.profile_transfer_error
 import azureversionator.shared.generated.resources.return_text
 import azureversionator.shared.generated.resources.settings
 import azureversionator.shared.generated.resources.trigger_pipeline_run_subtitle
@@ -91,14 +97,36 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
     val state by vm.state.collectAsState()
     var showNewProfileDialog by remember { mutableStateOf(false) }
     var newProfileName by remember { mutableStateOf("") }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val profileImportedMessage = stringResource(Res.string.profile_imported)
+    val profileTransferErrorMessage = stringResource(Res.string.profile_transfer_error)
+
+    LaunchedEffect(state.profileTransferFeedback) {
+        when (state.profileTransferFeedback) {
+            HomeViewModel.ProfileTransferFeedback.Imported -> {
+                snackbarHostState.showSnackbar(profileImportedMessage)
+                vm.onProfileTransferFeedbackConsumed()
+            }
+
+            HomeViewModel.ProfileTransferFeedback.Error -> {
+                snackbarHostState.showSnackbar(profileTransferErrorMessage)
+                vm.onProfileTransferFeedbackConsumed()
+            }
+
+            null -> Unit
+        }
+    }
 
     Screen {
-        Scaffold(topBar = {
-            TopAppBar(
-                text = stringResource(Res.string.app_name),
-                hasBackButton = false
-            )
-        }) { innerPadding ->
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    text = stringResource(Res.string.app_name),
+                    hasBackButton = false
+                )
+            },
+            snackbarHost = { SnackbarHost(snackbarHostState) }
+        ) { innerPadding ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -180,6 +208,11 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                                     MarginSmall
                                                 )
                                             ) {
+                                                TechActionButton(
+                                                    icon = Res.drawable.download,
+                                                    contentDescription = stringResource(Res.string.import_profile),
+                                                    onClick = vm::onImportProfileClicked
+                                                )
                                                 TechActionButton(
                                                     icon = Res.drawable.copy,
                                                     contentDescription = stringResource(Res.string.clone_profile),

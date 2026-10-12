@@ -54,6 +54,11 @@
     <string name="clone_profile">Clone Profile</string>
     <string name="remove_profile">Remove Profile</string>
     <string name="remove_profile_confirmation_message">Are you sure you want to remove this profile?</string>
+    <string name="import_profile">Import Profile</string>
+    <string name="export_profile">Export Profile</string>
+    <string name="profile_imported">Profile imported. Add your Personal Access Token before use.</string>
+    <string name="profile_exported">Profile exported without its Personal Access Token.</string>
+    <string name="profile_transfer_error">Unable to import or export the profile.</string>
     <string name="variables">Variables</string>
     <string name="variable_name">Name</string>
     <string name="variable_default_value">Default Value</string>
