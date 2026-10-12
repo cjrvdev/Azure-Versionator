@@ -212,7 +212,7 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                                 TechActionButton(
                                                     icon = Res.drawable.download,
                                                     contentDescription = stringResource(Res.string.import_profile),
-                                                    onClick = vm::onImportProfileClicked
+                                                    onClick = { vm.onImportProfileClicked() }
                                                 )
                                                 TechActionButton(
                                                     icon = Res.drawable.copy,
