@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -97,6 +96,7 @@ import dev.cjrv.azureversionator.ui.composables.TechActionButton
 import dev.cjrv.azureversionator.ui.composables.TechCard
 import dev.cjrv.azureversionator.ui.composables.TechLabel
 import dev.cjrv.azureversionator.ui.composables.TechPanel
+import dev.cjrv.azureversionator.ui.composables.TechToggleChip
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -475,34 +475,19 @@ fun VariableRow(
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                VariableOption(
+                TechToggleChip(
                     label = stringResource(Res.string.required),
                     checked = variable.isRequired,
                     onCheckedChange = onRequiredChange
                 )
                 Spacer(modifier = Modifier.width(MarginMedium))
-                VariableOption(
+                TechToggleChip(
                     label = stringResource(Res.string.variable_is_secret),
                     checked = variable.isSecret,
                     onCheckedChange = onSecretChange
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun VariableOption(
-    label: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
-) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Checkbox(checked = checked, onCheckedChange = onCheckedChange)
-        TechLabel(
-            text = label,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-        )
     }
 }
 

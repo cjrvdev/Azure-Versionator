@@ -62,7 +62,7 @@
     <string name="variables">Variables</string>
     <string name="variable_name">Name</string>
     <string name="variable_default_value">Default Value</string>
-    <string name="variable_is_secret">Secret?</string>
+    <string name="variable_is_secret">Hide value</string>
     <string name="add_variable">Add Variable</string>
     <string name="remove_variable">Remove</string>
     <string name="save_changes">Save changes</string>
