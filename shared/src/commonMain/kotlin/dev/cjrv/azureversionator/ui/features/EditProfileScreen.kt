@@ -284,7 +284,7 @@ private fun ProfileNameOrRemove(
             TechActionButton(
                 icon = Res.drawable.upload,
                 contentDescription = stringResource(Res.string.export_profile),
-                onClick = onExportProfileClick,
+                onClick = { onExportProfileClick() },
                 modifier = Modifier.size(32.dp),
             )
             TechActionButton(
