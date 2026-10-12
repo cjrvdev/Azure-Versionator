@@ -33,6 +33,15 @@ compose.desktop {
                 iconFile.set(rootProject.file("shared/src/commonMain/composeResources/drawable/appicon.png"))
             }
         }
+
+        buildTypes {
+            release {
+                proguard {
+                    optimize.set(false)
+                    configurationFiles.from("proguard-rules.pro")
+                }
+            }
+        }
     }
 
     dependencies{
