@@ -56,6 +56,7 @@ The file includes the profile name, organization, team project, variable templat
 
 #### 📱 Android
 - **Google Play Store**: [Get it on Google Play](https://play.google.com/store/apps/details?id=dev.cjrv.azureversionator) (Coming Soon)
+-  [APK in GitHub Releases](https://github.com/cjrvdev/Azure-Versionator/releases/latest)
 
 #### 🖥️ Desktop (JVM)
 - Download the executable for your OS (Windows/macOS) from the [GitHub Releases](https://github.com/cjrvdev/Azure-Versionator/releases/latest) page.
