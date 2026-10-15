@@ -285,7 +285,8 @@ private fun VariableField(
             modifier = modifier,
             isPassword = variable.isSecret,
             isError = isError,
-            errorMessage = errorMessage
+            errorMessage = errorMessage,
+            ignoreCase = true
         )
     } else {
         CustomTextField(
@@ -296,7 +297,8 @@ private fun VariableField(
             isPassword = variable.isSecret,
             isError = isError,
             errorMessage = errorMessage,
-            imeAction = ImeAction.Next
+            imeAction = ImeAction.Next,
+            ignoreCase = true
         )
     }
 }

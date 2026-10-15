@@ -61,14 +61,15 @@ fun CustomTextField(
     isError: Boolean = false,
     errorMessage: String? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
-    imeAction: ImeAction = ImeAction.Next
+    imeAction: ImeAction = ImeAction.Next,
+    ignoreCase: Boolean = false
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
 
     TextField(
         value = value,
         onValueChange = onValueChange,
-        label = { TechLabel(text = label) },
+        label = { TechLabel(text = label, ignoreCase = ignoreCase) },
         placeholder = { Text(placeholder) },
         singleLine = true,
         modifier = modifier,
@@ -100,12 +101,13 @@ fun CustomMultilineTextField(
     isPassword: Boolean = false,
     isError: Boolean = false,
     errorMessage: String? = null,
-    keyboardType: KeyboardType = KeyboardType.Text
+    keyboardType: KeyboardType = KeyboardType.Text,
+    ignoreCase: Boolean = false
 ) {
     TextField(
         value = value,
         onValueChange = onValueChange,
-        label = { TechLabel(text = label) },
+        label = { TechLabel(text = label, ignoreCase = ignoreCase) },
         placeholder = { Text(placeholder) },
         singleLine = false,
         modifier = modifier,

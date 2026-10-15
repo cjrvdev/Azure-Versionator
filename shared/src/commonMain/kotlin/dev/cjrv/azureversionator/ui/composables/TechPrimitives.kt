@@ -33,10 +33,11 @@ fun TechLabel(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.primary,
-    style: TextStyle = MaterialTheme.typography.labelSmall
+    style: TextStyle = MaterialTheme.typography.labelSmall,
+    ignoreCase: Boolean = false
 ) {
     Text(
-        text = text.uppercase(),
+        text = if (ignoreCase) text else text.uppercase(),
         modifier = modifier,
         color = color,
         style = style.copy(
