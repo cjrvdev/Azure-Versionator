@@ -46,7 +46,7 @@ Designed with an industrial "Cyber-Tech" aesthetic, it offers a fast and efficie
 
 The file includes the profile name, organization, team project, variable templates (including values, field types, required and secret flags), and filters. The profile ID and PAT are excluded; an imported profile receives a new ID.
 
-> **Before sharing:** JSON exports are plain text. Variable values are included even when marked **Secret**; that flag does not redact them. Remove sensitive variable values from the file before sharing it.
+> **Before sharing:** JSON exports are plain text. Variable values are included even when marked **Secret**; that flag does not redact them. ***Remove any sensitive variable values from the file before sharing it.***
 
 ---
 
