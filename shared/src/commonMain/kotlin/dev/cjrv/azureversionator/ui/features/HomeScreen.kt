@@ -1,8 +1,12 @@
 package dev.cjrv.azureversionator.ui.features
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -75,6 +80,8 @@ import dev.cjrv.azureversionator.navigation.EditProfile
 import dev.cjrv.azureversionator.navigation.NewVersion
 import dev.cjrv.azureversionator.navigation.Route
 import dev.cjrv.azureversionator.theme.LocalDarkTheme
+import dev.cjrv.azureversionator.theme.BorderAlpha
+import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.theme.MarginSmall
 import dev.cjrv.azureversionator.ui.Screen
@@ -187,9 +194,7 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                             .padding(MarginMedium)
                     ) {
                         TechPanel(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.surface)
+                            modifier = Modifier.fillMaxSize()
                         ) {
                             Column(modifier = Modifier.padding(MarginMedium)) {
                                 // Profile Command Module
@@ -312,10 +317,15 @@ private fun CreatedByLabel(
 ) {
     val authLabel = stringResource(Res.string.auth_by_label)
     val author = stringResource(Res.string.author_name)
+    val attributionColor = if (LocalDarkTheme.current) {
+        MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+    } else {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    }
     Text(
         modifier = Modifier.clickable { openAboutMe() },
         text = buildAnnotatedString {
-            withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))) {
+            withStyle(SpanStyle(color = attributionColor)) {
                 append(authLabel)
             }
             withStyle(
@@ -358,11 +368,32 @@ private fun OperationCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    TechCard(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { onClick() },
-        color = MaterialTheme.colorScheme.surfaceContainerHigh
+    val interactionSource = remember { MutableInteractionSource() }
+    val hovered by interactionSource.collectIsHoveredAsState()
+    val focused by interactionSource.collectIsFocusedAsState()
+    val highlighted = hovered || focused
+    val colors = MaterialTheme.colorScheme
+    val backgroundColor by animateColorAsState(
+        targetValue = if (highlighted) {
+            lerp(colors.surfaceContainerHigh, colors.primary, 0.06f)
+        } else {
+            colors.surfaceContainerHigh
+        }
+    )
+    val borderColor by animateColorAsState(
+        targetValue = if (highlighted) {
+            colors.primary.copy(alpha = 0.65f)
+        } else {
+            colors.outline.copy(alpha = BorderAlpha)
+        }
+    )
+    Surface(
+        onClick = onClick,
+        interactionSource = interactionSource,
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(CornerRadius),
+        border = BorderStroke(1.dp, borderColor),
+        color = backgroundColor
     ) {
         Row(
             modifier = Modifier.padding(20.dp),
@@ -373,7 +404,11 @@ private fun OperationCard(
             Column {
                 TechLabel(
                     text = subtitle,
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                    color = if (LocalDarkTheme.current) {
+                        colors.primary.copy(alpha = 0.85f)
+                    } else {
+                        colors.tertiary
+                    }
                 )
                 Text(
                     text = title,
