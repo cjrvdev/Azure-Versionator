@@ -1,6 +1,8 @@
 package dev.cjrv.azureversionator.ui.features
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,6 +42,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.SpanStyle
@@ -315,6 +319,19 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
 private fun CreatedByLabel(
     openAboutMe: () -> Unit,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val hovered by interactionSource.collectIsHoveredAsState()
+    val focused by interactionSource.collectIsFocusedAsState()
+    val highlighted = hovered || focused
+    val accentColor = MaterialTheme.colorScheme.primary
+    val underlineProgress by animateFloatAsState(
+        targetValue = if (highlighted) 1f else 0f,
+        animationSpec = tween(durationMillis = 180)
+    )
+    val authorColor by animateColorAsState(
+        targetValue = if (highlighted) accentColor else MaterialTheme.colorScheme.onSurface,
+        animationSpec = tween(durationMillis = 180)
+    )
     val authLabel = stringResource(Res.string.auth_by_label)
     val author = stringResource(Res.string.author_name)
     val attributionColor = if (LocalDarkTheme.current) {
@@ -323,14 +340,33 @@ private fun CreatedByLabel(
         MaterialTheme.colorScheme.onSurfaceVariant
     }
     Text(
-        modifier = Modifier.clickable { openAboutMe() },
+        modifier = Modifier
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = openAboutMe
+            )
+            .drawBehind {
+                if (underlineProgress > 0f) {
+                    val inset = size.width * (1f - underlineProgress) / 2f
+                    val strokeWidth = 1.dp.toPx()
+                    val y = size.height - strokeWidth / 2f
+                    drawLine(
+                        color = accentColor,
+                        start = Offset(inset, y),
+                        end = Offset(size.width - inset, y),
+                        strokeWidth = strokeWidth
+                    )
+                }
+            }
+            .padding(bottom = 3.dp),
         text = buildAnnotatedString {
             withStyle(SpanStyle(color = attributionColor)) {
                 append(authLabel)
             }
             withStyle(
                 SpanStyle(
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = authorColor,
                     fontWeight = FontWeight.Bold
                 )
             ) {
