@@ -11,6 +11,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -156,7 +157,12 @@ fun <T> CustomDropdownField(
             readOnly = true,
             enabled = enabled,
             label = if (label.isNotEmpty()) {
-                { TechLabel(text = label) }
+                {
+                    TechLabel(
+                        text = label,
+                        color = if (enabled) MaterialTheme.colorScheme.primary else LocalContentColor.current
+                    )
+                }
             } else null,
             placeholder = { Text(placeholder) },
             shape = androidx.compose.foundation.shape.RoundedCornerShape(CornerRadius),
@@ -220,7 +226,12 @@ fun CustomTextFieldWithHelp(
         value = value,
         onValueChange = onValueChange,
         enabled = enabled,
-        label = { TechLabel(text = label) },
+        label = {
+            TechLabel(
+                text = label,
+                color = if (enabled) MaterialTheme.colorScheme.primary else LocalContentColor.current
+            )
+        },
         placeholder = { Text(placeholder) },
         singleLine = true,
         modifier = modifier,
