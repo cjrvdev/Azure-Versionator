@@ -13,6 +13,7 @@ Designed with an industrial "Cyber-Tech" aesthetic, it offers a fast and efficie
 ## ✨ Key Features
 
 - **🛡️ Multi-Profile Management**: Create multiple profiles with unique Azure DevOps configurations for each organization or team project you need.
+- **Profile Import & Export**: Share individual profiles as JSON files, including organization, project, variable templates and filters, without exporting your Personal Access Token (PAT).
 - **🎨 Dynamic UI**: Supports Light and Dark mode.
 - **💻 Desktop & Mobile**: Seamless experience between your workstation and your phone.
 - **🦥LAZY-FRIENDLY** features created to simplify some of the unnecessary long tasks in Azure DevOps. Feel free to suggest new ones by creating a New Issue.
@@ -33,6 +34,19 @@ Designed with an industrial "Cyber-Tech" aesthetic, it offers a fast and efficie
 - **Networking**: [Ktor](https://ktor.io/)
 - **Persistence**: [Multiplatform Settings](https://github.com/russhwolf/multiplatform-settings)
 - **Serialization**: [Kotlinx Serialization](https://github.com/Kotlin/kotlinx.serialization)
+- **File Dialogs**: [FileKit](https://github.com/vinceglb/FileKit)
+
+---
+
+## 📤📥 Sharing Profiles
+
+**Export:** Select the profile you want to share, open **Edit Profile**, and use the **Export Profile** action to save a `.json` file. Export uses the saved active profile, so save any edits before exporting.
+
+**Import:** Use **Import Profile** on the Home screen and select a previously exported `.json` file. The app creates a new profile and makes it active without replacing existing profiles. Open **Edit Profile** to enter and save your own PAT before using Azure DevOps actions.
+
+The file includes the profile name, organization, team project, variable templates (including values, field types, required and secret flags), and filters. The profile ID and PAT are excluded; an imported profile receives a new ID.
+
+> **Before sharing:** JSON exports are plain text. Variable values are included even when marked **Secret**; that flag does not redact them. Remove sensitive variable values from the file before sharing it.
 
 ---
 
@@ -49,4 +63,5 @@ Designed with an industrial "Cyber-Tech" aesthetic, it offers a fast and efficie
 ---
 *Note: This project is in active development. Feel free to open issues or contribute!*
 
-*Also... yes, this ReadMe was done with AI. Lazyness is real*
+*Also... yes, this ReadMe was done with AI. Laziness is real*
+
