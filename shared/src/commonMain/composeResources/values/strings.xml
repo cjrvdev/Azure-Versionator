@@ -25,7 +25,7 @@
     <string name="azure_repository_name_placeholder">Select a repository</string>
     <string name="azure_branch_name">Branch</string>
     <string name="azure_branch_name_placeholder">Select a branch</string>
-    <string name="azure_pat_help">PAT must have 'Repo' READ and 'Pipeline' READ AND WRITE permissions</string>
+    <string name="azure_pat_help">PAT must have 'Code' READ and 'Build' READ AND EXECUTE permissions</string>
     <string name="filter_preferences">Pipeline Filter Preferences (optional)</string>
     <string name="filter_preferences_branch">Priority Branches</string>
     <string name="filter_preferences_exclude_branch">Exclude Branches</string>
