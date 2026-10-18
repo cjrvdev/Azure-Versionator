@@ -34,6 +34,7 @@
 - Use `MaterialTheme.colorScheme`, shared typography and `theme\Dimensions.kt`; preserve consistent panel styling across screens and check both themes.
 - Hover effects should also support keyboard focus via a shared `MutableInteractionSource`, as in Home's operation cards and attribution link.
 - `TechLabel` defaults to the primary color. In disabled text-field labels, inherit `LocalContentColor.current` from the enclosing Material field instead of forcing the primary color.
+- `CustomSearchableDropdownField` filters option labels without case sensitivity. It only commits existing options; dismissing the menu discards the search and restores the selected label.
 - Variable editors use `TextFieldType.SingleLine` or `TextFieldType.Multiline` to choose the appropriate shared text field. Preserve required/secret flags.
 - User-facing strings belong in `shared\src\commonMain\composeResources\values\strings.xml`; access generated resources through `Res.string.*` / `Res.drawable.*`.
 

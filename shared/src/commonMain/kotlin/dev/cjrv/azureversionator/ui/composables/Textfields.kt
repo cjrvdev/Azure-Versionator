@@ -35,8 +35,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import azureversionator.shared.generated.resources.Res
 import azureversionator.shared.generated.resources.help
+import azureversionator.shared.generated.resources.no_matching_options
 import dev.cjrv.azureversionator.theme.CornerRadius
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
 @Composable
@@ -200,6 +202,111 @@ fun <T> CustomDropdownField(
                         expanded = false
                     }
                 )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun <T> CustomSearchableDropdownField(
+    label: String,
+    selectedItem: T?,
+    options: List<T>,
+    optionLabel: (T) -> String,
+    onOptionSelected: (T) -> Unit,
+    modifier: Modifier = Modifier,
+    placeholder: String = "",
+    enabled: Boolean = true,
+    isError: Boolean = false,
+    errorMessage: String? = null
+) {
+    val selectedLabel = selectedItem?.let(optionLabel).orEmpty()
+    var query by remember(selectedItem, selectedLabel, enabled) { mutableStateOf<String?>(null) }
+    var expanded by remember(selectedItem, enabled) { mutableStateOf(false) }
+    val filteredOptions = options.filter {
+        optionLabel(it).contains(query.orEmpty(), ignoreCase = true)
+    }
+    val dismiss = {
+        expanded = false
+        query = null
+    }
+
+    ExposedDropdownMenuBox(
+        expanded = enabled && expanded,
+        onExpandedChange = {
+            if (enabled) {
+                if (it) expanded = true else dismiss()
+            }
+        },
+        modifier = modifier
+    ) {
+        TextField(
+            value = query ?: selectedLabel,
+            onValueChange = {
+                query = it
+                expanded = true
+            },
+            enabled = enabled,
+            singleLine = true,
+            label = if (label.isNotEmpty()) {
+                {
+                    TechLabel(
+                        text = label,
+                        color = if (enabled) MaterialTheme.colorScheme.primary else LocalContentColor.current
+                    )
+                }
+            } else null,
+            placeholder = { Text(placeholder) },
+            shape = RoundedCornerShape(CornerRadius),
+            isError = isError,
+            colors = techTextFieldColors(),
+            supportingText = if (isError && errorMessage != null) {
+                { Text(errorMessage) }
+            } else null,
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(
+                    expanded = enabled && expanded,
+                    modifier = Modifier.menuAnchor(
+                        type = ExposedDropdownMenuAnchorType.SecondaryEditable,
+                        enabled = enabled
+                    )
+                )
+            },
+            modifier = Modifier
+                .menuAnchor(
+                    type = ExposedDropdownMenuAnchorType.PrimaryEditable,
+                    enabled = enabled
+                )
+                .fillMaxWidth()
+        )
+
+        ExposedDropdownMenu(
+            expanded = enabled && expanded,
+            onDismissRequest = dismiss
+        ) {
+            if (filteredOptions.isEmpty()) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(Res.string.no_matching_options)) },
+                    onClick = {},
+                    enabled = false
+                )
+            } else {
+                filteredOptions.forEach { option ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = optionLabel(option),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        },
+                        onClick = {
+                            dismiss()
+                            onOptionSelected(option)
+                        }
+                    )
+                }
             }
         }
     }

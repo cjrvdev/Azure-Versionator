@@ -5,6 +5,7 @@
     <string name="return_text">Return</string>
     <string name="expand">Expand</string>
     <string name="collapse">Collapse</string>
+    <string name="no_matching_options">No matching options</string>
     <string name="edit">Edit</string>
     <string name="value_cannot_be_empty">Value cannot be empty</string>
     <string name="required">Required</string>
@@ -19,8 +20,8 @@
     <string name="azure_project_name_placeholder">Project name</string>
     <string name="azure_pat">Personal Access Token</string>
     <string name="azure_pat_placeholder">••••••••</string>
-    <string name="azure_pipeline_id">Pipeline ID</string>
-    <string name="azure_pipeline_id_placeholder">123..</string>
+    <string name="azure_pipeline_id">Pipeline</string>
+    <string name="azure_pipeline_id_placeholder">Select a pipeline</string>
     <string name="azure_repository_name">Repository</string>
     <string name="azure_repository_name_placeholder">Select a repository</string>
     <string name="azure_branch_name">Branch</string>

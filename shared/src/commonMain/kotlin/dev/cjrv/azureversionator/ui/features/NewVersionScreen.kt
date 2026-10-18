@@ -49,6 +49,7 @@ import dev.cjrv.azureversionator.ui.Screen
 import dev.cjrv.azureversionator.ui.composables.CustomDropdownField
 import dev.cjrv.azureversionator.ui.composables.CustomMultilineTextField
 import dev.cjrv.azureversionator.ui.composables.CustomPrimaryButton
+import dev.cjrv.azureversionator.ui.composables.CustomSearchableDropdownField
 import dev.cjrv.azureversionator.ui.composables.CustomTextField
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
 import dev.cjrv.azureversionator.ui.composables.TechLabel
@@ -137,7 +138,7 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                                 .padding(MarginMedium)
                                 .verticalScroll(rememberScrollState())
                         ) {
-                            CustomDropdownField(
+                            CustomSearchableDropdownField(
                                 label = stringResource(Res.string.azure_pipeline_id),
                                 selectedItem = selectedPipeline,
                                 options = state.pipelines,
@@ -150,7 +151,7 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                                 errorMessage = state.pipelineIdError ?: state.loadPipelinesError
                             )
                             Row(horizontalArrangement = Arrangement.spacedBy(MarginMedium)) {
-                                CustomDropdownField(
+                                CustomSearchableDropdownField(
                                     label = stringResource(Res.string.azure_repository_name),
                                     selectedItem = selectedRepository,
                                     options = state.repositories,
@@ -163,7 +164,7 @@ fun NewVersionScreen(onNavigateBack: () -> Unit) {
                                     errorMessage = state.repositoryIdError
                                         ?: state.loadRepositoriesError
                                 )
-                                CustomDropdownField(
+                                CustomSearchableDropdownField(
                                     label = stringResource(Res.string.azure_branch_name),
                                     selectedItem = selectedBranch,
                                     options = state.branches,
