@@ -61,6 +61,8 @@ import azureversionator.shared.generated.resources.app_name
 import azureversionator.shared.generated.resources.attachment_bulk_downloader
 import azureversionator.shared.generated.resources.auth_by_label
 import azureversionator.shared.generated.resources.author_name
+import azureversionator.shared.generated.resources.base64_encode_decode
+import azureversionator.shared.generated.resources.base64_encode_decode_subtitle
 import azureversionator.shared.generated.resources.clone_profile
 import azureversionator.shared.generated.resources.copy
 import azureversionator.shared.generated.resources.dark_mode
@@ -78,8 +80,10 @@ import azureversionator.shared.generated.resources.profile_name_placeholder
 import azureversionator.shared.generated.resources.profile_transfer_error
 import azureversionator.shared.generated.resources.return_text
 import azureversionator.shared.generated.resources.settings
+import azureversionator.shared.generated.resources.sync
 import azureversionator.shared.generated.resources.trigger_pipeline_run_subtitle
 import dev.cjrv.azureversionator.navigation.AttachmentBulkDownloader
+import dev.cjrv.azureversionator.navigation.Base64EncodeDecode
 import dev.cjrv.azureversionator.navigation.EditProfile
 import dev.cjrv.azureversionator.navigation.NewVersion
 import dev.cjrv.azureversionator.navigation.Route
@@ -92,6 +96,7 @@ import dev.cjrv.azureversionator.ui.Screen
 import dev.cjrv.azureversionator.ui.composables.CustomDropdownField
 import dev.cjrv.azureversionator.ui.composables.CustomTextField
 import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
+import dev.cjrv.azureversionator.ui.composables.OperationCard
 import dev.cjrv.azureversionator.ui.composables.TechActionButton
 import dev.cjrv.azureversionator.ui.composables.TechCard
 import dev.cjrv.azureversionator.ui.composables.TechIcon
@@ -285,6 +290,12 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                         icon = Res.drawable.download,
                                         onClick = { navigateToTarget(AttachmentBulkDownloader) }
                                     )
+                                    OperationCard(
+                                        title = stringResource(Res.string.base64_encode_decode),
+                                        subtitle = stringResource(Res.string.base64_encode_decode_subtitle),
+                                        icon = Res.drawable.sync,
+                                        onClick = { navigateToTarget(Base64EncodeDecode) }
+                                    )
                                 }
 
                                 // Terminal Footer
@@ -396,63 +407,3 @@ fun ThemeLanguageSelector(toggleTheme: () -> Unit) {
     }
 }
 
-@Composable
-private fun OperationCard(
-    title: String,
-    subtitle: String,
-    icon: DrawableResource,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val hovered by interactionSource.collectIsHoveredAsState()
-    val focused by interactionSource.collectIsFocusedAsState()
-    val highlighted = hovered || focused
-    val colors = MaterialTheme.colorScheme
-    val backgroundColor by animateColorAsState(
-        targetValue = if (highlighted) {
-            lerp(colors.surfaceContainerHigh, colors.primary, 0.06f)
-        } else {
-            colors.surfaceContainerHigh
-        }
-    )
-    val borderColor by animateColorAsState(
-        targetValue = if (highlighted) {
-            colors.primary.copy(alpha = 0.65f)
-        } else {
-            colors.outline.copy(alpha = BorderAlpha)
-        }
-    )
-    Surface(
-        onClick = onClick,
-        interactionSource = interactionSource,
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(CornerRadius),
-        border = BorderStroke(1.dp, borderColor),
-        color = backgroundColor
-    ) {
-        Row(
-            modifier = Modifier.padding(20.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            TechIcon(icon = icon)
-            Spacer(modifier = Modifier.width(MarginMedium))
-            Column {
-                TechLabel(
-                    text = subtitle,
-                    color = if (LocalDarkTheme.current) {
-                        colors.primary.copy(alpha = 0.85f)
-                    } else {
-                        colors.tertiary
-                    }
-                )
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontWeight = FontWeight.ExtraBold
-                )
-            }
-        }
-    }
-}

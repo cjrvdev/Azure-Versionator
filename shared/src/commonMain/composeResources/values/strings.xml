@@ -88,4 +88,8 @@
     <string name="success">SUCCESS</string>
     <string name="error">ERROR</string>
 
+    <!-- Base64 encode & decode -->
+    <string name="base64_encode_decode">Base64 Encode &amp; Decode</string>
+    <string name="base64_encode_decode_subtitle">Process text and images</string>
+
 </resources>

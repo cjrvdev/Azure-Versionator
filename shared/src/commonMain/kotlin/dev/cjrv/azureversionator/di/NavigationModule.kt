@@ -1,11 +1,13 @@
 package dev.cjrv.azureversionator.di
 
 import dev.cjrv.azureversionator.navigation.AttachmentBulkDownloader
+import dev.cjrv.azureversionator.navigation.Base64EncodeDecode
 import dev.cjrv.azureversionator.navigation.EditProfile
 import dev.cjrv.azureversionator.navigation.Home
 import dev.cjrv.azureversionator.navigation.Navigator
 import dev.cjrv.azureversionator.navigation.NewVersion
 import dev.cjrv.azureversionator.ui.features.AttachmentBulkDownloaderScreen
+import dev.cjrv.azureversionator.ui.features.Base64ProcessorScreen
 import dev.cjrv.azureversionator.ui.features.EditProfileScreen
 import dev.cjrv.azureversionator.ui.features.HomeScreen
 import dev.cjrv.azureversionator.ui.features.NewVersionScreen
@@ -13,11 +15,6 @@ import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.dsl.module
 import org.koin.dsl.navigation3.navigation
 
-/**
- * Navigation graph definitions for Koin Navigation 3 integration.
- *
- * Add each screen route here with `navigation<Route> { }`.
- */
 @OptIn(KoinExperimentalAPI::class)
 val navigationModule = module {
     single { Navigator(startDestination = Home) }
@@ -39,6 +36,11 @@ val navigationModule = module {
     }
     navigation<EditProfile> {
         EditProfileScreen() {
+            get<Navigator>().goBack()
+        }
+    }
+    navigation<Base64EncodeDecode> {
+        Base64ProcessorScreen() {
             get<Navigator>().goBack()
         }
     }

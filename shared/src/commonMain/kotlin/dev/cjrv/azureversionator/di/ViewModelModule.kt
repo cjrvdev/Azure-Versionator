@@ -1,6 +1,7 @@
 package dev.cjrv.azureversionator.di
 
 import dev.cjrv.azureversionator.ui.features.AttachmentBulkDownloaderViewModel
+import dev.cjrv.azureversionator.ui.features.Base64ProcessorViewModel
 import dev.cjrv.azureversionator.ui.features.EditProfileViewModel
 import dev.cjrv.azureversionator.ui.features.HomeViewModel
 import dev.cjrv.azureversionator.ui.features.NewVersionViewModel
@@ -12,4 +13,5 @@ val viewModelModule = module {
     viewModelOf(::NewVersionViewModel)
     viewModelOf(::AttachmentBulkDownloaderViewModel)
     viewModelOf(::EditProfileViewModel)
+    viewModelOf(::Base64ProcessorViewModel)
 }
