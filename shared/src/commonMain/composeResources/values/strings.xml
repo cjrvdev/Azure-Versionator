@@ -91,5 +91,15 @@
     <!-- Base64 encode & decode -->
     <string name="base64_encode_decode">Base64 Encode &amp; Decode</string>
     <string name="base64_encode_decode_subtitle">Process text and images</string>
+    <string name="base64_text_mode">Text</string>
+    <string name="base64_image_mode">Image</string>
+    <string name="base64_input">Input</string>
+    <string name="base64_result">Result</string>
+    <string name="base64_encode">Encode</string>
+    <string name="base64_decode">Decode</string>
+    <string name="base64_select_image">Select image</string>
+    <string name="base64_save_image">Save image</string>
+    <string name="base64_copy_result">Copy result</string>
+    <string name="base64_image_input_placeholder">Paste Base64 or a data:image/... URI</string>
 
 </resources>
