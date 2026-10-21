@@ -201,9 +201,10 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(MarginMedium)
+                            .verticalScroll(rememberScrollState())
                     ) {
                         TechPanel(
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             Column(modifier = Modifier.padding(MarginMedium)) {
                                 // Profile Command Module
@@ -271,10 +272,7 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
 
                                 // Operations Grid
                                 Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .weight(1f)
-                                        .verticalScroll(rememberScrollState()),
+                                    modifier = Modifier.fillMaxWidth(),
                                     verticalArrangement = Arrangement.spacedBy(MarginMedium)
                                 ) {
                                     OperationCard(
@@ -406,4 +404,3 @@ fun ThemeLanguageSelector(toggleTheme: () -> Unit) {
         )
     }
 }
-
