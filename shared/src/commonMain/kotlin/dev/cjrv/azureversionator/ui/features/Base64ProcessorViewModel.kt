@@ -20,7 +20,15 @@ class Base64ProcessorViewModel : ViewModel() {
     val state: StateFlow<UIState> = _state.asStateFlow()
 
     fun onModeSelected(mode: ProcessorMode) {
-        _state.update { it.copy(mode = mode, errorMessage = null, successMessage = null) }
+        _state.update {
+            if (it.mode == mode) it else it.clearFields(mode = mode)
+        }
+    }
+
+    fun onOperationSelected(operation: OperationMode) {
+        _state.update {
+            if (it.operation == operation) it else it.clearFields(operation = operation)
+        }
     }
 
     fun onTextInputChanged(value: String) {
@@ -50,7 +58,7 @@ class Base64ProcessorViewModel : ViewModel() {
 
                 _state.update {
                     it.copy(
-                        imageResult = "data:${bytes.imageMimeType()};base64,${Base64.encode(bytes)}",
+                        result = "data:${bytes.imageMimeType()};base64,${Base64.encode(bytes)}",
                         errorMessage = null
                     )
                 }
@@ -61,7 +69,7 @@ class Base64ProcessorViewModel : ViewModel() {
     }
 
     fun saveImage() {
-        val value = _state.value.imageInput.ifBlank { _state.value.imageResult }.trim()
+        val value = _state.value.imageInput.trim()
         if (value.isBlank()) {
             _state.update { it.copy(errorMessage = "Enter a Base64 image before saving.") }
             return
@@ -79,8 +87,7 @@ class Base64ProcessorViewModel : ViewModel() {
                 file.write(image.bytes)
                 _state.update {
                     it.copy(
-                        errorMessage = null,
-                        successMessage = "Image saved successfully."
+                        errorMessage = null
                     )
                 }
             } catch (exception: Exception) {
@@ -90,7 +97,7 @@ class Base64ProcessorViewModel : ViewModel() {
     }
 
     fun onMessageConsumed() {
-        _state.update { it.copy(errorMessage = null, successMessage = null) }
+        _state.update { it.copy(errorMessage = null) }
     }
 
     private fun transformText(transform: (String) -> String) {
@@ -99,7 +106,7 @@ class Base64ProcessorViewModel : ViewModel() {
 
         _state.update {
             it.copy(
-                textResult = transform(value),
+                result = transform(value),
                 errorMessage = null
             )
         }
@@ -132,16 +139,29 @@ class Base64ProcessorViewModel : ViewModel() {
 
     data class UIState(
         val mode: ProcessorMode = ProcessorMode.Text,
+        val operation: OperationMode = OperationMode.Encode,
         val textInput: String = "",
         val isTextInputBase64: Boolean = false,
-        val textResult: String = "",
         val imageInput: String = "",
-        val imageResult: String = "",
-        val errorMessage: String? = null,
-        val successMessage: String? = null
+        val result: String = "",
+        val errorMessage: String? = null
     )
 
     enum class ProcessorMode { Text, Image }
+    enum class OperationMode { Encode, Decode }
+
+    private fun UIState.clearFields(
+        mode: ProcessorMode = this.mode,
+        operation: OperationMode = this.operation
+    ) = copy(
+        mode = mode,
+        operation = operation,
+        textInput = "",
+        isTextInputBase64 = false,
+        imageInput = "",
+        result = "",
+        errorMessage = null
+    )
 
     private companion object {
         val imageExtensions = mapOf(
