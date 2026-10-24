@@ -34,3 +34,8 @@ data object AttachmentBulkDownloader : Route
 @Serializable
 data object EditProfile : Route
 
+@Serializable
+data object Base64EncodeDecode : Route
+
+
+

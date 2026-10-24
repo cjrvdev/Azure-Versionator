@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -98,7 +99,7 @@ private fun PrimaryButton(
             }
             TechLabel(
                 text = text,
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = LocalContentColor.current,
                 style = style.textStyle
             )
         }
@@ -177,7 +178,7 @@ private fun SecondaryButton(
             }
             TechLabel(
                 text = text,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = LocalContentColor.current,
                 style = style.textStyle
             )
         }
