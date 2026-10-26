@@ -26,7 +26,6 @@
     <string name="azure_repository_name_placeholder">Select a repository</string>
     <string name="azure_branch_name">Branch</string>
     <string name="azure_branch_name_placeholder">Select a branch</string>
-    <string name="azure_pat_help">PAT must have 'Code' READ and 'Build' READ AND EXECUTE permissions</string>
     <string name="filter_preferences">Pipeline Filter Preferences (optional)</string>
     <string name="filter_preferences_branch">Priority Branches</string>
     <string name="filter_preferences_exclude_branch">Exclude Branches</string>
@@ -77,7 +76,7 @@
     <string name="create_new_pat">Create New PAT</string>
     <string name="open_azure_settings">Open Azure Settings</string>
     <string name="create_pat_help">Before creating a new token...</string>
-    <string name="create_pat_help_message">PAT must have:\n -'Repo' READ permission\n -'Pipeline' READ AND WRITE permissions</string>
+    <string name="create_pat_help_message">PAT must have:\n -'Code' READ, WRITE AND MANAGE permissions\n -'Build' READ AND EXECUTE permissions</string>
 
     <!-- Home UI Tech Styles -->
     <string name="active_profile_label">ACTIVE PROFILE</string>
@@ -87,6 +86,21 @@
     <string name="author_name">CJRV.DEV </string>
     <string name="success">SUCCESS</string>
     <string name="error">ERROR</string>
+
+    <!-- Merge branches -->
+    <string name="merge_branches">Merge Branches</string>
+    <string name="merge_branches_subtitle">UPDATE BRANCHES FROM A SOURCE</string>
+    <string name="merge_source_branch">Source branch</string>
+    <string name="merge_target_branches">Branches to update</string>
+    <string name="merge_filter_branches">Filter branches</string>
+    <string name="merge_refresh">Refresh Stats</string>
+    <string name="merge_submit">Merge selected</string>
+    <string name="merge_no_branches">No branches to show</string>
+    <string name="merge_up_to_date">Up to date</string>
+    <string name="merge_pending_commits">%1$d commits behind</string>
+    <string name="merge_status_merging">Merging…</string>
+    <string name="merge_status_merged">Merged</string>
+    <string name="merge_status_failed">Failed – resolve manually: %1$s</string>
 
     <!-- Base64 encode & decode -->
     <string name="base64_encode_decode">Base64 Encode &amp; Decode</string>

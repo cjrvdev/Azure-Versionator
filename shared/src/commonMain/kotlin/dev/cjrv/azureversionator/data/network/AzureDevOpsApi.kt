@@ -2,6 +2,7 @@ package dev.cjrv.azureversionator.data.network
 
 import dev.cjrv.azureversionator.data.model.app.Profile
 import dev.cjrv.azureversionator.data.model.azure.AzureBranch
+import dev.cjrv.azureversionator.data.model.azure.AzureBranchStats
 import dev.cjrv.azureversionator.data.model.azure.AzurePipeline
 import dev.cjrv.azureversionator.data.model.azure.AzureRepository
 import dev.cjrv.azureversionator.data.model.azure.AzureWorkItemAttachment
@@ -35,6 +36,28 @@ interface AzureDevOpsApi {
         repositoryId: String,
         selectedProfile: Profile
     ): Result<List<AzureBranch>>
+
+    /**
+     * Returns ahead/behind statistics of every branch relative to [baseBranchName] (short name).
+     */
+    suspend fun getBranchStats(
+        repositoryId: String,
+        baseBranchName: String,
+        selectedProfile: Profile
+    ): Result<List<AzureBranchStats>>
+
+    /**
+     * Merges [sourceCommitId] into [targetBranchName] by creating a merge commit and fast-forwarding
+     * the branch to it. Fails if the merge has conflicts or the branch moved in the meantime.
+     */
+    suspend fun mergeIntoBranch(
+        repositoryId: String,
+        targetBranchName: String,
+        targetCommitId: String,
+        sourceCommitId: String,
+        comment: String,
+        selectedProfile: Profile
+    ): Result<Unit>
 
     /**
      * Returns active attached files for a work item.

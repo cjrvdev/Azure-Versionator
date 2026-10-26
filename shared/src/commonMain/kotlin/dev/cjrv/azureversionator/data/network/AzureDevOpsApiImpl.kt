@@ -2,6 +2,7 @@ package dev.cjrv.azureversionator.data.network
 
 import dev.cjrv.azureversionator.data.model.app.Profile
 import dev.cjrv.azureversionator.data.model.azure.AzureBranch
+import dev.cjrv.azureversionator.data.model.azure.AzureBranchStats
 import dev.cjrv.azureversionator.data.model.azure.AzurePipeline
 import dev.cjrv.azureversionator.data.model.azure.AzureRepository
 import dev.cjrv.azureversionator.data.model.azure.AzureVariable
@@ -17,6 +18,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.URLBuilder
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
+import kotlinx.coroutines.delay
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.io.encoding.Base64
@@ -27,6 +29,11 @@ class AzureDevOpsApiImpl(
 ) : AzureDevOpsApi {
 
     private val apiVersion = "7.1"
+
+    private companion object {
+        const val MERGE_MAX_POLL_ATTEMPTS = 30
+        const val MERGE_POLL_INTERVAL_MS = 1000L
+    }
 
     @OptIn(ExperimentalEncodingApi::class)
     override suspend fun runPipeline(
@@ -118,6 +125,107 @@ class AzureDevOpsApiImpl(
                     fullName = branch.name,
                     objectId = branch.objectId
                 )
+            }
+        }
+    }
+
+    @OptIn(ExperimentalEncodingApi::class)
+    override suspend fun getBranchStats(
+        repositoryId: String,
+        baseBranchName: String,
+        selectedProfile: Profile
+    ): Result<List<AzureBranchStats>> {
+        return runCatching {
+            val url = URLBuilder("${projectApiBaseUrl(selectedProfile)}/_apis/git/repositories/$repositoryId/stats/branches").apply {
+                parameters.append("baseVersionDescriptor.version", baseBranchName)
+                parameters.append("baseVersionDescriptor.versionType", "branch")
+                parameters.append("api-version", apiVersion)
+            }.buildString()
+
+            val response = httpClient.get(url) {
+                header("Authorization", "Basic ${basicCredentials(selectedProfile)}")
+            }
+
+            if (!response.status.isSuccess()) {
+                error("Branch stats request failed with status ${response.status.value}")
+            }
+
+            response.body<BranchStatsResponse>().value.map { stats ->
+                AzureBranchStats(
+                    name = stats.name,
+                    commitId = stats.commit.commitId,
+                    aheadCount = stats.aheadCount,
+                    behindCount = stats.behindCount,
+                    isBaseVersion = stats.isBaseVersion
+                )
+            }
+        }
+    }
+
+    @OptIn(ExperimentalEncodingApi::class)
+    override suspend fun mergeIntoBranch(
+        repositoryId: String,
+        targetBranchName: String,
+        targetCommitId: String,
+        sourceCommitId: String,
+        comment: String,
+        selectedProfile: Profile
+    ): Result<Unit> {
+        return runCatching {
+            val credentials = basicCredentials(selectedProfile)
+            val repositoryUrl = "${projectApiBaseUrl(selectedProfile)}/_apis/git/repositories/$repositoryId"
+
+            val createResponse = httpClient.post("$repositoryUrl/merges?api-version=$apiVersion") {
+                header("Authorization", "Basic $credentials")
+                contentType(ContentType.Application.Json)
+                setBody(MergeRequestDto(comment = comment, parents = listOf(targetCommitId, sourceCommitId)))
+            }
+
+            if (!createResponse.status.isSuccess()) {
+                error("Merge request failed with status ${createResponse.status.value}")
+            }
+
+            var merge = createResponse.body<MergeResponse>()
+            var attempts = 0
+            while (merge.status == "queued" || merge.status == "inProgress") {
+                if (++attempts > MERGE_MAX_POLL_ATTEMPTS) error("Timed out waiting for the merge to complete")
+                delay(MERGE_POLL_INTERVAL_MS)
+
+                val pollResponse = httpClient.get("$repositoryUrl/merges/${merge.mergeOperationId}?api-version=$apiVersion") {
+                    header("Authorization", "Basic $credentials")
+                }
+                if (!pollResponse.status.isSuccess()) {
+                    error("Merge status request failed with status ${pollResponse.status.value}")
+                }
+                merge = pollResponse.body<MergeResponse>()
+            }
+
+            val mergeCommitId = merge.detailedStatus?.mergeCommitId
+            if (merge.status != "completed" || mergeCommitId.isNullOrBlank()) {
+                error(merge.detailedStatus?.failureMessage?.takeIf { it.isNotBlank() } ?: "Merge ${merge.status}: conflicts or failure")
+            }
+
+            val refResponse = httpClient.post("$repositoryUrl/refs?api-version=$apiVersion") {
+                header("Authorization", "Basic $credentials")
+                contentType(ContentType.Application.Json)
+                setBody(
+                    listOf(
+                        RefUpdateDto(
+                            name = "refs/heads/$targetBranchName",
+                            oldObjectId = targetCommitId,
+                            newObjectId = mergeCommitId
+                        )
+                    )
+                )
+            }
+
+            if (!refResponse.status.isSuccess()) {
+                error("Branch update failed with status ${refResponse.status.value}")
+            }
+
+            val refResult = refResponse.body<RefUpdatesResponse>().value.firstOrNull()
+            if (refResult == null || !refResult.success) {
+                error("Branch update rejected: ${refResult?.updateStatus ?: "unknown"}")
             }
         }
     }
@@ -257,6 +365,62 @@ private data class BranchesResponse(
 private data class BranchDto(
     val name: String,
     @SerialName("objectId") val objectId: String? = null
+)
+
+@Serializable
+private data class BranchStatsResponse(
+    val value: List<BranchStatsDto> = emptyList()
+)
+
+@Serializable
+private data class BranchStatsDto(
+    val name: String,
+    val commit: BranchStatsCommitDto,
+    val aheadCount: Int = 0,
+    val behindCount: Int = 0,
+    val isBaseVersion: Boolean = false
+)
+
+@Serializable
+private data class BranchStatsCommitDto(
+    val commitId: String
+)
+
+@Serializable
+private data class MergeRequestDto(
+    val comment: String,
+    val parents: List<String>
+)
+
+@Serializable
+private data class MergeResponse(
+    val mergeOperationId: Int,
+    val status: String,
+    val detailedStatus: MergeDetailedStatusDto? = null
+)
+
+@Serializable
+private data class MergeDetailedStatusDto(
+    val mergeCommitId: String? = null,
+    val failureMessage: String? = null
+)
+
+@Serializable
+private data class RefUpdateDto(
+    val name: String,
+    val oldObjectId: String,
+    val newObjectId: String
+)
+
+@Serializable
+private data class RefUpdatesResponse(
+    val value: List<RefUpdateResultDto> = emptyList()
+)
+
+@Serializable
+private data class RefUpdateResultDto(
+    val success: Boolean = false,
+    val updateStatus: String? = null
 )
 
 @Serializable

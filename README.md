@@ -23,6 +23,7 @@ Designed with an industrial "Cyber-Tech" aesthetic, it offers a fast and efficie
 ## ✔️ Current actions
 - **⚙️ Trigger Builds**: Launch pipeline runs on specific branches and repositories with ease by creating variable templates that are much faster to fill.
 - **📥 Attachment Downloader**: Bulk download work item attachments in one click! Supports **any** type of workitem. 
+- **🔀 Merge Branches**: Pick a repository and a source branch (e.g. `master`), see how many commits each branch is behind, select the ones you want and merge the source into them directly. Conflicts are reported and must be resolved manually. Requires a PAT with `Code` READ & WRITE and permission to push to those branches (branch policies may block it).
 
 ---
 

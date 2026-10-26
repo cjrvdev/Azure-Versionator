@@ -37,5 +37,8 @@ data object EditProfile : Route
 @Serializable
 data object Base64EncodeDecode : Route
 
+@Serializable
+data object MergeBranches : Route
+
 
 
