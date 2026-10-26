@@ -22,20 +22,19 @@ import kotlinx.coroutines.delay
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
+import kotlin.time.Duration.Companion.milliseconds
 
 class AzureDevOpsApiImpl(
     private val httpClient: HttpClient
 ) : AzureDevOpsApi {
 
-    private val apiVersion = "7.1"
-
     private companion object {
+        const val API_VERSION = "7.1"
         const val MERGE_MAX_POLL_ATTEMPTS = 30
         const val MERGE_POLL_INTERVAL_MS = 1000L
     }
 
-    @OptIn(ExperimentalEncodingApi::class)
+    
     override suspend fun runPipeline(
         selectedProfile: Profile,
         pipelineId: String,
@@ -43,7 +42,7 @@ class AzureDevOpsApiImpl(
     ): Result<PipelineRunResponse> {
         return runCatching {
             val credentials = basicCredentials(selectedProfile)
-            val url = "${projectApiBaseUrl(selectedProfile)}/_apis/pipelines/$pipelineId/runs?api-version=$apiVersion"
+            val url = "${projectApiBaseUrl(selectedProfile)}/_apis/pipelines/$pipelineId/runs?api-version=$API_VERSION"
 
             val body = buildRunPipelineRequestBody(selectedProfile.variables, branchName)
 
@@ -61,10 +60,10 @@ class AzureDevOpsApiImpl(
         }
     }
 
-    @OptIn(ExperimentalEncodingApi::class)
+    
     override suspend fun getPipelines(selectedProfile: Profile): Result<List<AzurePipeline>> {
         return runCatching {
-            val response = httpClient.get("${projectApiBaseUrl(selectedProfile)}/_apis/pipelines?api-version=$apiVersion") {
+            val response = httpClient.get("${projectApiBaseUrl(selectedProfile)}/_apis/pipelines?api-version=$API_VERSION") {
                 header("Authorization", "Basic ${basicCredentials(selectedProfile)}")
             }
 
@@ -82,10 +81,10 @@ class AzureDevOpsApiImpl(
         }
     }
 
-    @OptIn(ExperimentalEncodingApi::class)
+    
     override suspend fun getRepositories(selectedProfile: Profile): Result<List<AzureRepository>> {
         return runCatching {
-            val response = httpClient.get("${projectApiBaseUrl(selectedProfile)}/_apis/git/repositories?api-version=$apiVersion") {
+            val response = httpClient.get("${projectApiBaseUrl(selectedProfile)}/_apis/git/repositories?api-version=$API_VERSION") {
                 header("Authorization", "Basic ${basicCredentials(selectedProfile)}")
             }
 
@@ -103,14 +102,14 @@ class AzureDevOpsApiImpl(
         }
     }
 
-    @OptIn(ExperimentalEncodingApi::class)
+    
     override suspend fun getBranches(
         repositoryId: String,
         selectedProfile: Profile
     ): Result<List<AzureBranch>> {
         return runCatching {
             val response = httpClient.get(
-                "${projectApiBaseUrl(selectedProfile)}/_apis/git/repositories/$repositoryId/refs?filter=heads/&api-version=$apiVersion"
+                "${projectApiBaseUrl(selectedProfile)}/_apis/git/repositories/$repositoryId/refs?filter=heads/&api-version=$API_VERSION"
             ) {
                 header("Authorization", "Basic ${basicCredentials(selectedProfile)}")
             }
@@ -129,7 +128,6 @@ class AzureDevOpsApiImpl(
         }
     }
 
-    @OptIn(ExperimentalEncodingApi::class)
     override suspend fun getBranchStats(
         repositoryId: String,
         baseBranchName: String,
@@ -139,7 +137,7 @@ class AzureDevOpsApiImpl(
             val url = URLBuilder("${projectApiBaseUrl(selectedProfile)}/_apis/git/repositories/$repositoryId/stats/branches").apply {
                 parameters.append("baseVersionDescriptor.version", baseBranchName)
                 parameters.append("baseVersionDescriptor.versionType", "branch")
-                parameters.append("api-version", apiVersion)
+                parameters.append("api-version", API_VERSION)
             }.buildString()
 
             val response = httpClient.get(url) {
@@ -162,7 +160,6 @@ class AzureDevOpsApiImpl(
         }
     }
 
-    @OptIn(ExperimentalEncodingApi::class)
     override suspend fun mergeIntoBranch(
         repositoryId: String,
         targetBranchName: String,
@@ -175,7 +172,7 @@ class AzureDevOpsApiImpl(
             val credentials = basicCredentials(selectedProfile)
             val repositoryUrl = "${projectApiBaseUrl(selectedProfile)}/_apis/git/repositories/$repositoryId"
 
-            val createResponse = httpClient.post("$repositoryUrl/merges?api-version=$apiVersion") {
+            val createResponse = httpClient.post("$repositoryUrl/merges?api-version=$API_VERSION") {
                 header("Authorization", "Basic $credentials")
                 contentType(ContentType.Application.Json)
                 setBody(MergeRequestDto(comment = comment, parents = listOf(targetCommitId, sourceCommitId)))
@@ -189,9 +186,9 @@ class AzureDevOpsApiImpl(
             var attempts = 0
             while (merge.status == "queued" || merge.status == "inProgress") {
                 if (++attempts > MERGE_MAX_POLL_ATTEMPTS) error("Timed out waiting for the merge to complete")
-                delay(MERGE_POLL_INTERVAL_MS)
+                delay(MERGE_POLL_INTERVAL_MS.milliseconds)
 
-                val pollResponse = httpClient.get("$repositoryUrl/merges/${merge.mergeOperationId}?api-version=$apiVersion") {
+                val pollResponse = httpClient.get("$repositoryUrl/merges/${merge.mergeOperationId}?api-version=$API_VERSION") {
                     header("Authorization", "Basic $credentials")
                 }
                 if (!pollResponse.status.isSuccess()) {
@@ -205,7 +202,7 @@ class AzureDevOpsApiImpl(
                 error(merge.detailedStatus?.failureMessage?.takeIf { it.isNotBlank() } ?: "Merge ${merge.status}: conflicts or failure")
             }
 
-            val refResponse = httpClient.post("$repositoryUrl/refs?api-version=$apiVersion") {
+            val refResponse = httpClient.post("$repositoryUrl/refs?api-version=$API_VERSION") {
                 header("Authorization", "Basic $credentials")
                 contentType(ContentType.Application.Json)
                 setBody(
@@ -230,14 +227,14 @@ class AzureDevOpsApiImpl(
         }
     }
 
-    @OptIn(ExperimentalEncodingApi::class)
+    
     override suspend fun getWorkItemAttachments(
         workItemId: String,
         selectedProfile: Profile
     ): Result<List<AzureWorkItemAttachment>> {
         return runCatching {
             val response = httpClient.get(
-                "${projectApiBaseUrl(selectedProfile)}/_apis/wit/workitems/$workItemId?\$expand=relations&api-version=$apiVersion"
+                "${projectApiBaseUrl(selectedProfile)}/_apis/wit/workitems/$workItemId?\$expand=relations&api-version=$API_VERSION"
             ) {
                 header("Authorization", "Basic ${basicCredentials(selectedProfile)}")
             }
@@ -262,7 +259,7 @@ class AzureDevOpsApiImpl(
         }
     }
 
-    @OptIn(ExperimentalEncodingApi::class)
+    
     override suspend fun downloadAttachment(
         attachmentUrl: String,
         fileName: String,
@@ -272,7 +269,7 @@ class AzureDevOpsApiImpl(
             val downloadUrl = URLBuilder(attachmentUrl).apply {
                 parameters.append("download", "true")
                 parameters.append("fileName", fileName)
-                parameters.append("api-version", apiVersion)
+                parameters.append("api-version", API_VERSION)
             }.buildString()
 
             val response = httpClient.get(downloadUrl) {
@@ -330,7 +327,7 @@ class AzureDevOpsApiImpl(
         }
     }
 
-    @OptIn(ExperimentalEncodingApi::class)
+    
     private fun basicCredentials(selectedProfile: Profile): String {
         return Base64.encode(":${selectedProfile.personalAccessToken}".encodeToByteArray())
     }
