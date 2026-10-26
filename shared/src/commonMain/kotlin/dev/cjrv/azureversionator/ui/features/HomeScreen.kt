@@ -3,7 +3,6 @@ package dev.cjrv.azureversionator.ui.features
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -19,9 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
@@ -30,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -45,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +53,7 @@ import azureversionator.shared.generated.resources.active_profile_label
 import azureversionator.shared.generated.resources.add
 import azureversionator.shared.generated.resources.add_task
 import azureversionator.shared.generated.resources.app_name
+import azureversionator.shared.generated.resources.arrow_split
 import azureversionator.shared.generated.resources.attachment_bulk_downloader
 import azureversionator.shared.generated.resources.auth_by_label
 import azureversionator.shared.generated.resources.author_name
@@ -71,6 +67,8 @@ import azureversionator.shared.generated.resources.edit_profile
 import azureversionator.shared.generated.resources.extract_workitem_attachments_subtitle
 import azureversionator.shared.generated.resources.import_profile
 import azureversionator.shared.generated.resources.light_mode
+import azureversionator.shared.generated.resources.merge_branches
+import azureversionator.shared.generated.resources.merge_branches_subtitle
 import azureversionator.shared.generated.resources.new_build
 import azureversionator.shared.generated.resources.new_profile
 import azureversionator.shared.generated.resources.ok
@@ -85,11 +83,10 @@ import azureversionator.shared.generated.resources.trigger_pipeline_run_subtitle
 import dev.cjrv.azureversionator.navigation.AttachmentBulkDownloader
 import dev.cjrv.azureversionator.navigation.Base64EncodeDecode
 import dev.cjrv.azureversionator.navigation.EditProfile
+import dev.cjrv.azureversionator.navigation.MergeBranches
 import dev.cjrv.azureversionator.navigation.NewVersion
 import dev.cjrv.azureversionator.navigation.Route
 import dev.cjrv.azureversionator.theme.LocalDarkTheme
-import dev.cjrv.azureversionator.theme.BorderAlpha
-import dev.cjrv.azureversionator.theme.CornerRadius
 import dev.cjrv.azureversionator.theme.MarginMedium
 import dev.cjrv.azureversionator.theme.MarginSmall
 import dev.cjrv.azureversionator.ui.Screen
@@ -99,11 +96,9 @@ import dev.cjrv.azureversionator.ui.composables.InfiniteLoadingIndicator
 import dev.cjrv.azureversionator.ui.composables.OperationCard
 import dev.cjrv.azureversionator.ui.composables.TechActionButton
 import dev.cjrv.azureversionator.ui.composables.TechCard
-import dev.cjrv.azureversionator.ui.composables.TechIcon
 import dev.cjrv.azureversionator.ui.composables.TechLabel
 import dev.cjrv.azureversionator.ui.composables.TechPanel
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -287,6 +282,12 @@ fun HomeScreen(navigateToTarget: (Route) -> Unit) {
                                         subtitle = stringResource(Res.string.extract_workitem_attachments_subtitle),
                                         icon = Res.drawable.download,
                                         onClick = { navigateToTarget(AttachmentBulkDownloader) }
+                                    )
+                                    OperationCard(
+                                        title = stringResource(Res.string.merge_branches),
+                                        subtitle = stringResource(Res.string.merge_branches_subtitle),
+                                        icon = Res.drawable.arrow_split,
+                                        onClick = { navigateToTarget(MergeBranches) }
                                     )
                                     OperationCard(
                                         title = stringResource(Res.string.base64_encode_decode),

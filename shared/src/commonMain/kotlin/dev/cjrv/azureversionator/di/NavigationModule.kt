@@ -4,12 +4,14 @@ import dev.cjrv.azureversionator.navigation.AttachmentBulkDownloader
 import dev.cjrv.azureversionator.navigation.Base64EncodeDecode
 import dev.cjrv.azureversionator.navigation.EditProfile
 import dev.cjrv.azureversionator.navigation.Home
+import dev.cjrv.azureversionator.navigation.MergeBranches
 import dev.cjrv.azureversionator.navigation.Navigator
 import dev.cjrv.azureversionator.navigation.NewVersion
 import dev.cjrv.azureversionator.ui.features.AttachmentBulkDownloaderScreen
 import dev.cjrv.azureversionator.ui.features.Base64ProcessorScreen
 import dev.cjrv.azureversionator.ui.features.EditProfileScreen
 import dev.cjrv.azureversionator.ui.features.HomeScreen
+import dev.cjrv.azureversionator.ui.features.MergeBranchesScreen
 import dev.cjrv.azureversionator.ui.features.NewVersionScreen
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.dsl.module
@@ -41,6 +43,11 @@ val navigationModule = module {
     }
     navigation<Base64EncodeDecode> {
         Base64ProcessorScreen() {
+            get<Navigator>().goBack()
+        }
+    }
+    navigation<MergeBranches> {
+        MergeBranchesScreen() {
             get<Navigator>().goBack()
         }
     }
