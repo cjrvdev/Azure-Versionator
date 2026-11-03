@@ -156,6 +156,16 @@ class Base64ProcessorViewModel : ViewModel() {
     ) {
         val displayedResult: String
             get() = if (includeDataUriPrefix) resultDataUriPrefix + result else result
+
+        // Avoids concatenating and laying out multi-megabyte strings in the UI.
+        val resultPreview: String
+            get() {
+                val prefix = if (includeDataUriPrefix) resultDataUriPrefix else ""
+                val totalLength = prefix.length + result.length
+                if (totalLength <= PREVIEW_LENGTH) return prefix + result
+                val head = (prefix + result.take(PREVIEW_LENGTH)).take(PREVIEW_LENGTH)
+                return "$head… ($totalLength characters)"
+            }
     }
 
     enum class ProcessorMode { Text, Image }
@@ -176,6 +186,8 @@ class Base64ProcessorViewModel : ViewModel() {
     )
 
     private companion object {
+        const val PREVIEW_LENGTH = 500
+
         val imageExtensions = mapOf(
             "image/png" to "png",
             "image/jpeg" to "jpg",

@@ -152,7 +152,7 @@ fun Base64ProcessorScreen(onNavigateBack: () -> Unit) {
                             Base64ProcessorViewModel.ProcessorMode.Image -> {
                                 if (state.operation == Base64ProcessorViewModel.OperationMode.Encode) {
                                     ImageEncoder(
-                                        result = state.displayedResult,
+                                        result = state.resultPreview,
                                         hasDataUriPrefix = state.resultDataUriPrefix.isNotEmpty(),
                                         includeDataUriPrefix = state.includeDataUriPrefix,
                                         onIncludeDataUriPrefixChanged = vm::onIncludeDataUriPrefixChanged,
@@ -202,7 +202,7 @@ private fun TextProcessor(
         enabled = if (isEncoding) state.textInput.isNotBlank() else state.isTextInputBase64,
         modifier = Modifier.fillMaxWidth()
     )
-    ResultField(value = state.displayedResult, onCopy = onCopy)
+    ResultField(value = state.resultPreview, onCopy = onCopy)
 }
 
 @Composable
@@ -271,6 +271,7 @@ private fun ResultField(
         label = stringResource(Res.string.base64_result),
         value = value,
         onValueChange = {},
+        readOnly = true,
         modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp, max = 200.dp)
     )
     Row(
