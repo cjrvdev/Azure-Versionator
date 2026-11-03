@@ -1,6 +1,7 @@
 package dev.cjrv.azureversionator.ui.features
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,17 +16,23 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.unit.dp
 import azureversionator.shared.generated.resources.Res
+import azureversionator.shared.generated.resources.base64_copied
 import azureversionator.shared.generated.resources.base64_copy_result
 import azureversionator.shared.generated.resources.base64_decode
 import azureversionator.shared.generated.resources.base64_encode
@@ -63,6 +70,16 @@ fun Base64ProcessorScreen(onNavigateBack: () -> Unit) {
     val state by vm.state.collectAsState()
     val clipboard = LocalClipboard.current
     val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    val copiedMessage = stringResource(Res.string.base64_copied)
+    val copyResult: () -> Unit = {
+        coroutineScope.launch {
+            clipboard.setClipEntry(createPlainTextClipEntry(state.fullResult))
+            snackbarHostState.currentSnackbarData?.dismiss()
+            snackbarHostState.showSnackbar(copiedMessage)
+        }
+    }
 
     state.errorMessage?.let { message ->
         ProcessorMessageDialog(
@@ -74,6 +91,7 @@ fun Base64ProcessorScreen(onNavigateBack: () -> Unit) {
 
     Screen {
         Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
                 TopAppBar(
                     stringResource(Res.string.base64_encode_decode),
@@ -143,11 +161,7 @@ fun Base64ProcessorScreen(onNavigateBack: () -> Unit) {
                                 } else {
                                     vm::decodeText
                                 },
-                                onCopy = {
-                                    coroutineScope.launch {
-                                        clipboard.setClipEntry(createPlainTextClipEntry(state.displayedResult))
-                                    }
-                                }
+                                onCopy = copyResult
                             )
                             Base64ProcessorViewModel.ProcessorMode.Image -> {
                                 if (state.operation == Base64ProcessorViewModel.OperationMode.Encode) {
@@ -157,13 +171,7 @@ fun Base64ProcessorScreen(onNavigateBack: () -> Unit) {
                                         includeDataUriPrefix = state.includeDataUriPrefix,
                                         onIncludeDataUriPrefixChanged = vm::onIncludeDataUriPrefixChanged,
                                         onSelectImage = vm::selectImage,
-                                        onCopy = {
-                                            coroutineScope.launch {
-                                                clipboard.setClipEntry(
-                                                    createPlainTextClipEntry(state.displayedResult)
-                                                )
-                                            }
-                                        }
+                                        onCopy = copyResult
                                     )
                                 } else {
                                     ImageDecoder(
@@ -267,13 +275,22 @@ private fun ResultField(
     includePrefix: Boolean? = null,
     onIncludePrefixChanged: (Boolean) -> Unit = {}
 ) {
-    CustomMultilineTextField(
-        label = stringResource(Res.string.base64_result),
-        value = value,
-        onValueChange = {},
-        readOnly = true,
-        modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp, max = 200.dp)
-    )
+    Box(modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp, max = 200.dp)) {
+        CustomMultilineTextField(
+            label = stringResource(Res.string.base64_result),
+            value = value,
+            onValueChange = {},
+            readOnly = true,
+            modifier = Modifier.fillMaxSize()
+        )
+        // Overlay blocks text selection so users can't copy a truncated preview by accident.
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .pointerHoverIcon(PointerIcon.Hand)
+                .clickable(enabled = value.isNotBlank(), onClick = onCopy)
+        )
+    }
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(MarginMedium, Alignment.End),

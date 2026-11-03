@@ -119,6 +119,7 @@
     <string name="base64_select_image">Select image</string>
     <string name="base64_save_image">Save image</string>
     <string name="base64_copy_result">Copy result</string>
+    <string name="base64_copied">Copied to clipboard</string>
     <string name="base64_include_data_uri_prefix">Include data URI prefix</string>
     <string name="base64_image_input_placeholder">Paste Base64 or a data:image/... URI</string>
 

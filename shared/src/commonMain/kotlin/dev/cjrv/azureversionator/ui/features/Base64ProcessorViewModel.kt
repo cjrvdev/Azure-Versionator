@@ -154,7 +154,7 @@ class Base64ProcessorViewModel : ViewModel() {
         val includeDataUriPrefix: Boolean = true,
         val errorMessage: String? = null
     ) {
-        val displayedResult: String
+        val fullResult: String
             get() = if (includeDataUriPrefix) resultDataUriPrefix + result else result
 
         // Avoids concatenating and laying out multi-megabyte strings in the UI.
