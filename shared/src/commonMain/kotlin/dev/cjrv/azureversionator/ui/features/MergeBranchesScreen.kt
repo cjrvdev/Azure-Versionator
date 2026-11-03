@@ -25,10 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import azureversionator.shared.generated.resources.Res
-import azureversionator.shared.generated.resources.add_task
+import azureversionator.shared.generated.resources.arrow_split
 import azureversionator.shared.generated.resources.azure_branch_name_placeholder
 import azureversionator.shared.generated.resources.azure_repository_name
 import azureversionator.shared.generated.resources.azure_repository_name_placeholder
+import azureversionator.shared.generated.resources.branches_selected
 import azureversionator.shared.generated.resources.error
 import azureversionator.shared.generated.resources.merge_branches
 import azureversionator.shared.generated.resources.merge_filter_branches
@@ -56,6 +57,7 @@ import dev.cjrv.azureversionator.ui.composables.TechLabel
 import dev.cjrv.azureversionator.ui.composables.TechPanel
 import dev.cjrv.azureversionator.ui.composables.TechToggleChip
 import dev.cjrv.azureversionator.ui.composables.TopAppBar
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -66,7 +68,8 @@ fun MergeBranchesScreen(onNavigateBack: () -> Unit) {
     val state by vm.state.collectAsState()
     val selectedRepository = state.repositories.firstOrNull { it.id == state.selectedRepositoryId }
     val sourceBranch = state.sourceBranches.firstOrNull { it.name == state.sourceBranchName }
-    val visibleBranches = state.branchStats.filter { it.name.contains(state.filterText, ignoreCase = true) }
+    val visibleBranches =
+        state.branchStats.filter { it.name.contains(state.filterText, ignoreCase = true) }
     val busy = state.isLoadingStats || state.isMerging
 
     if (state.generalError != null) {
@@ -191,7 +194,12 @@ fun MergeBranchesScreen(onNavigateBack: () -> Unit) {
                                                     checked = branch.name in state.selectedBranches,
                                                     enabled = !state.isMerging,
                                                     result = state.results[branch.name],
-                                                    onCheckedChange = { vm.onBranchToggled(branch.name, it) }
+                                                    onCheckedChange = {
+                                                        vm.onBranchToggled(
+                                                            branch.name,
+                                                            it
+                                                        )
+                                                    }
                                                 )
                                             }
                                         }
@@ -199,14 +207,26 @@ fun MergeBranchesScreen(onNavigateBack: () -> Unit) {
                                 }
 
                                 CustomPrimaryButton(
-                                    text = stringResource(Res.string.merge_submit),
+                                    text = "${stringResource(Res.string.merge_submit)}${
+                                        pluralStringResource(
+                                            Res.plurals.branches_selected,
+                                            state.selectedBranches.size,
+                                            state.selectedBranches.size
+                                        )
+                                    }",
                                     onClick = vm::mergeSelected,
                                     enabled = state.selectedBranches.isNotEmpty() && !busy,
                                     modifier = Modifier.fillMaxWidth(),
                                     leadingIcon = {
                                         Icon(
-                                            imageVector = vectorResource(Res.drawable.add_task),
-                                            contentDescription = stringResource(Res.string.merge_submit)
+                                            imageVector = vectorResource(Res.drawable.arrow_split),
+                                            contentDescription = "${stringResource(Res.string.merge_submit)}${
+                                                pluralStringResource(
+                                                    Res.plurals.branches_selected,
+                                                    state.selectedBranches.size,
+                                                    state.selectedBranches.size
+                                                )
+                                            }"
                                         )
                                     }
                                 )
