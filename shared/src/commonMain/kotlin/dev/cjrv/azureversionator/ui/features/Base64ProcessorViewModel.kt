@@ -45,6 +45,10 @@ class Base64ProcessorViewModel : ViewModel() {
         _state.update { it.copy(imageInput = value, errorMessage = null) }
     }
 
+    fun onIncludeDataUriPrefixChanged(include: Boolean) {
+        _state.update { it.copy(includeDataUriPrefix = include) }
+    }
+
     fun encodeText() = transformText { Base64.encode(it.encodeToByteArray()) }
 
     fun decodeText() = transformText { Base64.decode(it).decodeToString() }
@@ -58,7 +62,8 @@ class Base64ProcessorViewModel : ViewModel() {
 
                 _state.update {
                     it.copy(
-                        result = "data:${bytes.imageMimeType()};base64,${Base64.encode(bytes)}",
+                        result = Base64.encode(bytes),
+                        resultDataUriPrefix = "data:${bytes.imageMimeType()};base64,",
                         errorMessage = null
                     )
                 }
@@ -107,6 +112,7 @@ class Base64ProcessorViewModel : ViewModel() {
         _state.update {
             it.copy(
                 result = transform(value),
+                resultDataUriPrefix = "",
                 errorMessage = null
             )
         }
@@ -144,8 +150,13 @@ class Base64ProcessorViewModel : ViewModel() {
         val isTextInputBase64: Boolean = false,
         val imageInput: String = "",
         val result: String = "",
+        val resultDataUriPrefix: String = "",
+        val includeDataUriPrefix: Boolean = true,
         val errorMessage: String? = null
-    )
+    ) {
+        val displayedResult: String
+            get() = if (includeDataUriPrefix) resultDataUriPrefix + result else result
+    }
 
     enum class ProcessorMode { Text, Image }
     enum class OperationMode { Encode, Decode }
@@ -160,6 +171,7 @@ class Base64ProcessorViewModel : ViewModel() {
         isTextInputBase64 = false,
         imageInput = "",
         result = "",
+        resultDataUriPrefix = "",
         errorMessage = null
     )
 

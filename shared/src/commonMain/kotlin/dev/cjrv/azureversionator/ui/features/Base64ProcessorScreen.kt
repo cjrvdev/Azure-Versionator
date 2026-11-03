@@ -32,6 +32,7 @@ import azureversionator.shared.generated.resources.base64_encode
 import azureversionator.shared.generated.resources.base64_encode_decode
 import azureversionator.shared.generated.resources.base64_image_input_placeholder
 import azureversionator.shared.generated.resources.base64_image_mode
+import azureversionator.shared.generated.resources.base64_include_data_uri_prefix
 import azureversionator.shared.generated.resources.base64_input
 import azureversionator.shared.generated.resources.base64_result
 import azureversionator.shared.generated.resources.base64_save_image
@@ -144,19 +145,22 @@ fun Base64ProcessorScreen(onNavigateBack: () -> Unit) {
                                 },
                                 onCopy = {
                                     coroutineScope.launch {
-                                        clipboard.setClipEntry(createPlainTextClipEntry(state.result))
+                                        clipboard.setClipEntry(createPlainTextClipEntry(state.displayedResult))
                                     }
                                 }
                             )
                             Base64ProcessorViewModel.ProcessorMode.Image -> {
                                 if (state.operation == Base64ProcessorViewModel.OperationMode.Encode) {
                                     ImageEncoder(
-                                        result = state.result,
+                                        result = state.displayedResult,
+                                        hasDataUriPrefix = state.resultDataUriPrefix.isNotEmpty(),
+                                        includeDataUriPrefix = state.includeDataUriPrefix,
+                                        onIncludeDataUriPrefixChanged = vm::onIncludeDataUriPrefixChanged,
                                         onSelectImage = vm::selectImage,
                                         onCopy = {
                                             coroutineScope.launch {
                                                 clipboard.setClipEntry(
-                                                    createPlainTextClipEntry(state.result)
+                                                    createPlainTextClipEntry(state.displayedResult)
                                                 )
                                             }
                                         }
@@ -198,12 +202,15 @@ private fun TextProcessor(
         enabled = if (isEncoding) state.textInput.isNotBlank() else state.isTextInputBase64,
         modifier = Modifier.fillMaxWidth()
     )
-    ResultField(value = state.result, onCopy = onCopy)
+    ResultField(value = state.displayedResult, onCopy = onCopy)
 }
 
 @Composable
 private fun ImageEncoder(
     result: String,
+    hasDataUriPrefix: Boolean,
+    includeDataUriPrefix: Boolean,
+    onIncludeDataUriPrefixChanged: (Boolean) -> Unit,
     onSelectImage: () -> Unit,
     onCopy: () -> Unit
 ) {
@@ -218,7 +225,12 @@ private fun ImageEncoder(
             )
         }
     )
-    ResultField(value = result, onCopy = onCopy)
+    ResultField(
+        value = result,
+        onCopy = onCopy,
+        includePrefix = if (hasDataUriPrefix) includeDataUriPrefix else null,
+        onIncludePrefixChanged = onIncludeDataUriPrefixChanged
+    )
 }
 
 @Composable
@@ -249,19 +261,34 @@ private fun ImageDecoder(
 }
 
 @Composable
-private fun ResultField(value: String, onCopy: () -> Unit) {
+private fun ResultField(
+    value: String,
+    onCopy: () -> Unit,
+    includePrefix: Boolean? = null,
+    onIncludePrefixChanged: (Boolean) -> Unit = {}
+) {
     CustomMultilineTextField(
         label = stringResource(Res.string.base64_result),
         value = value,
         onValueChange = {},
         modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp, max = 200.dp)
     )
-    Box(modifier = Modifier.fillMaxWidth()) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(MarginMedium, Alignment.End),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (includePrefix != null) {
+            TechToggleChip(
+                label = stringResource(Res.string.base64_include_data_uri_prefix),
+                checked = includePrefix,
+                onCheckedChange = onIncludePrefixChanged
+            )
+        }
         CustomSecondaryButton(
             text = stringResource(Res.string.base64_copy_result),
             enabled = value.isNotBlank(),
             onClick = onCopy,
-            modifier = Modifier.align(Alignment.CenterEnd),
             leadingIcon = {
                 Icon(
                     imageVector = vectorResource(Res.drawable.copy),
