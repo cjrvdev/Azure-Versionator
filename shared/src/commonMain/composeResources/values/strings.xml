@@ -94,13 +94,18 @@
     <string name="merge_target_branches">Branches to update</string>
     <string name="merge_filter_branches">Filter branches</string>
     <string name="merge_refresh">Refresh Stats</string>
-    <string name="merge_submit">Merge selected</string>
+    <string name="merge_submit">Merge</string>
     <string name="merge_no_branches">No branches to show</string>
     <string name="merge_up_to_date">Up to date</string>
     <string name="merge_pending_commits">%1$d commits behind</string>
     <string name="merge_status_merging">Merging…</string>
     <string name="merge_status_merged">Merged</string>
     <string name="merge_status_failed">Failed – resolve manually: %1$s</string>
+    <plurals name="branches_selected">
+        <item quantity="zero"> - None selected</item>
+        <item quantity="one"> - 1 branch selected</item>
+        <item quantity="other"> - %1$d branches selected</item>
+    </plurals>
 
     <!-- Base64 encode & decode -->
     <string name="base64_encode_decode">Base64 Encode &amp; Decode</string>
