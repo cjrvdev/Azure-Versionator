@@ -66,7 +66,8 @@ fun CustomTextField(
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Next,
     ignoreCase: Boolean = false,
-    readOnly : Boolean = false
+    readOnly : Boolean = false,
+    enabled: Boolean = true
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
 
@@ -81,6 +82,7 @@ fun CustomTextField(
         isError = isError,
         colors = techTextFieldColors(),
         readOnly = readOnly,
+        enabled = enabled,
         supportingText = if (isError && errorMessage != null) {
             { Text(errorMessage) }
         } else null,
@@ -108,7 +110,8 @@ fun CustomMultilineTextField(
     errorMessage: String? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
     ignoreCase: Boolean = false,
-    readOnly : Boolean = false
+    readOnly : Boolean = false,
+    enabled: Boolean = true
 ) {
     TextField(
         value = value,
@@ -116,6 +119,7 @@ fun CustomMultilineTextField(
         label = { TechLabel(text = label, ignoreCase = ignoreCase) },
         placeholder = { Text(placeholder) },
         singleLine = false,
+        enabled = enabled,
         modifier = modifier,
         shape = androidx.compose.foundation.shape.RoundedCornerShape(CornerRadius),
         isError = isError,

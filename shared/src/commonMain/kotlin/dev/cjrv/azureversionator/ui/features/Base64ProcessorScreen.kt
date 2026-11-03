@@ -163,6 +163,7 @@ fun Base64ProcessorScreen(onNavigateBack: () -> Unit) {
                                 },
                                 onCopy = copyResult
                             )
+
                             Base64ProcessorViewModel.ProcessorMode.Image -> {
                                 if (state.operation == Base64ProcessorViewModel.OperationMode.Encode) {
                                     ImageEncoder(
@@ -275,21 +276,25 @@ private fun ResultField(
     includePrefix: Boolean? = null,
     onIncludePrefixChanged: (Boolean) -> Unit = {}
 ) {
+    val isEnabled: Boolean = value.isNotBlank()
     Box(modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp, max = 200.dp)) {
         CustomMultilineTextField(
             label = stringResource(Res.string.base64_result),
             value = value,
             onValueChange = {},
+            enabled = isEnabled,
             readOnly = true,
             modifier = Modifier.fillMaxSize()
         )
         // Overlay blocks text selection so users can't copy a truncated preview by accident.
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .pointerHoverIcon(PointerIcon.Hand)
-                .clickable(enabled = value.isNotBlank(), onClick = onCopy)
-        )
+        if (isEnabled) {
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .pointerHoverIcon(PointerIcon.Hand)
+                    .clickable(enabled = value.isNotBlank(), onClick = onCopy)
+            )
+        }
     }
     Row(
         modifier = Modifier.fillMaxWidth(),
